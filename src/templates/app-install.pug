@@ -1,0 +1,157 @@
+-
+	function getDatasource(id) {
+		for(var datasource of manifest.datasources) {
+			if(datasource.clientid === id) {
+				return datasource;
+			}
+		}
+	}
+
+doctype html
+html
+	head
+		include includes/header.pug
+		title Install #{manifest.name} - Databox App Store
+
+		script
+			| var manifest = {"url":
+			=	"'" + manifest.url + "',"
+			|	"packages": {
+			if 'packages' in manifest
+				each pack, index in manifest.packages
+					= "'" + (pack.id || index) + "':{'enabled': " + (pack.enabled || pack.required) + ", 'datasources': ["
+					if 'datastores' in pack
+						each datastore in pack.datastores
+							= "'" + datastore + "',"
+					| ]},
+			|    },
+			|   "datasources": {
+			if 'datasources' in manifest
+				each datasource in manifest.datasources
+					= "'" + datasource.clientid + "':{'required': " + datasource.required + "}"
+					| ,
+			|    }
+			| };
+
+	body.mdc-typography
+		header.mdc-toolbar.mdc-toolbar--fixed.mdc-toolbar--waterfall.mdc-theme--dark
+			div.mdc-toolbar__row
+				section.mdc-toolbar__section.mdc-toolbar__section--align-start
+					a(href="/app/" + manifest.name).material-icons
+						| arrow_back
+					span.mdc-toolbar__title
+						| Databox App Store
+				section.mdc-toolbar__section.mdc-toolbar__section--align-end.mdc-toolbar__section--shrink-to-fit
+					a#search-icon.mdc-theme--dark.material-icons.search.align-icons(title="Search")
+						| search
+				section.mdc-toolbar__section.mdc-toolbar__section--align-end.mdc-toolbar__section--shrink-to-fit
+					label.mdc-textfield(style="overflow: hidden;")
+						input#search-field.mdc-textfield__input(type="text", placeholder="Search")
+		main.mdc-toolbar-fixed-adjust#content
+			div.mdc-card
+				section(style="display:flex").mdc-card__primary
+					img(src='/icons/android-icon-144x144.png')
+					div
+						div.mdc-card__title--large
+							= manifest.name
+						div.mdc-card__subtitle.mdc-typography--caption
+							= manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
+						div
+							i.material-icons.rating
+								| star
+							i.material-icons.rating
+								| star
+							i.material-icons.rating
+								| star
+							i.material-icons.rating.disabled
+								| star_outline
+							i.material-icons.rating.disabled
+								| star_outline
+						div
+							i.material-icons.rating
+								| lock
+							i.material-icons.rating
+								| lock
+							i.material-icons.rating
+								| lock
+							i.material-icons.rating.disabled
+								| lock_open
+							i.material-icons.rating.disabled
+								| lock_open
+				div.mdc-layout-grid
+					if 'packages' in manifest
+						each pack, index in manifest.packages
+							div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-4.package(id=("pack_" + (pack.id || index)), onclick='togglePackage("' + (pack.id || index) + '")', class=(pack.required || pack.enabled) ? '' : 'transparent')
+								div.mdc-theme--text-primary-on-dark.dark(style="display: flex; align-items: center")
+									div.mdc-typography--title.fill.padded
+										= pack.name
+									div.badge.material-icons
+										| check
+								div.fill.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg
+									= pack.purpose
+								div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg
+									= pack.benefits
+								div.exchange
+									div
+										| in exchange for
+								div.dark.padded.mdc-theme--text-primary-on-dark
+									= pack.risks
+									if 'datasources' in pack
+										each datasource in pack.datasources
+											div
+												= 'Access to a ' + getDatasource(datasource).type
+									if 'datastores' in pack
+										each datasource in pack.datastores
+											div
+												= 'Access to a ' + getDatasource(datasource).type
+								if pack.required
+									div.mdc-theme--accent-bg.padded
+										| Required
+								else if pack.enabled
+									div.mdc-theme--accent-bg.padded
+										= 'Disable ' + pack.name
+								else
+									div.mdc-theme--accent-bg.padded
+										= 'Enable ' + pack.name
+
+					if 'export-whitelist' in manifest && manifest['export-whitelist'].length > 0
+						div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12(style="margin-top:20px")
+							div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg.mdc-typography--title
+								| URL Permissions
+							ul.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12.mdc-list
+								each url in manifest['export-whitelist']
+									li.mdc-list-item
+										i.material-icons.mdc-list-item__start-detail
+											| link
+										span.mdc-list-item__text
+											= url.url
+											span.mdc-list-item__text__secondary
+												= url.description
+
+					if 'datasources' in manifest && manifest.datasources.length > 0
+						div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12(style="margin-top:16px")
+							div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg.mdc-typography--title
+								| Data Sources
+							ul.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12.mdc-list
+								each datasource in manifest.datasources
+									li.datasource.mdc-menu-anchor.mdc-list-item.disabled(id='datasource_' + datasource.clientid)
+										i.material-icons.mdc-list-item__start-detail
+											| input
+										span.mdc-list-item__text
+											= datasource.type
+											span.mdc-list-item__text__secondary(id='datasource_' + datasource.clientid + '_sensor', style='display: none')
+												| Unbound
+										div.mdc-simple-menu(tabindex="-1")
+											ul.mdc-simple-menu__items.mdc-list(role="menu", aria-hidden="true")
+												each sensor in sensors
+													if sensor.type == datasource.type
+														li.mdc-list-item(role="menuitem", tabindex="0", onclick='selectSensor("' + datasource.clientid + '","' + sensor.description + (sensor.location ? ', ' + sensor.location : "") + '",' + JSON.stringify(sensor.hypercat) + ')')
+															= sensor.description + (sensor.location ? ', ' + sensor.location : "")
+												else
+													li.mdc-list-item.disabled
+														| No sensors found
+				section.mdc-card__actions
+					button(disabled, onclick='install()')#install_button.mdc-button.mdc-card__action.mdc-button--primary
+						| Install
+	script(src="/scripts/toolbar.js")
+	script(src="/scripts/install.js")

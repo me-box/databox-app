@@ -1,0 +1,69 @@
+doctype html
+html
+	head
+		include includes/header
+		title #{app[0].manifest.name} - Databox App Store
+	body
+		include includes/toolbar
+		main.mdc-toolbar-fixed-adjust
+			div.mdc-layout-grid
+				div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-10
+					div.mdc-card
+						section(style="display:flex").mdc-card__primary
+							img(src='/icons/android-icon-144x144.png')
+							div
+								div.mdc-card__title--large
+									= app[0].manifest.name
+								div.mdc-card__subtitle.mdc-typography--caption
+									= app[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
+								div
+									i.material-icons
+										| star
+									i.material-icons
+										| star
+									i.material-icons
+										| star
+									i.material-icons.disabled
+										| star_outline
+									i.material-icons.disabled
+										| star_outline
+						section.mdc-card__supporting-text
+							= app[0].manifest.description
+						section.mdc-card__supporting-text
+							i.material-icons
+								| lock
+							i.material-icons
+								| lock
+							i.material-icons
+								| lock
+							i.material-icons.disabled
+								| lock_open
+							i.material-icons.disabled
+								| lock_open
+							| Moderate Risk
+						section.mdc-card__actions
+							if(app.length > 1)
+								a.mdc-button.mdc-button--compact(style="padding: 5px; color: #666", id="versionButton")
+									i.material-icons
+										| settings
+								div.mdc-simple-menu(id="versionMenu")
+									ul.mdc-list.mdc-simple-menu__items
+										each appItem in app
+											li.mdc-list-item(role="option", id=appItem._id, onclick='selectVersion("' + appItem._id + '")')
+												= 'v' + appItem.manifest.version + ' on ' + appItem.store
+							a(id="install_link" href="/app/" + app[0].manifest.name + "/install").mdc-button.mdc-card__action.mdc-button--primary
+									| Install
+
+				div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-2
+					include templates/app-list.pug
+		script
+			!= "const installURL = \"/app/" + app[0].manifest.name + "/install\""
+		script.
+			function selectVersion(id) {
+				const installLink = document.getElementById('install_link');
+				installLink.href = installURL + "/" + id;
+
+			}
+			const menu = new mdc.menu.MDCSimpleMenu(document.querySelector('#versionMenu'));
+			// Add event listener to some button to toggle the menu on and off.
+			document.querySelector('#versionButton').addEventListener('click', function() { menu.open = !menu.open});

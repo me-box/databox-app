@@ -1,0 +1,22 @@
+doctype html
+html
+	head
+		include templates/header
+		title Databox App Store
+		script(src="/templates/app-list.js")
+	body
+		include templates/toolbar-nav
+		main.mdc-toolbar-fixed-adjust.mdc-layout-grid
+			div.mdc-layout-grid__inner#app-list
+		script.
+			fetch('list-apps')
+				.then(function (res) {
+					return res.json();
+				})
+				.then(function (json) {
+					document.getElementById('app-list').innerHTML = template({
+						apps: json
+					});
+				});
+
+			mdc.autoInit();

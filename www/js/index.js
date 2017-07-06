@@ -29,6 +29,33 @@ function showSpinner() {
 	document.getElementById('content').innerHTML = spinnerTemplate();
 }
 
+function scanQR() {
+	QRScanner.prepare((err, status) => {
+		if (err) {
+			console.error(err);
+		}
+		if (status.authorized) {
+			QRScanner.scan((err, text) => {
+				if (err) {
+					console.error(err);
+				} else {
+					QRScanner.destroy(function(status){
+						console.log(status);
+					});
+					console.log(text);
+					databoxURL = text;
+					connect();
+				}
+			});
+
+			document.getElementById('content').innerHTML = '';
+			QRScanner.show((status) => {
+				console.log(status);
+			});
+		}
+	});
+}
+
 function connect() {
 	const field = document.getElementById('connectField');
 	if (field) {

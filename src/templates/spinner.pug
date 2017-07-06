@@ -1,93 +1,40 @@
-div(style="padding: 16px")
-	div.mdc-card
-		section(style="display:flex").mdc-card__primary
-			img(src='/icons/android-icon-144x144.png')
-			div(style="padding-left: 16px")
-				div.mdc-card__title--large
-					= app[0].displayName
-				div.mdc-card__subtitle.mdc-typography--caption
-					= app[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
-				div
-					i.material-icons
-						| star
-					i.material-icons
-						| star
-					i.material-icons
-						| star
-					i.material-icons.disabled
-						| star_outline
-					i.material-icons.disabled
-						| star_outline
-		section.mdc-card__supporting-text
-			= app[0].manifest.description
-		section.mdc-card__supporting-text(style="display: flex")
-			i.material-icons
-				| lock
-			i.material-icons
-				| lock
-			i.material-icons
-				| lock
-			i.material-icons.disabled
-				| lock_open
-			i.material-icons.disabled
-				| lock_open
-			div(style="padding: 0 16px")
-				| Moderate Risk
-		section.mdc-card__supporting-text
-			div(style="display: flex; padding-top: 16px")
-				i.material-icons(style="padding:8px 16px 0 0; color: #B71C1C")
-					| lock
-				span.mdc-list-item__text
-					| Data
-					span.mdc-list-item__text__secondary
-						div
-							| No granular data settings
-						div
-							| Sends data to third-party
-						div
-							| No data access API
-						div
-							| Possible data leakage
-			div(style="display: flex; padding-top: 16px")
-				i.material-icons(style="padding:8px 16px 0 0; color: #F57F17")
-					| lock
-				span.mdc-list-item__text
-					| Datasources
-					span.mdc-list-item__text__secondary
-						div
-							| Uses sensors with low security rating
-						div
-							| Uses sensors not compliant with standards
-			div(style="display: flex; padding-top: 16px")
-				i.material-icons(style="padding:8px 16px 0 0; color: #1B5E20")
-					| lock
-				div.mdc-list-item__text
-					| Apps
-					div.mdc-list-item__text__secondary
-						div
-							| Actuates class x physical devices
-		section.mdc-card__actions
-			if(app.length > 1)
-				a.mdc-button.mdc-button--compact(style="padding: 5px; color: #666", id="versionButton")
-					i.material-icons(style="font-size: 12pt")
-						| arrow_drop_down
-				div.mdc-simple-menu(id="versionMenu")
-					ul.mdc-list.mdc-simple-menu__items
-						each appItem in app
-							li.mdc-list-item(role="option", id=appItem._id, onclick='selectVersion("' + appItem._id + '")')
-								= 'v' + appItem.manifest.version + ' on ' + appItem.store
-			a(id="install_link" href="#!/app/" + app[0].manifest.name + "/install").mdc-button.mdc-card__action.mdc-button--primary
-				| Install
-script
-	!= "const installURL = \"#!/app/" + app[0].manifest.name + "/install/\""
-script.
-	function selectVersion(id) {
-		const installLink = document.getElementById('install_link');
-		installLink.href = installURL + id;
+div(style="padding: 16px; display: flex; justify-content: center; margin-top: 200px")
+	style.
+		#spinner {
+			align-self: center;
+			animation: rotator 1.4s linear infinite;
+		}
 
-	}
-	const menu = new mdc.menu.MDCSimpleMenu(document.querySelector('#versionMenu'));
-	// Add event listener to some button to toggle the menu on and off.
-	document.querySelector('#versionButton').addEventListener('click', function () {
-		menu.open = !menu.open
-	});
+		@keyframes rotator {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(270deg);
+			}
+		}
+
+		.path {
+			stroke-dasharray: 187;
+			stroke-dashoffset: 0;
+			stroke: #ff8f00;
+			transform-origin: center;
+			animation: dash 1.4s ease-in-out infinite
+		}
+
+		@keyframes dash {
+			0% {
+				stroke-dashoffset: 187;
+			}
+			50% {
+				stroke-dashoffset: 46.75;
+				transform: rotate(135deg);
+			}
+			100% {
+				stroke-dashoffset: 187;
+				transform: rotate(450deg);
+			}
+		}
+	svg#spinner(width="35px", height="35px", viewBox="0 0 66 66", xmlns="http://www.w3.org/2000/svg")
+		circle.path(fill="none", stroke-width="6", stroke-linecap="square", cx="33", cy="33", r="30")
+

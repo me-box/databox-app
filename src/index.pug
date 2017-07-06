@@ -1,22 +1,92 @@
 doctype html
 html
 	head
-		include templates/header
-		title Databox App Store
-		script(src="/templates/app-list.js")
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		meta(name='mobile-web-app-capable', content="yes")
+		meta(name="apple-mobile-web-app-capable", content="yes")
+		meta(name="theme-color", content="#00838F")
+		link(rel="manifest", href="icons/manifest.json")
+		link(rel="apple-touch-icon", sizes="57x57", href="icons/apple-icon-57x57.png")
+		link(rel="apple-touch-icon", sizes="76x76", href="icons/apple-icon-76x76.png")
+		link(rel="apple-touch-icon", sizes="120x120", href="icons/apple-icon-120x120.png")
+		link(rel="apple-touch-icon", sizes="152x152", href="icons/apple-icon-152x152.png")
+		link(rel="apple-touch-icon", sizes="180x180", href="icons/apple-icon-180x180.png")
+		link(rel="icon", type="image/png", sizes="16x16", href="icons/favicon-16x16.png")
+		link(rel="icon", type="image/png", sizes="32x32", href="icons/favicon-32x32.png")
+		link(rel="icon", type="image/png", sizes="96x96", href="icons/favicon-96x96.png")
+		link(rel="icon", type="image/png", sizes="192x192", href="icons/android-icon-192x192.png")
+		link(rel='stylesheet', href='https://fonts.googleapis.com/icon?family=Material+Icons')
+		link(rel='stylesheet', href='css/material-components-web.min.css')
+		link(rel='stylesheet', href='css/appstore.css')
+		title Databox
+		script(src="cordova.js")
+		script(src='js/material-components-web.min.js')
+		script(src="js/navigo.min.js")
+		script(src="js/app-install.js")
+		script(src="js/templates/connect.js")
+		script(src="js/templates/spinner.js")
+		script(src="js/templates/installed.js")
+		script(src="js/templates/app-install.js")
+		script(src="js/templates/app-list.js")
+		script(src="js/templates/app.js")
 	body
-		include templates/toolbar-nav
-		main.mdc-toolbar-fixed-adjust.mdc-layout-grid
-			div.mdc-layout-grid__inner#app-list
-		script.
-			fetch('list-apps')
-				.then(function (res) {
-					return res.json();
-				})
-				.then(function (json) {
-					document.getElementById('app-list').innerHTML = template({
-						apps: json
-					});
-				});
+		header.mdc-toolbar.mdc-toolbar--fixed.mdc-toolbar--waterfall.mdc-theme--dark
+			div#toolbar.mdc-toolbar__row
+				section.mdc-toolbar__section.mdc-toolbar__section--align-start
+					a#navicon.mdc-icon-toggle.material-icons
+						| menu
+					a#backicon.mdc-icon-toggle.material-icons
+						| arrow_back
+					span#toolbar_title.mdc-toolbar__title
+						| Databox
 
-			mdc.autoInit();
+				section.mdc-toolbar__section.mdc-toolbar__section--align-end.mdc-toolbar__section--shrink-to-fit
+					a#searchicon.mdc-icon-toggle.material-icons.search.align-icons(title="Search", href="#!/search/")
+						| search
+
+			div#toolbar-search.mdc-toolbar__row(style='display: none')
+				section.mdc-toolbar__section.mdc-toolbar__section--align-start
+					a.mdc-icon-toggle.material-icons
+						| arrow_back
+					label.mdc-textfield
+						input#toolbar-search__input.mdc-textfield__input(type="text", placeholder='Search')
+
+		aside.mdc-temporary-drawer.mdc-typography
+			nav.mdc-temporary-drawer__drawer
+				header.mdc-toolbar.mdc-theme--dark
+					div.mdc-toolbar__row
+						section.mdc-toolbar__section.mdc-toolbar__section--align-start
+							span.mdc-toolbar__title(style='margin-left: 72px')
+								| Databox
+				nav#nav.mdc-temporary-drawer__content.mdc-list
+					a.mdc-list-item.mdc-temporary-drawer--selected(href="/")
+						i.material-icons.mdc-list-item__start-detail(aria-hidden="true")
+							| store
+						| App Store
+					a.mdc-list-item(href="#")
+						i.material-icons.mdc-list-item__start-detail(aria-hidden="true")
+							| star
+						| Star
+					div.mdc-list-group__subheader(style="margin: 16px 0 0 16px")
+						| Installed
+					a.mdc-list-item(href="#!/installed/app")
+						i.material-icons.mdc-list-item__start-detail(aria-hidden="true")
+							| star
+						| Apps
+					a.mdc-list-item(href="#!/installed/driver")
+						i.material-icons.mdc-list-item__start-detail(aria-hidden="true")
+							| star
+						| Drivers
+					a.mdc-list-item(href="#!/installed/store")
+						i.material-icons.mdc-list-item__start-detail(aria-hidden="true")
+							| star
+						| Stores
+					a.mdc-list-item(href="#!/installed/system")
+						i.material-icons.mdc-list-item__start-detail(aria-hidden="true")
+							| star
+						| System
+
+	main#content.mdc-toolbar-fixed-adjust.mdc-typography
+
+	script(src="js/index.js")

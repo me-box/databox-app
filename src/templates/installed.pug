@@ -1,38 +1,17 @@
-style.
-	#spinner {
-		align-self: center;
-		animation: rotator 1.4s linear infinite;
-	}
-
-	@keyframes rotator {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(270deg);
-		}
-	}
-
-	.path {
-		stroke-dasharray: 187;
-		stroke-dashoffset: 0;
-		stroke: #ff8f00;
-		transform-origin: center;
-		animation: dash 1.4s ease-in-out infinite
-	}
-
-	@keyframes dash {
-		0% {
-			stroke-dashoffset: 187;
-		}
-		50% {
-			stroke-dashoffset: 46.75;
-			transform: rotate(135deg);
-		}
-		100% {
-			stroke-dashoffset: 187;
-			transform: rotate(450deg);
-		}
-	}
-div(style="padding: 16px")
-	div#spinner
+div.mdc-list.mdc-list--two-line
+	each container in containers
+		div.mdc-list-item
+			span.mdc-list-item__start-detail.material-icons
+				| store
+			span.mdc-list-item__text
+				= container.Names[0].split('.')[0].substr(1)
+				span.mdc-list-item__text__secondary
+					= container.State
+			span(style="display: flex;margin-left: auto")
+				span(href="#").material-icons.mdc-list-item__end-detail
+					| refresh
+				span(href="#").material-icons.mdc-list-item__end-detail
+					| close
+	else
+		div
+			| Empty

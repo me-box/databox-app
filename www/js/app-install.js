@@ -108,9 +108,3 @@ function bindMenu(menuElement) {
 		}
 	});
 }
-
-let menus = document.getElementsByClassName('mdc-simple-menu');
-for (let menuElement of menus) {
-	bindMenu(menuElement);
-}
-validate();

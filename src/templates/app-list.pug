@@ -2,36 +2,38 @@ if apps.length === 0
 	div
 		| Empty
 else
-	each appItem in apps
-		if !app || appItem[0].manifest.name !== app[0].manifest.name
-			a(href="/app/" + appItem[0].manifest.name, title=appItem[0].manifest.name).mdc-card.app-small.mdc-layout-grid__cell.mdc-layout-grid__cell--span-2
-				img(src='/icons/android-icon-144x144.png').mdc-card__media
-				section.mdc-card__primary
-					div.mdc-card__title
-						= appItem[0].manifest.name
-					div.mdc-card__subtitle.mdc-typography--caption
-						= appItem[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
-					div.ratings
-						div
-							i.material-icons.rating
-								| lock
-							i.material-icons.rating
-								| lock
-							i.material-icons.rating
-								| lock
-							i.material-icons.rating.disabled
-								| lock
-							i.material-icons.rating.disabled
-								| lock
-						div(style="flex: 1")
-						div
-							i.material-icons.rating
-								| star
-							i.material-icons.rating
-								| star
-							i.material-icons.rating
-								| star
-							i.material-icons.rating.disabled
-								| star
-							i.material-icons.rating.disabled
-								| star
+	div.mdc-layout-grid
+		div.mdc-layout-grid__inner
+			each appItem in apps
+				if !app || appItem[0].manifest.name !== app[0].manifest.name
+					a(href="#!/app/" + appItem[0].manifest.name, title=appItem[0].manifest.name).mdc-card.app-small.mdc-layout-grid__cell.mdc-layout-grid__cell--span-2
+						img(src='icons/android-icon-144x144.png').mdc-card__media
+						section.mdc-card__primary
+							div.mdc-card__title
+								= appItem[0].displayName
+							div.mdc-card__subtitle.mdc-typography--caption
+								= appItem[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
+							div.ratings
+								div
+									i.material-icons.rating
+										| lock
+									i.material-icons.rating
+										| lock
+									i.material-icons.rating
+										| lock
+									i.material-icons.rating.disabled
+										| lock
+									i.material-icons.rating.disabled
+										| lock
+								div(style="flex: 1")
+								div
+									i.material-icons.rating
+										| star
+									i.material-icons.rating
+										| star
+									i.material-icons.rating
+										| star
+									i.material-icons.rating.disabled
+										| star
+									i.material-icons.rating.disabled
+										| star

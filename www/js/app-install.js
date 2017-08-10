@@ -1,110 +1,108 @@
-function togglePackage(id) {
-	const pack = manifest.packages[id];
-	if (pack.required) {
-		return true;
-	}
-	pack.enabled = !pack.enabled;
-	let packElement = document.getElementById('pack_' + id);
-	if (pack.enabled) {
-		packElement.classList.remove('transparent');
-		packElement.querySelector('.mdc-theme--accent-bg').innerText = packElement.querySelector('.mdc-theme--accent-bg').innerText.replace('Enable', 'Disable');
+function listDatasources(manifest) {
+	if ('datasources' in manifest && manifest.datasources.length > 0) {
+		return fetch(databoxURL + '/api/datasource/list')
+			.then((res) => {
+				return res.json();
+			})
+			.catch((error) => {
+				console.log(error);
+				return [];
+			});
 	} else {
-		packElement.classList.add('transparent');
-		packElement.querySelector('.mdc-theme--accent-bg').innerText = packElement.querySelector('.mdc-theme--accent-bg').innerText.replace('Disable', 'Enable');
+		return new Promise((resolve) => {
+			resolve([]);
+		})
 	}
-
-	const keys = Object.keys(manifest.datasources);
-	for (let datasource_id of keys) {
-		let datasource_enabled = false;
-		for (let pack2 of Object.values(manifest.packages)) {
-			if (pack2.enabled) {
-				if (pack2.datasources.includes(datasource_id)) {
-					datasource_enabled = true;
-				}
-			}
-		}
-
-		if (datasource_enabled) {
-			document.getElementById('datasource_' + datasource_id).classList.remove('disabled');
-			document.getElementById('datasource_' + datasource_id + '_sensor').style.display = 'block';
-		} else {
-			document.getElementById('datasource_' + datasource_id).classList.add('disabled');
-			document.getElementById('datasource_' + datasource_id + '_sensor').style.display = 'none';
-		}
-	}
-
-	validate();
-	return true;
 }
 
-function selectSensor(datasource_id, sensor_text, sensor_hypercat) {
-	if (datasource_id in manifest.datasources) {
-		const datasource = manifest.datasources[datasource_id];
-		datasource.hypercat = sensor_hypercat;
-		const element = document.getElementById('datasource_' + datasource_id + '_sensor');
-		element.innerText = sensor_text;
-	}
-	validate();
-	return true;
-}
-
-function isPackageValid(pack) {
-	for (let datasource_id of pack.datasources) {
-		let datasource = manifest.datasources[datasource_id];
-		if (datasource.required && !('hypercat' in datasource)) {
-			return false;
-		}
-	}
-	return true;
-}
-
-function validate() {
-	const packages = Object.values(manifest.packages);
-	let valid = true;
-	if (packages.length > 0) {
-		let enabled = 0;
-
-		for (let pack of packages) {
-
-			if (pack.enabled) {
-				enabled++;
-				if (!isPackageValid(pack)) {
-					valid = false;
-					break;
-				}
-			}
-
-			if (!valid) {
-				break;
-			}
-		}
-
-		valid = valid && enabled > 0
-	}
-
-	console.log(valid);
-
-	document.getElementById('install_button').disabled = !valid;
-}
-
-function install() {
-	document.getElementById('install_button').disabled = true;
-
-	fetch("/app/install", {
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json'
-		},
-		method: "POST",
-		body: JSON.stringify(manifest)
+function appConfigDisplay(manifest, sensors) {
+	toolbarBack('Configure ' + manifest.displayName);
+	document.getElementById('content').innerHTML = appConfigTemplate({
+		manifest: manifest,
+		sensors: sensors
 	});
+
+	if('packages' in manifest) {
+		for(let index = 0; index < manifest.packages.length; index++) {
+			let databoxPackage = manifest.packages[index];
+			let packageID = "pack_" + (databoxPackage.id || index);
+			let element = document.getElementById(packageID);
+			if(!databoxPackage.required) {
+				element.addEventListener('click', () => {
+					databoxPackage.enabled = !databoxPackage.enabled;
+					appConfigDisplay(manifest, sensors);
+				});
+			}
+		}
+	}
+
+	document.getElementById('install_button').addEventListener('click', () => {
+		document.getElementById('content').innerHTML = spinnerTemplate();
+		fetch(databoxURL + "/api/install", {
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			method: "POST",
+			body: JSON.stringify(manifest),
+		})
+			.then((res) => {
+				router.navigate('/' + manifest['databox-type'] + '/installed');
+			});
+	});
+
+	let menus = document.getElementsByClassName('mdc-simple-menu');
+	for (const menuElement of menus) {
+		const menu = new mdc.menu.MDCSimpleMenu(menuElement);
+		menuElement.parentElement.addEventListener('click', () => menu.open = !menu.open);
+	}
+
+
+	let menuItems = document.getElementsByClassName('mdc-list-item');
+	for(const menuItem of menuItems) {
+		if(menuItem.getAttribute('role') === 'menuitem') {
+			menuItem.addEventListener('click', () => {
+				const clientid = menuItem.getAttribute('datasource');
+				for(const datasource of manifest.datasources) {
+					if(datasource.clientid === clientid) {
+						const sensorHref = menuItem.getAttribute('sensor');
+						for (const sensor of sensors) {
+							if(sensor.href === sensorHref) {
+								datasource.hypercat = sensor;
+								appConfigDisplay(manifest, sensors);
+								break;
+							}
+						}
+						break;
+					}
+				}
+			});
+		}
+	}
 }
 
-function bindMenu(menuElement) {
-	let menu = new mdc.menu.MDCSimpleMenu(menuElement);
-	menuElement.parentElement.addEventListener('click', function () {
-		if (!menuElement.parentElement.classList.contains('disabled')) {
-			menu.open = !menu.open;
-		}
-	});
-}
+router.on('/:name/config', (params) => {
+	console.log(params);
+	showSpinner();
+	listApps()
+		.then((apps) => {
+			const manifest = JSON.parse(JSON.stringify(apps[params.name][0].manifest));
+			listDatasources(manifest)
+				.then((sensors) => {
+					console.log(sensors);
+					appConfigDisplay(manifest, sensors);
+				});
+		});
+});
+
+router.on('/:name/config/:id', (params) => {
+	console.log(params);
+	listApps()
+		.then((apps) => {
+			// TODO manifest from id
+			const manifest = JSON.parse(JSON.stringify(apps[params.name][0].manifest));
+			listDatasources(manifest)
+				.then((sensors) => {
+					appConfigDisplay(manifest, sensors);
+				});
+		});
+});

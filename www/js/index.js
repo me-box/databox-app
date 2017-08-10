@@ -5,23 +5,15 @@ const stores = [
 		"name": "Local Store",
 		"url": "http://localhost:8181"
 	},
-	{
-		"name": "Up In the Clouds Store",
-		"url": "http://store.upintheclouds.org"
-	},
-	{
-		"name": "IoT Databox Store",
-		"url": "https://store.iotdatabox.com"
-	}
+	// {
+	// 	"name": "Up In the Clouds Store",
+	// 	"url": "http://store.upintheclouds.org"
+	// },
+	// {
+	// 	"name": "IoT Databox Store",
+	// 	"url": "https://store.iotdatabox.com"
+	// }
 ];
-const mappings = {
-	"urn:X-hypercat:rels:hasDescription:en": "description",
-	"urn:X-hypercat:rels:isContentType": "contentType",
-	"urn:X-databox:rels:hasVendor": "vendor",
-	"urn:X-databox:rels:hasType": "type",
-	"urn:X-databox:rels:hasLocation": "location",
-	"urn:X-databox:rels:hasDatasourceid": "id"
-};
 let databoxURL = 'http://databox.local:8989';
 let apps;
 
@@ -56,6 +48,13 @@ function scanQR() {
 	});
 }
 
+function submit(event) {
+	if (event.charCode === 13) {
+		event.preventDefault();
+		connect();
+	}
+}
+
 function connect() {
 	const field = document.getElementById('connectField');
 	if (field) {
@@ -73,8 +72,39 @@ function connect() {
 
 	toolbarDisabled();
 	showSpinner();
-	fetch(databoxURL + '/api/list/app')
+	fetch(databoxURL + '/api/app/list')
 		.then(() => {
+			const handleMessage = function(message) {
+				if(message) {
+					console.log(message.Action + ": " + message.from);
+				}
+				if(router.lastRouteResolved().url.endsWith('/installed')) {
+					reloadAppList(router.lastRouteResolved().params.type);
+				}
+			};
+
+			const js = document.createElement('script');
+			js.type = 'text/javascript';
+			js.src = databoxURL + '/socket.io/socket.io.js';
+			js.async = true;
+			js.onload = function() {
+				console.log("connnect");
+				const socket = io.connect(databoxURL);
+				socket.on('docker-connect', handleMessage);
+				socket.on('docker-disconnect', handleMessage);
+				socket.on('docker-create', handleMessage);
+				socket.on('docker-start', handleMessage);
+				socket.on('docker-stop', handleMessage);
+				socket.on('docker-die', handleMessage);
+				socket.on('docker-destroy', handleMessage);
+				socket.disconnect();
+				window.onbeforeunload = function(){
+					socket.disconnect();
+				};
+			};
+
+			document.body.appendChild(js);
+
 			router.resolve();
 		})
 		.then()
@@ -112,6 +142,7 @@ function toolbarDrawer() {
 }
 
 function toolbarBack() {
+	document.getElementById('toolbartitle').innerText = 'Databox';
 	document.getElementById('toolbar-search').style.display = 'none';
 	document.getElementById('toolbar').style.display = 'flex';
 	document.getElementById('searchicon').style.display = 'block';
@@ -120,72 +151,20 @@ function toolbarBack() {
 	document.getElementById('backicon').style.display = 'block';
 }
 
-function listSensors(manifest) {
-	if ('datasources' in manifest && manifest.datasources.length > 0) {
-		return fetch(databoxURL + '/databox-arbiter/cat')
-			.then((res) => {
-				return res.json();
-			})
-			.then((json) => {
-				if ('items' in json) {
 
-					const promises = json.items.map(item => fetch(getCatalogueUrl(item)).then(res => res.json()));
-					return Promise.all(promises)
-						.then(results => {
-							let sensors = [];
-							for (const result of results) {
-								if ('items' in result) {
-									for (const item of result.items) {
-										if ('item-metadata' in item) {
-											let sensor = {};
-											sensor.endpoint = item.href;
-											sensor.hypercat = item;
-											for (const metadataItem of item['item-metadata']) {
-												if (metadataItem.rel in mappings) {
-													let mapped = mappings[metadataItem.rel];
-													sensor[mapped] = metadataItem.val;
-												}
-											}
-											if ('type' in sensor) {
-												sensors.push(sensor);
-											}
-										}
-									}
-								}
-							}
-
-							return sensors;
-						})
-						.catch(function (error) {
-							console.log(error);
-							return [];
-						});
-				}
-				return [];
-			})
-			.catch((error) => {
-				console.log(error);
-				return [];
-			});
-	} else {
-		return new Promise((resolve) => {
-			resolve([]);
-		})
-	}
-}
-
-function listApps() {
+function listApps(type) {
+	let promise;
 	if (!apps) {
 		let proms = [];
 		console.log("Test");
 		for (let store of stores) {
 			proms.push(fetch(store.url + '/app/list')
 				.then((res) => res.json())
-				.then(function (json) {
+				.then((json) => {
 					for (const app of json.apps) {
 						app.url = store.url + '/app/get/?name=' + app.manifest.name;
 						app.store = store.name;
-						app.displayName = app.manifest.name.replace('databox', '').split('-').join(' ').trim();
+						app.displayName = app.manifest.name.replace('databox', '').replace('driver-', '').replace('app-', '').split('-').join(' ').trim();
 					}
 					return json;
 				})
@@ -193,36 +172,56 @@ function listApps() {
 					return {'apps': []}
 				}));
 		}
-		return Promise.all(proms)
+		promise = Promise.all(proms)
 			.then((appLists) => {
-				console.log(JSON.stringify(appLists));
 				apps = {};
 				for (const appList of appLists) {
 					for (const app of appList.apps) {
 						const name = app.manifest.name;
-						if (app.manifest['databox-type'] === 'app' || app.manifest['databox-type'] === 'driver') {
-							let versions = [];
-							if (name in apps) {
-								versions = apps[name];
-							}
-
-							versions.push(app);
-							apps[name] = versions;
+						let versions = [];
+						if (name in apps) {
+							versions = apps[name];
 						}
+
+						versions.push(app);
+						apps[name] = versions;
 					}
 				}
 				return apps;
 			});
 	} else {
-		return new Promise((resolve) => {
+		promise = new Promise((resolve) => {
 			resolve(apps);
 		})
 	}
+
+	if(type) {
+		const appType = type;
+		return promise
+			.then((apps) => {
+				let filtered = {};
+				console.log(JSON.stringify(apps));
+				for(const name in apps) {
+					let app = apps[name];
+					console.log(JSON.stringify(app));
+					if (app[0].manifest['databox-type'] === appType) {
+						filtered[app[0].manifest.name] = app;
+					}
+				}
+				return filtered;
+			});
+	} else {
+		return promise;
+	}
+}
+
+function search(query) {
+
 }
 
 router.on(() => {
 	showSpinner();
-	listApps()
+	listApps('app')
 		.then((apps) => {
 			toolbarDrawer();
 			document.getElementById('content').innerHTML = appListTemplate({
@@ -231,76 +230,13 @@ router.on(() => {
 		});
 });
 
-router.on('/app/:name', (params) => {
+router.on('/driver/store', () => {
 	showSpinner();
-	listApps()
+	listApps('driver')
 		.then((apps) => {
-			toolbarBack();
-			const app = apps[params.name];
-			document.getElementById('content').innerHTML = appTemplate({
-				app: app
-			});
-		});
-});
-
-router.on('/app/:name/install', (params) => {
-	console.log(params);
-	showSpinner();
-	listApps()
-		.then((apps) => {
-			toolbarBack();
-			const manifest = JSON.parse(JSON.stringify(apps[params.name][0].manifest));
-
-			listSensors(manifest)
-				.then((sensors) => {
-					document.getElementById('content').innerHTML = appInstallTemplate({
-						manifest: manifest,
-						sensors: sensors
-					});
-
-					let packages = document.getElementsByClassName('package');
-					for (const databoxPackage of packages) {
-						databoxPackage.addEventListener('click', () => {
-
-						});
-					}
-
-					let menus = document.getElementsByClassName('mdc-simple-menu');
-					for (const menuElement of menus) {
-						bindMenu(menuElement);
-					}
-				});
-		});
-});
-
-router.on('/app/:name/install/:id', (params) => {
-	console.log(params);
-	listApps()
-		.then((apps) => {
-			toolbarBack();
-			const app = apps[params.name];
-			document.getElementById('content').innerHTML = appInstallTemplate({
-				manifest: app[0].manifest,
-				sensors: []
-			});
-
-			let menus = document.getElementsByClassName('mdc-simple-menu');
-			for (let menuElement of menus) {
-				bindMenu(menuElement);
-			}
-			validate();
-		});
-});
-
-router.on('/installed/:type', (params) => {
-	showSpinner();
-	fetch(databoxURL + '/api/list/' + params.type)
-		.then((res) => res.json())
-		.then((containers) => {
 			toolbarDrawer();
-			console.log(containers);
-			document.getElementById('content').innerHTML = installedTemplate({
-				containers: containers
+			document.getElementById('content').innerHTML = appListTemplate({
+				apps: apps
 			});
 		});
 });
@@ -309,48 +245,84 @@ router.on('/search', () => {
 	document.getElementById('toolbar-search').style.display = 'flex';
 	document.getElementById('toolbar').style.display = 'none';
 	document.getElementById('content').innerHTML = '';
-
-	console.log("Search");
-
-	let timer;
 	const search = document.getElementById('toolbar-search__input');
-	search.addEventListener('input', () => {
-		console.log(search.value);
-		if (search.value.length > 2) {
-			if (timer) {
-				clearTimeout(timer);
-			}
-			timer = setTimeout(() => {
-				listApps()
-					.then((apps) => {
-
-					});
-			}, 1000);
-		}
-	});
+	search.value = '';
 	search.focus();
 });
 
 router.on('/search/:query', (params) => {
 	document.getElementById('toolbar-search').style.display = 'flex';
 	document.getElementById('toolbar').style.display = 'none';
-	document.getElementById('content').innerHTML = '';
+	const search = document.getElementById('toolbar-search__input');
+	if(search.value !== params.query) {
+		search.value = params.query;
+	}
+	search.focus();
 
+	showSpinner();
+
+	listApps()
+		.then((apps) => {
+			const result = {};
+			for(const appname in apps) {
+				console.log(appname);
+				if(appname.indexOf(params.query) !== -1) {
+					result[appname] = apps[appname];
+				}
+			}
+			document.getElementById('content').innerHTML = appListTemplate({
+				apps: result
+			});
+		});
+});
+
+router.on('/:name', (params) => {
 	showSpinner();
 	listApps()
 		.then((apps) => {
-
+			fetch(databoxURL + '/api/installed/list')
+				.then((res) => res.json())
+				.then((json) => {
+					toolbarBack();
+					const app = apps[params.name];
+					app.installed = json.indexOf(app[0].manifest.name) !== -1;
+					document.getElementById('content').innerHTML = appTemplate({
+						app: app
+					});
+				})
+				.catch((error) => {
+					toolbarBack();
+					const app = apps[params.name];
+					document.getElementById('content').innerHTML = appTemplate({
+						app: app
+					});
+				});
 		});
+});
 
-	console.log("Search");
-	console.log(params);
+router.on('/:name/ui', (params) => {
+
+
 });
 
 connect();
 
+let searchTimer;
 const drawer = new mdc.drawer.MDCTemporaryDrawer(document.querySelector('.mdc-temporary-drawer'));
 document.getElementById('navicon').addEventListener('click', () => drawer.open = true);
 document.getElementById('backicon').addEventListener('click', () => window.history.back());
+document.getElementById('searchbackicon').addEventListener('click', () => window.history.back());
+document.getElementById('toolbar-search__input').addEventListener('input', () => {
+	const search = document.getElementById('toolbar-search__input');
+	if (search.value.length > 1) {
+		if (searchTimer) {
+			clearTimeout(searchTimer);
+		}
+		searchTimer = setTimeout(() => {
+			router.navigate("/search/" + search.value);
+		}, 1000);
+	}
+});
 const toolbar = mdc.toolbar.MDCToolbar.attachTo(document.querySelector('.mdc-toolbar'));
 toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust');
 
@@ -362,6 +334,16 @@ router.hooks({
 		done();
 	},
 	after: (params) => {
+		let navItems = document.getElementById('nav').getElementsByTagName('a');
+		for(const navItem of navItems) {
+			if(location.href.endsWith(navItem.href)) {
+				navItem.classList.add('mdc-temporary-drawer--selected');
+				const nodes = Array.from(navItem.childNodes).filter(f => f.nodeName === '#text');
+				document.getElementById('toolbartitle').innerText = nodes.length ? nodes[0].textContent.trim() : '';
+			} else {
+				navItem.classList.remove('mdc-temporary-drawer--selected');
+			}
+		}
 		mdc.autoInit();
 	}
 });

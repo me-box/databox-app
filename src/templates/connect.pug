@@ -10,7 +10,7 @@ div(style="padding: 16px")
 			div
 				| Enter the address of a databox to continue
 			label.mdc-textfield(style="width: 100%")
-				input#connectField.mdc-textfield__input(type="text", style="width: 100%")
+				input#connectField.mdc-textfield__input(style="width: 100%", required=true, onkeypress='submit(event)')
 				span.mdc-textfield__label
 					| Databox Address
 

@@ -1,0 +1,162 @@
+-
+	function getMetadata(item, rel) {
+		for(var metadataItem of item['item-metadata']) {
+			if(metadataItem.rel === rel) {
+				return metadataItem.val;
+			}
+		}
+		return null;
+	}
+
+	function getDatasource(id) {
+		for(var datasource of manifest.datasources) {
+			if(datasource.clientid === id) {
+				return datasource;
+			}
+		}
+	}
+
+	function isDatasourceActive(datasource) {
+		for (let pack of manifest.packages) {
+			if (pack.enabled) {
+				for (let datasource_id of pack.datastores) {
+					if (datasource.clientid == datasource_id) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	function isPackageValid(pack) {
+		for (let datasource_id of pack.datastores) {
+			let datasource = getDatasource(datasource_id);
+			if (datasource.required && !('hypercat' in datasource)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function isValid() {
+		let valid = true;
+		if ('packages' in manifest && manifest.packages.length > 0) {
+			let enabled = 0;
+
+			for (let pack of manifest.packages) {
+				if (pack.enabled) {
+					enabled++;
+					if (!isPackageValid(pack)) {
+						valid = false;
+						break;
+					}
+				}
+
+				if (!valid) {
+					break;
+				}
+			}
+
+			valid = valid && enabled > 0
+		}
+
+		return valid;
+	}
+
+div(style="padding: 16px")
+	div.mdc-card
+		section(style="display:flex").mdc-card__primary
+			img(src='icons/android-icon-144x144.png')
+			div(style="padding-left: 16px")
+				div.mdc-card__title--large
+					= 'Configure ' + manifest.name
+		div.mdc-layout-grid
+			div.mdc-layout-grid__inner
+				if 'packages' in manifest
+					each pack, index in manifest.packages
+						div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-4.package(id=("pack_" + (pack.id || index)), class=(pack.required || pack.enabled) ? '' : 'transparent')
+							div.mdc-theme--text-primary-on-dark.dark(style="display: flex; align-items: center")
+								div.mdc-typography--title.fill.padded
+									= pack.name
+								div.badge.material-icons
+									| check
+							div.fill.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg
+								= pack.purpose
+							div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg
+								= pack.benefits
+							div.exchange
+								div
+									| in exchange for
+							div.dark.padded.mdc-theme--text-primary-on-dark
+								= pack.risks
+								if 'datasources' in pack
+									each datasource in pack.datasources
+										div
+											= 'Access to a ' + getDatasource(datasource).type
+								if 'datastores' in pack
+									each datasource in pack.datastores
+										div
+											= 'Access to a ' + getDatasource(datasource).type
+							if pack.required
+								div.mdc-theme--accent-bg.padded
+									| Required
+							else if pack.enabled
+								div.mdc-theme--accent-bg.padded
+									= 'Disable ' + pack.name
+							else
+								div.mdc-theme--accent-bg.padded
+									= 'Enable ' + pack.name
+
+				if 'export-whitelist' in manifest && manifest['export-whitelist'].length > 0
+					div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12(style="margin-top:20px")
+						div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg.mdc-typography--title
+							| URL Permissions
+						ul.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12.mdc-list
+							each url in manifest['export-whitelist']
+								li.mdc-list-item
+									i.material-icons.mdc-list-item__start-detail
+										| link
+									span.mdc-list-item__text
+										= url.url
+										span.mdc-list-item__text__secondary
+											= url.description
+
+				if 'datasources' in manifest && manifest.datasources.length > 0
+					div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12(style="margin-top:16px")
+						div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg.mdc-typography--title
+							| Data Sources
+						ul.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12.mdc-list
+							each datasource in manifest.datasources
+								if isDatasourceActive(datasource)
+									li.datasource.mdc-menu-anchor.mdc-list-item
+										i.material-icons.mdc-list-item__start-detail
+											| input
+										span.mdc-list-item__text
+											= datasource.type
+											span.mdc-list-item__text__secondary
+												if(datasource.hypercat)
+													= getMetadata(datasource.hypercat, 'urn:X-hypercat:rels:hasDescription:en')
+												else
+													| Unbound
+										div.mdc-simple-menu.mdc-simple-menu--open-from-bottom-left
+											ul.mdc-simple-menu__items.mdc-list(role="menu")
+												each sensor in sensors
+													if getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type
+														li.mdc-list-item(role="menuitem", datasource=datasource.clientid, sensor=sensor.href)
+															= getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')
+												else
+													li.mdc-list-item.disabled
+														| No sensors found
+								else
+									li.datasource.mdc-menu-anchor.mdc-list-item.disabled(id='datasource_' + datasource.clientid, class=)
+										i.material-icons.mdc-list-item__start-detail
+											| input
+										span.mdc-list-item__text
+											= datasource.type
+
+
+		section.mdc-card__actions
+			button(disabled=!isValid())#install_button.mdc-button.mdc-card__action.mdc-button--primary
+				| Install

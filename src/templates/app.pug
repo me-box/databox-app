@@ -66,20 +66,25 @@ div(style="padding: 16px")
 					div.mdc-list-item__text__secondary
 						div
 							| Actuates class x physical devices
-		section.mdc-card__actions
-			if(app.length > 1)
-				a.mdc-button.mdc-button--compact(style="padding: 5px; color: #666", id="versionButton")
-					i.material-icons(style="font-size: 12pt")
-						| arrow_drop_down
-				div.mdc-simple-menu(id="versionMenu")
-					ul.mdc-list.mdc-simple-menu__items
-						each appItem in app
-							li.mdc-list-item(role="option", id=appItem._id, onclick='selectVersion("' + appItem._id + '")')
-								= 'v' + appItem.manifest.version + ' on ' + appItem.store
-			a(id="install_link" href="#!/app/" + app[0].manifest.name + "/install").mdc-button.mdc-card__action.mdc-button--primary
-				| Install
+		if(!app.installed)
+			section.mdc-card__actions
+				if(app.length > 1)
+					a#versionButton.mdc-button.mdc-button--compact(style="padding: 5px; color: #666")
+						i.material-icons(style="font-size: 12pt")
+							| arrow_drop_down
+					div#versionMenu.mdc-simple-menu
+						ul.mdc-list.mdc-simple-menu__items
+							each appItem in app
+								li.mdc-list-item(role="option", id=appItem._id, onclick='selectVersion("' + appItem._id + '")')
+									= 'v' + appItem.manifest.version + ' on ' + appItem.store
+				a(id="install_link" href="#!/" + app[0].manifest.name + "/config").mdc-button.mdc-card__action.mdc-button--primary
+					| Install
+		else
+			section.mdc-card__actions
+				button.mdc-button.mdc-card__action.mdc-button--primary(disabled=true)
+					| Installed
 script
-	!= "const installURL = \"#!/app/" + app[0].manifest.name + "/install/\""
+	!= "const installURL = \"#!/" + app[0].manifest.name + "/config/\""
 script.
 	function selectVersion(id) {
 		const installLink = document.getElementById('install_link');

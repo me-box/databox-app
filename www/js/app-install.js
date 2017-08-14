@@ -1,6 +1,6 @@
 function listDatasources(manifest) {
 	if ('datasources' in manifest && manifest.datasources.length > 0) {
-		return fetch(databoxURL + '/api/datasource/list')
+		return fetch(databoxURL + 'api/datasource/list')
 			.then((res) => {
 				return res.json();
 			})
@@ -38,7 +38,7 @@ function appConfigDisplay(manifest, sensors) {
 
 	document.getElementById('install_button').addEventListener('click', () => {
 		document.getElementById('content').innerHTML = spinnerTemplate();
-		fetch(databoxURL + "/api/install", {
+		fetch(databoxURL + "api/install", {
 			headers: {
 				'Content-Type': 'application/json'
 			},

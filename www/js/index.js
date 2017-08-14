@@ -14,7 +14,7 @@ const stores = [
 	// 	"url": "https://store.iotdatabox.com"
 	// }
 ];
-let databoxURL = 'http://databox.local:8989';
+let databoxURL = 'http://databox.local:8989/';
 let apps;
 
 function showSpinner() {
@@ -59,10 +59,16 @@ function connect() {
 	const field = document.getElementById('connectField');
 	if (field) {
 		let value = field.value;
-		if (value.indexOf('://') === -1) {
+		if(value.indexOf('://') === -1) {
 			value = 'http://' + value;
 		}
-		localStorage.setItem('databoxURL', value);
+		console.log(value);
+		const url = new URL(value);
+		if(!url.port) {
+			url.port = '8989';
+		}
+		console.log(url.toString());
+		localStorage.setItem('databoxURL', url.toString());
 	}
 
 	let value = localStorage.getItem('databoxURL');
@@ -72,7 +78,7 @@ function connect() {
 
 	toolbarDisabled();
 	showSpinner();
-	fetch(databoxURL + '/api/app/list')
+	fetch(databoxURL + 'api/app/list')
 		.then(() => {
 			const handleMessage = function(message) {
 				if(message) {
@@ -85,7 +91,7 @@ function connect() {
 
 			const js = document.createElement('script');
 			js.type = 'text/javascript';
-			js.src = databoxURL + '/socket.io/socket.io.js';
+			js.src = databoxURL + 'socket.io/socket.io.js';
 			js.async = true;
 			js.onload = function() {
 				console.log("connnect");
@@ -107,20 +113,15 @@ function connect() {
 
 			router.resolve();
 		})
-		.then()
 		.catch((error) => {
 			console.log(error);
-			showConnectionError();
+			document.getElementById('content').innerHTML = connectTemplate({qr_scan: typeof cordova !== 'undefined'});
+			const tfs = document.querySelectorAll('.mdc-textfield');
+			for (const tf of tfs) {
+				mdc.textfield.MDCTextfield.attachTo(tf);
+			}
+			document.getElementById('connectField').focus();
 		});
-}
-
-function showConnectionError() {
-	document.getElementById('content').innerHTML = connectTemplate();
-	const tfs = document.querySelectorAll('.mdc-textfield');
-	for (const tf of tfs) {
-		mdc.textfield.MDCTextfield.attachTo(tf);
-	}
-	document.getElementById('connectField').focus();
 }
 
 function toolbarDisabled() {
@@ -280,7 +281,7 @@ router.on('/:name', (params) => {
 	showSpinner();
 	listApps()
 		.then((apps) => {
-			fetch(databoxURL + '/api/installed/list')
+			fetch(databoxURL + 'api/installed/list')
 				.then((res) => res.json())
 				.then((json) => {
 					toolbarBack();
@@ -301,8 +302,16 @@ router.on('/:name', (params) => {
 });
 
 router.on('/:name/ui', (params) => {
+	toolbarBack();
+	document.getElementById('toolbartitle').innerText = params.name;
+	const iframe = document.createElement("iframe");
+	iframe.setAttribute("src", databoxURL + params.name + '/ui');
 
+	const content = document.getElementById('content');
 
+	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
+	content.innerHTML = '';
+	content.appendChild(iframe);
 });
 
 connect();

@@ -2,11 +2,11 @@ if apps.length === 0
 	div
 		| Empty
 else
-	div(style="padding-top: 24px")
+	div(style="padding: 24px 0")
 		div.mdc-grid-list.mdc-elevation--z3(style="background-color: white;")
 			div.mdc-grid-list__tiles
 				each appItem in apps
-					a(href="#!/" + appItem[0].manifest.name, title=appItem[0].manifest.name).mdc-grid-tile
+					a(href="#!/" + appItem[0].manifest.name + '/', title=appItem[0].manifest.name).mdc-grid-tile
 						div.mdc-grid-tile__primary
 							img.mdc-grid-tile__primary-content(src="icons/android-icon-144x144.png")
 						div

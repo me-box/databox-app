@@ -3,7 +3,7 @@ function app_uninstall(app) {
 	const button = document.getElementById(app + '_controls');
 	button.style.display = 'none';
 	spinner.style.display = 'block';
-	fetch(databoxURL + "/api/uninstall", {
+	fetch(databoxURL + "api/uninstall", {
 		headers: {
 			'Content-Type': 'application/json'
 		},
@@ -17,7 +17,7 @@ function app_restart(app) {
 	const button = document.getElementById(app + '_controls');
 	button.style.display = 'none';
 	spinner.style.display = 'block';
-	fetch(databoxURL + "/api/restart", {
+	fetch(databoxURL + "api/restart", {
 		headers: {
 			'Content-Type': 'application/json'
 		},
@@ -30,7 +30,7 @@ let loadingAppList = false;
 function reloadAppList(type) {
 	if(!loadingAppList) {
 		loadingAppList = true;
-		fetch(databoxURL + '/api/' + type + '/list')
+		fetch(databoxURL + 'api/' + type + '/list')
 			.then((res) => res.json())
 			.then((containers) => {
 				loadingAppList = false;

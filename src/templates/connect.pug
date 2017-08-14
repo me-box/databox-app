@@ -17,5 +17,6 @@ div(style="padding: 16px")
 		section.mdc-card__actions
 			button.mdc-card__action.mdc-button.mdc-button--primary(onclick='connect()')
 				| Connect
-			button.mdc-card__action.mdc-button.mdc-button--primary(onclick='scanQR()')
-				| Scan QR Code
+			if(qr_scan)
+				button.mdc-card__action.mdc-button.mdc-button--primary(onclick='scanQR()')
+					| Scan QR Code

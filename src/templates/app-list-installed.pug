@@ -1,8 +1,8 @@
 if(containers && containers.length > 0)
-	div(style="padding-top: 24px")
+	div(style="padding: 24px 0")
 		div.mdc-list.mdc-list--two-line.mdc-elevation--z3(style="background-color: white;")
 			each container in containers
-				div.mdc-list-item(data-mdc-auto-init="MDCRipple")
+				a.mdc-list-item(href="#!/" + container.Names[0].split('.')[0].substr(1) + '/ui', data-mdc-auto-init="MDCRipple")
 					span.mdc-list-item__start-detail.material-icons
 						if container.Labels['databox.type'] === 'store'
 							| dns

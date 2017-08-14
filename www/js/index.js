@@ -81,7 +81,7 @@ function connect() {
 				"url": url.toString()
 			});
 
-			router.resolve();
+			router.navigate('/');
 		})
 		.catch((error) => {
 			console.log(error);

@@ -1,17 +1,13 @@
 const router = new Navigo(null, true, '#!');
 
 const stores = [
-	{
-		"name": "Local Store",
-		"url": "http://localhost:8181"
-	},
 	// {
 	// 	"name": "Up In the Clouds Store",
-	// 	"url": "http://store.upintheclouds.org"
+	// 	"url": "http://store.upintheclouds.org/"
 	// },
 	// {
 	// 	"name": "IoT Databox Store",
-	// 	"url": "https://store.iotdatabox.com"
+	// 	"url": "https://store.iotdatabox.com/"
 	// }
 ];
 let databoxURL = 'http://databox.local:8989/';
@@ -62,12 +58,10 @@ function connect() {
 		if(value.indexOf('://') === -1) {
 			value = 'http://' + value;
 		}
-		console.log(value);
 		const url = new URL(value);
 		if(!url.port) {
 			url.port = '8989';
 		}
-		console.log(url.toString());
 		localStorage.setItem('databoxURL', url.toString());
 	}
 
@@ -80,36 +74,12 @@ function connect() {
 	showSpinner();
 	fetch(databoxURL + 'api/app/list')
 		.then(() => {
-			const handleMessage = function(message) {
-				if(message) {
-					console.log(message.Action + ": " + message.from);
-				}
-				if(router.lastRouteResolved().url.endsWith('/installed')) {
-					reloadAppList(router.lastRouteResolved().params.type);
-				}
-			};
-
-			const js = document.createElement('script');
-			js.type = 'text/javascript';
-			js.src = databoxURL + 'socket.io/socket.io.js';
-			js.async = true;
-			js.onload = function() {
-				console.log("connnect");
-				const socket = io.connect(databoxURL);
-				socket.on('docker-connect', handleMessage);
-				socket.on('docker-disconnect', handleMessage);
-				socket.on('docker-create', handleMessage);
-				socket.on('docker-start', handleMessage);
-				socket.on('docker-stop', handleMessage);
-				socket.on('docker-die', handleMessage);
-				socket.on('docker-destroy', handleMessage);
-				socket.disconnect();
-				window.onbeforeunload = function(){
-					socket.disconnect();
-				};
-			};
-
-			document.body.appendChild(js);
+			const url = new URL(value);
+			url.port = '8181';
+			stores.push({
+				"name": "Local Store",
+				"url": url.toString()
+			});
 
 			router.resolve();
 		})
@@ -159,11 +129,11 @@ function listApps(type) {
 		let proms = [];
 		console.log("Test");
 		for (let store of stores) {
-			proms.push(fetch(store.url + '/app/list')
+			proms.push(fetch(store.url + 'app/list')
 				.then((res) => res.json())
 				.then((json) => {
 					for (const app of json.apps) {
-						app.url = store.url + '/app/get/?name=' + app.manifest.name;
+						app.url = store.url + 'app/get/?name=' + app.manifest.name;
 						app.store = store.name;
 						app.displayName = app.manifest.name.replace('databox', '').replace('driver-', '').replace('app-', '').split('-').join(' ').trim();
 					}
@@ -201,10 +171,8 @@ function listApps(type) {
 		return promise
 			.then((apps) => {
 				let filtered = {};
-				console.log(JSON.stringify(apps));
 				for(const name in apps) {
 					let app = apps[name];
-					console.log(JSON.stringify(app));
 					if (app[0].manifest['databox-type'] === appType) {
 						filtered[app[0].manifest.name] = app;
 					}
@@ -266,7 +234,6 @@ router.on('/search/:query', (params) => {
 		.then((apps) => {
 			const result = {};
 			for(const appname in apps) {
-				console.log(appname);
 				if(appname.indexOf(params.query) !== -1) {
 					result[appname] = apps[appname];
 				}

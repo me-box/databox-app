@@ -1,6 +1,5 @@
 div(style="padding: 16px")
 	div.mdc-card
-		section.mdc-card__media.connectImage
 		section.mdc-card__primary
 			h1.mdc-card__title.mdc-card__title--large
 				| Connection Error
@@ -10,7 +9,7 @@ div(style="padding: 16px")
 			div
 				| Enter the address of a databox to continue
 			label.mdc-textfield(style="width: 100%")
-				input#connectField.mdc-textfield__input(style="width: 100%", required=true, onkeypress='submit(event)')
+				input#connectField.mdc-textfield__input(type='url', style="width: 100%", required=true, onkeypress='submit(event)')
 				span.mdc-textfield__label
 					| Databox Address
 

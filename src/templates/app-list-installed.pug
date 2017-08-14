@@ -20,9 +20,9 @@ if(containers && containers.length > 0)
 						circle.path(fill="none", stroke-width="6", stroke-linecap="square", cx="33", cy="33", r="30")
 					if container.Labels['databox.type'] === 'store' || container.Labels['databox.type'] === 'driver' || container.Labels['databox.type'] === 'app'
 						span(style="display: flex;margin-left: auto", id=container.Labels['com.docker.swarm.service.name'] + '_controls')
-							span.material-icons.mdc-list-item__end-detail.mdc-icon-toggle(onclick='app_restart(\'' + container.Labels['com.docker.swarm.service.name'] + '\')')
+							span.material-icons.mdc-list-item__end-detail.mdc-icon-toggle(onclick='app_restart(event, \'' + container.Labels['com.docker.swarm.service.name'] + '\')')
 								| refresh
-							span.material-icons.mdc-list-item__end-detail.mdc-icon-toggle(onclick='app_uninstall(\'' + container.Labels['com.docker.swarm.service.name'] + '\')')
+							span.material-icons.mdc-list-item__end-detail.mdc-icon-toggle(onclick='app_uninstall(event, \'' + container.Labels['com.docker.swarm.service.name'] + '\')')
 								| close
 else
 	div(style="padding: 48px; text-align: center")

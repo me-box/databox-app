@@ -1,4 +1,4 @@
-function app_uninstall(app) {
+function app_uninstall(event, app) {
 	const spinner = document.getElementById(app + '_spinner');
 	const button = document.getElementById(app + '_controls');
 	button.style.display = 'none';
@@ -10,9 +10,10 @@ function app_uninstall(app) {
 		method: "POST",
 		body: JSON.stringify({"id": app}),
 	});
+	event.preventDefault();
 }
 
-function app_restart(app) {
+function app_restart(event, app) {
 	const spinner = document.getElementById(app + '_spinner');
 	const button = document.getElementById(app + '_controls');
 	button.style.display = 'none';
@@ -24,6 +25,7 @@ function app_restart(app) {
 		method: "POST",
 		body: JSON.stringify({"id": app}),
 	});
+	event.preventDefault();
 }
 
 let loadingAppList = false;
@@ -34,11 +36,16 @@ function reloadAppList(type) {
 			.then((res) => res.json())
 			.then((containers) => {
 				loadingAppList = false;
-				toolbarDrawer();
-				//console.log(containers);
-				document.getElementById('content').innerHTML = appListInstalledTemplate({
-					containers: containers
-				});
+				if(router.lastRouteResolved().url === ('/' + type + '/installed')) {
+					toolbarDrawer();
+					//console.log(containers);
+					document.getElementById('content').innerHTML = appListInstalledTemplate({
+						containers: containers
+					});
+					setTimeout(function () {
+						reloadAppList(type);
+					}, 1000);
+				}
 			})
 			.catch((error) => {
 				loadingAppList = false;

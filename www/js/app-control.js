@@ -36,7 +36,7 @@ function reloadAppList(type) {
 			.then((res) => res.json())
 			.then((containers) => {
 				loadingAppList = false;
-				if(router.lastRouteResolved().url === ('/' + type + '/installed')) {
+				if(router.lastRouteResolved().params.type === type) {
 					toolbarDrawer();
 					//console.log(containers);
 					document.getElementById('content').innerHTML = appListInstalledTemplate({

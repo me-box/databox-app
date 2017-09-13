@@ -1,0 +1,11 @@
+div(style="padding: 16px; display: flex; justify-content: center")
+	div.mdc-card
+		section.mdc-card__primary(style="display: flex; flex-direction: column; align-items: center")
+			div.material-icons(style="font-size: 128pt; color: #666")
+				= icon
+			h2.mdc-card__title.mdc-card__title--large
+				= title
+			if(button)
+				div
+					button#alert_button.mdc-button.mdc-button--accent
+						= button

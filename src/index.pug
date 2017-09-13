@@ -23,6 +23,7 @@ html(lang='en')
 		script(src="cordova.js", defer=true)
 		script(src='js/material-components-web.min.js', defer=true)
 		script(src="js/navigo.min.js", defer=true)
+		script(src="js/templates/alert.js", defer=true)
 		script(src="js/templates/app.js", defer=true)
 		script(src="js/templates/app-config.js", defer=true)
 		script(src="js/templates/app-list.js", defer=true)
@@ -70,6 +71,10 @@ html(lang='en')
 						i.material-icons.mdc-list-item__start-detail
 							| store
 						| Driver Store
+					a.mdc-list-item#sensing(href="#!/sensing")
+						i.material-icons.mdc-list-item__start-detail
+							| network_check
+						| Mobile Sensor Data
 					div.mdc-list-group__subheader(style="margin: 16px 0 0 16px")
 						| Installed
 					a.mdc-list-item(href="#!/app/installed")

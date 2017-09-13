@@ -10,8 +10,24 @@ const stores = [
 	// 	"url": "https://store.iotdatabox.com/"
 	// }
 ];
-let databoxURL = 'http://databox.local:8989/';
+
+const sensorDriver = 'driver-sensingkit';
+const isApp = typeof cordova !== 'undefined';
+let databoxURL = 'http://localhost:8989/';
+if (!isApp) {
+	const url = new URL(window.location);
+	databoxURL = url.protocol + '//' + url.host + '/';
+	//document.getElementById('sensing').style.display = 'none';
+}
 let apps;
+
+function checkOk(res) {
+	if (!res.ok) {
+		console.log(res.statusText);
+		throw res.statusText;
+	}
+	return res;
+}
 
 function showSpinner() {
 	document.getElementById('content').innerHTML = spinnerTemplate();
@@ -27,7 +43,7 @@ function scanQR() {
 				if (err) {
 					console.error(err);
 				} else {
-					QRScanner.destroy(function(status){
+					QRScanner.destroy(function (status) {
 						console.log(status);
 					});
 					console.log(text);
@@ -55,11 +71,11 @@ function connect() {
 	const field = document.getElementById('connectField');
 	if (field) {
 		let value = field.value;
-		if(value.indexOf('://') === -1) {
+		if (value.indexOf('://') === -1) {
 			value = 'http://' + value;
 		}
 		const url = new URL(value);
-		if(!url.port) {
+		if (!url.port) {
 			url.port = '8989';
 		}
 		localStorage.setItem('databoxURL', url.toString());
@@ -72,20 +88,21 @@ function connect() {
 
 	toolbarDisabled();
 	showSpinner();
-	fetch(databoxURL + 'api/app/list')
+	fetch(databoxURL + 'api/driver/list')
+		.then(checkOk)
 		.then(() => {
-			const url = new URL(value);
+			const url = new URL(databoxURL);
 			url.port = '8181';
 			stores.push({
 				"name": "Local Store",
 				"url": url.toString()
 			});
 
-			router.navigate('/');
+			router.resolve();
 		})
 		.catch((error) => {
 			console.log(error);
-			document.getElementById('content').innerHTML = connectTemplate({qr_scan: typeof cordova !== 'undefined'});
+			document.getElementById('content').innerHTML = connectTemplate({qr_scan: isApp});
 			const tfs = document.querySelectorAll('.mdc-textfield');
 			for (const tf of tfs) {
 				mdc.textfield.MDCTextfield.attachTo(tf);
@@ -127,9 +144,9 @@ function listApps(type) {
 	let promise;
 	if (!apps) {
 		let proms = [];
-		console.log("Test");
 		for (let store of stores) {
 			proms.push(fetch(store.url + 'app/list')
+				.then(checkOk)
 				.then((res) => res.json())
 				.then((json) => {
 					for (const app of json.apps) {
@@ -166,12 +183,12 @@ function listApps(type) {
 		})
 	}
 
-	if(type) {
+	if (type) {
 		const appType = type;
 		return promise
 			.then((apps) => {
 				let filtered = {};
-				for(const name in apps) {
+				for (const name in apps) {
 					let app = apps[name];
 					if (app[0].manifest['databox-type'] === appType) {
 						filtered[app[0].manifest.name] = app;
@@ -182,10 +199,6 @@ function listApps(type) {
 	} else {
 		return promise;
 	}
-}
-
-function search(query) {
-
 }
 
 router.on(() => {
@@ -210,6 +223,89 @@ router.on('/driver/store', () => {
 		});
 });
 
+function showSensingInstall() {
+	document.getElementById('content').innerHTML = alertTemplate({
+		icon: 'network_check',
+		button: 'Enable Mobile Sensor Data'
+	});
+	document.getElementById('alert_button').addEventListener('click', () => {
+		showSpinner();
+		listApps('driver')
+			.then((apps) => {
+				const osApp = apps[sensorDriver];
+				const manifest = osApp[0].manifest;
+				if (osApp) {
+					fetch(databoxURL + "api/install", {
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						method: "POST",
+						body: JSON.stringify(manifest),
+					})
+						.then(checkOk)
+						.then((res) => {
+							showSensingStart();
+						});
+				}
+			});
+	});
+}
+
+function showSensingStart() {
+	SensingKit.isRunning((result) => {
+		console.log(result);
+		if(result === 'true')
+		{
+			showSpinner();
+			SensingKit.start(databoxURL + sensorDriver, (error) => {
+				console.log(error);
+				const url = databoxURL + sensorDriver + '/ui';
+				const iframe = document.createElement("iframe");
+				iframe.setAttribute("src", url);
+
+				const content = document.getElementById('content');
+
+				iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
+				content.innerHTML = '';
+				content.appendChild(iframe);
+			});
+		}
+		else
+		{
+			document.getElementById('content').innerHTML = alertTemplate({
+				icon: 'network_check',
+				button: 'Start Recording Mobile Sensor Data'
+			});
+			document.getElementById('alert_button').addEventListener('click', () => {
+				SensingKit.start(databoxURL + sensorDriver, (error) => {
+					console.log(error);
+					showSensingStart();
+				});
+			});
+		}
+	});
+}
+
+router.on('/sensing', () => {
+	toolbarDrawer();
+	showSpinner();
+	fetch(databoxURL + 'api/installed/list')
+		.then(checkOk)
+		.then((res) => res.json())
+		.then((json) => {
+			console.log(json);
+			if (json.indexOf(sensorDriver) === -1) {
+				showSensingInstall();
+			} else {
+				showSensingStart();
+			}
+		})
+		.catch((error) => {
+
+		});
+});
+
+
 router.on('/search', () => {
 	document.getElementById('toolbar-search').style.display = 'flex';
 	document.getElementById('toolbar').style.display = 'none';
@@ -223,7 +319,7 @@ router.on('/search/:query', (params) => {
 	document.getElementById('toolbar-search').style.display = 'flex';
 	document.getElementById('toolbar').style.display = 'none';
 	const search = document.getElementById('toolbar-search__input');
-	if(search.value !== params.query) {
+	if (search.value !== params.query) {
 		search.value = params.query;
 	}
 	search.focus();
@@ -233,8 +329,8 @@ router.on('/search/:query', (params) => {
 	listApps()
 		.then((apps) => {
 			const result = {};
-			for(const appname in apps) {
-				if(appname.indexOf(params.query) !== -1) {
+			for (const appname in apps) {
+				if (appname.indexOf(params.query) !== -1) {
 					result[appname] = apps[appname];
 				}
 			}
@@ -249,6 +345,7 @@ router.on('/:name', (params) => {
 	listApps()
 		.then((apps) => {
 			fetch(databoxURL + 'api/installed/list')
+				.then(checkOk)
 				.then((res) => res.json())
 				.then((json) => {
 					toolbarBack();
@@ -269,10 +366,17 @@ router.on('/:name', (params) => {
 });
 
 router.on('/:name/ui', (params) => {
-	toolbarBack();
+	showSpinner();
+
 	document.getElementById('toolbartitle').innerText = params.name;
+	let appname = params.name;
+	if (appname === 'databox_arbiter') {
+		appname = 'arbiter';
+	}
+	const url = databoxURL + appname + '/ui';
+	toolbarBack();
 	const iframe = document.createElement("iframe");
-	iframe.setAttribute("src", databoxURL + params.name + '/ui');
+	iframe.setAttribute("src", url);
 
 	const content = document.getElementById('content');
 
@@ -281,7 +385,10 @@ router.on('/:name/ui', (params) => {
 	content.appendChild(iframe);
 });
 
-connect();
+toolbarDisabled();
+window.onload = function () {
+	connect();
+};
 
 let searchTimer;
 const drawer = new mdc.drawer.MDCTemporaryDrawer(document.querySelector('.mdc-temporary-drawer'));
@@ -311,8 +418,8 @@ router.hooks({
 	},
 	after: (params) => {
 		let navItems = document.getElementById('nav').getElementsByTagName('a');
-		for(const navItem of navItems) {
-			if(location.href.endsWith(navItem.href)) {
+		for (const navItem of navItems) {
+			if (location.href.endsWith(navItem.href)) {
 				navItem.classList.add('mdc-temporary-drawer--selected');
 				const nodes = Array.from(navItem.childNodes).filter(f => f.nodeName === '#text');
 				document.getElementById('toolbartitle').innerText = nodes.length ? nodes[0].textContent.trim() : '';

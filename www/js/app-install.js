@@ -17,6 +17,12 @@ function listDatasources(manifest) {
 
 function appConfigDisplay(manifest, sensors) {
 	toolbarBack('Configure ' + manifest.displayName);
+	if('packages' in manifest && manifest.packages.length > 0) {
+		const firstPackage = manifest.packages[0];
+		if(!('enabled' in firstPackage)) {
+			firstPackage.enabled = true;
+		}
+	}
 	document.getElementById('content').innerHTML = appConfigTemplate({
 		manifest: manifest,
 		sensors: sensors

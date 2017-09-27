@@ -1,6 +1,6 @@
 -
 	function unfulfilledDatasources() {
-		if ('packages' in manifest && manifest.packages.length > 0) {
+		if ('packages' in manifest) {
 			let required = [];
 
 			for (const pack of manifest.packages) {
@@ -22,13 +22,14 @@
 
 	function hasSensors(datasource) {
 		if (datasource.required && !('hypercat' in datasource)) {
-			for(const sensor in sensors) {
+			for(const sensor of sensors) {
 				if(getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type) {
 					return true;
 				}
 			}
 			return false;
 		}
+		return true;
 	}
 
 	function hasUnfulfilledDatasources() {
@@ -36,16 +37,18 @@
 	}
 
 	function getMetadata(item, rel) {
-		for(var metadataItem of item['item-metadata']) {
-			if(metadataItem.rel === rel) {
-				return metadataItem.val;
+		if('item-metadata' in item) {
+			for(const metadataItem of item['item-metadata']) {
+				if(metadataItem.rel === rel) {
+					return metadataItem.val;
+				}
 			}
 		}
 		return null;
 	}
 
 	function getDatasource(id) {
-		for(var datasource of manifest.datasources) {
+		for(const datasource of manifest.datasources) {
 			if(datasource.clientid === id) {
 				return datasource;
 			}
@@ -53,9 +56,9 @@
 	}
 
 	function isDatasourceActive(datasource) {
-		for (let pack of manifest.packages) {
+		for (const pack of manifest.packages) {
 			if (pack.enabled) {
-				for (let datasource_id of pack.datastores) {
+				for (const datasource_id of pack.datastores) {
 					if (datasource.clientid == datasource_id) {
 						return true;
 					}
@@ -67,8 +70,8 @@
 	}
 
 	function isPackageValid(pack) {
-		for (let datasource_id of pack.datastores) {
-			let datasource = getDatasource(datasource_id);
+		for (const datasource_id of pack.datastores) {
+			const datasource = getDatasource(datasource_id);
 			if (datasource.required && !('hypercat' in datasource)) {
 				return false;
 			}
@@ -167,35 +170,43 @@ div(style="padding: 16px")
 						ul.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12.mdc-list
 							each datasource in manifest.datasources
 								if isDatasourceActive(datasource)
-									li.datasource.mdc-menu-anchor.mdc-list-item
-										i.material-icons.mdc-list-item__start-detail
-											| input
-										span.mdc-list-item__text
-											= datasource.type
-											span.mdc-list-item__text__secondary
-												if datasource.hypercat
-													= getMetadata(datasource.hypercat, 'urn:X-hypercat:rels:hasDescription:en')
-												else if datasource.required
-													div(style="color:#d50000; opacity: 0.8")
-														| Required
-												else
-													| Unbound
-										div.mdc-simple-menu.mdc-simple-menu--open-from-bottom-left
-											ul.mdc-simple-menu__items.mdc-list(role="menu")
-												each sensor in sensors
-													if getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type
-														li.mdc-list-item(role="menuitem", datasource=datasource.clientid, sensor=sensor.href)
-															= getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')
-												else
-													li.mdc-list-item.disabled
-														| No sensors found
-								else
-									li.datasource.mdc-menu-anchor.mdc-list-item.disabled(id='datasource_' + datasource.clientid, class=)
-										i.material-icons.mdc-list-item__start-detail
-											| input
-										span.mdc-list-item__text
-											= datasource.type
+									if hasSensors(datasource)
+										li.datasource.mdc-menu-anchor.mdc-list-item
+											i.material-icons.mdc-list-item__start-detail
+												| input
+											span.mdc-list-item__text
+												= datasource.type
+												span.mdc-list-item__text__secondary
+													if datasource.hypercat
+														= getMetadata(datasource.hypercat, 'urn:X-hypercat:rels:hasDescription:en')
+													else if datasource.required
+														div(style="color:#d50000; opacity: 0.8")
+															| Required
+													else
+														| Unbound
+												div.mdc-simple-menu.mdc-simple-menu--open-from-bottom-left
+													ul.mdc-simple-menu__items.mdc-list(role="menu")
+														each sensor in sensors
+															if getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type
+																li.mdc-list-item(role="menuitem", datasource=datasource.clientid, sensor=sensor.href)
+																	= getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')
 
+									else
+										li.mdc-list-item
+											i.material-icons.mdc-list-item__start-detail
+												| input
+											span.mdc-list-item__text
+												= datasource.type
+												span.mdc-list-item__text__secondary
+													div(style="color:#d50000; opacity: 0.8")
+														| Required, but no sources found
+
+								else
+									li.mdc-list-item.disabled
+										i.material-icons.mdc-list-item__start-detail
+											| input
+										span.mdc-list-item__text
+											= datasource.type
 
 		section.mdc-card__actions
 			button(disabled=!isValid())#install_button.mdc-button.mdc-card__action.mdc-button--primary

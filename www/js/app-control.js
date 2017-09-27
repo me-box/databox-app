@@ -36,7 +36,7 @@ function reloadAppList(type) {
 			.then((res) => res.json())
 			.then((containers) => {
 				loadingAppList = false;
-				if(router.lastRouteResolved().params.type === type) {
+				if(router.lastRouteResolved().params && router.lastRouteResolved().params.type === type) {
 					toolbarDrawer();
 					//console.log(containers);
 					document.getElementById('content').innerHTML = appListInstalledTemplate({

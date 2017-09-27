@@ -17,7 +17,7 @@ let databoxURL = 'http://localhost:8989/';
 if (!isApp) {
 	const url = new URL(window.location);
 	databoxURL = url.protocol + '//' + url.host + '/';
-	//document.getElementById('sensing').style.display = 'none';
+	document.getElementById('sensing').style.display = 'none';
 }
 
 function checkOk(res) {

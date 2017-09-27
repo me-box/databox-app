@@ -28,7 +28,7 @@ function appConfigDisplay(manifest, sensors) {
 		sensors: sensors
 	});
 
-	if('packages' in manifest) {
+	if('packages' in manifest && manifest.packages.length > 1) {
 		for(let index = 0; index < manifest.packages.length; index++) {
 			let databoxPackage = manifest.packages[index];
 			let packageID = "pack_" + (databoxPackage.id || index);
@@ -87,14 +87,12 @@ function appConfigDisplay(manifest, sensors) {
 }
 
 router.on('/:name/config', (params) => {
-	console.log(params);
 	showSpinner();
 	listApps()
 		.then((apps) => {
 			const manifest = JSON.parse(JSON.stringify(apps[params.name][0].manifest));
 			listDatasources(manifest)
 				.then((sensors) => {
-					console.log(sensors);
 					appConfigDisplay(manifest, sensors);
 				});
 		});

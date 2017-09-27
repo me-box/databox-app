@@ -12,15 +12,17 @@
     "dependencies": {
         "cordova-android": "^6.2.3",
         "cordova-browser": "^5.0.0",
+        "cordova-ios": "^4.4.0",
         "cordova-plugin-compat": "^1.1.0",
         "cordova-plugin-qrscanner": "^2.5.0",
+        "cordova-plugin-sensingKit": "http://github.com/ktg/cordova-plugin-sensingKit.git",
         "cordova-plugin-statusbar": "^2.2.3",
+        "cordova-plugin-swift-support": "^3.1.1",
         "cordova-plugin-whitelist": "^1.3.2",
         "material-components-web": "^0.20.0",
         "navigo": "^5.3.1",
         "pug": "^2.0.0-rc.4",
-        "pug-cli": "^1.0.0-alpha6",
-        "cordova-plugin-sensingKit": "http://github.com/ktg/cordova-plugin-sensingKit.git"
+        "pug-cli": "^1.0.0-alpha6"
     },
     "cordova": {
         "plugins": {
@@ -31,7 +33,8 @@
         },
         "platforms": [
             "android",
-            "browser"
+            "browser",
+            "ios"
         ]
     },
     "false": {}

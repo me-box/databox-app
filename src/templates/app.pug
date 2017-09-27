@@ -43,11 +43,20 @@ div(style="padding: 16px")
 						div
 							| No granular data settings
 						div
-							| Sends data to third-party
-						div
 							| No data access API
-						div
-							| Possible data leakage
+			if 'export-whitelist' in app[0].manifest && app[0].manifest['export-whitelist'].length > 0
+				div(style="display: flex; padding-top: 16px")
+					i.material-icons(style="padding:8px 16px 0 0; color: #F57F17")
+						| lock
+					span.mdc-list-item__text
+						| External Access
+						span.mdc-list-item__text__secondary
+							each url in app[0].manifest['export-whitelist']
+								div
+									= 'Accesses ' + url.url
+							div
+								| Potentially sends data to third-party
+
 			div(style="display: flex; padding-top: 16px")
 				i.material-icons(style="padding:8px 16px 0 0; color: #F57F17")
 					| lock

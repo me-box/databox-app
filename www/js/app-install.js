@@ -51,26 +51,23 @@ function appConfigDisplay(manifest, sensors) {
 			method: "POST",
 			body: JSON.stringify(manifest),
 		})
-			.then((res) => {
+			.then(() => {
 				router.navigate('/' + manifest['databox-type'] + '/installed');
 			});
 	});
 
-	let menus = document.getElementsByClassName('mdc-simple-menu');
-	for (const menuElement of menus) {
-		const menu = new mdc.menu.MDCSimpleMenu(menuElement);
-		menuElement.parentElement.addEventListener('click', () => menu.open = !menu.open);
-	}
-
-
-	let menuItems = document.getElementsByClassName('mdc-list-item');
-	for(const menuItem of menuItems) {
-		if(menuItem.getAttribute('role') === 'menuitem') {
-			menuItem.addEventListener('click', () => {
-				const clientid = menuItem.getAttribute('datasource');
-				for(const datasource of manifest.datasources) {
-					if(datasource.clientid === clientid) {
-						const sensorHref = menuItem.getAttribute('sensor');
+	let selects = document.getElementsByTagName('select');
+	for(const selectElements of selects) {
+		selectElements.addEventListener('change', (event) => {
+			const selectElement = event.currentTarget;
+			const clientid = selectElement.getAttribute('datasource');
+			for(const datasource of manifest.datasources) {
+				if(datasource.clientid === clientid) {
+					if(selectElement.selectedIndex === 0) {
+						datasource.hypercat = null;
+						appConfigDisplay(manifest, sensors);
+					} else {
+						const sensorHref = selectElement.value;
 						for (const sensor of sensors) {
 							if(sensor.href === sensorHref) {
 								datasource.hypercat = sensor;
@@ -78,11 +75,39 @@ function appConfigDisplay(manifest, sensors) {
 								break;
 							}
 						}
-						break;
 					}
+					break;
 				}
-			});
-		}
+			}
+		});
+	}
+
+	const MDCSelect = mdc.select.MDCSelect;
+	let mdcSelects = document.getElementsByClassName('mdc-select');
+	for(const mdcSelect of mdcSelects) {
+		const select = new MDCSelect(mdcSelect);
+		select.listen('MDCSelect:change', () => {
+			const selectElement = select;
+			const clientid = mdcSelect.getAttribute('datasource');
+			for(const datasource of manifest.datasources) {
+				if(datasource.clientid === clientid) {
+					const sensorHref = selectElement.value;
+					for (const sensor of sensors) {
+						if(sensor.href === sensorHref) {
+							datasource.hypercat = sensor;
+							appConfigDisplay(manifest, sensors);
+							break;
+						}
+					}
+					break;
+				}
+			}
+		});
+	}
+
+	for(const mdcSelect of mdcSelects) {
+		mdcSelect.style.minWidth = mdcSelect.style.width;
+		mdcSelect.style.width = null;
 	}
 }
 

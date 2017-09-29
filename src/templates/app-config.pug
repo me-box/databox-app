@@ -72,7 +72,7 @@
 	function isPackageValid(pack) {
 		for (const datasource_id of pack.datastores) {
 			const datasource = getDatasource(datasource_id);
-			if (datasource.required && !('hypercat' in datasource)) {
+			if (datasource.required && !(datasource.hypercat)) {
 				return false;
 			}
 		}
@@ -104,20 +104,30 @@
 		return valid;
 	}
 
-if hasUnfulfilledDatasources()
-	div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12(style="margin-top:20px")
-		div.padded(style="color:#d50000; background: #DDD")
-			= 'Unable to install app. Cannot find any datasources for ' + unfulfilledDatasources() + '. You may need to install and configure a driver to provide them'
 div(style="padding: 16px")
 	div.mdc-card
-
 		section(style="display:flex").mdc-card__primary
 			img(src='icons/android-icon-144x144.png')
 			div(style="padding-left: 16px")
 				div.mdc-card__title--large
-					= 'Configure ' + manifest.name
-		div.mdc-layout-grid
+					= manifest.name
+				div.mdc-card__subtitle.mdc-typography--caption
+					= manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
+				div
+					i.material-icons
+						| star
+					i.material-icons
+						| star
+					i.material-icons
+						| star
+					i.material-icons.disabled
+						| star
+					i.material-icons.disabled
+						| star
+		section.mdc-card__supporting-text
+			= manifest.description
 
+		div.mdc-layout-grid
 			div.mdc-layout-grid__inner
 				if 'packages' in manifest
 					if manifest.packages.length > 1
@@ -149,64 +159,47 @@ div(style="padding: 16px")
 									div.mdc-theme--accent-bg.padded
 										| Required
 
-				if 'export-whitelist' in manifest && manifest['export-whitelist'].length > 0
-					div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12(style="margin-top:20px")
-						div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg.mdc-typography--title
-							| URL Permissions
-						ul.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12.mdc-list
-							each url in manifest['export-whitelist']
-								li.mdc-list-item
-									i.material-icons.mdc-list-item__start-detail
-										| link
-									span.mdc-list-item__text
-										= url.url
-										span.mdc-list-item__text__secondary
-											= url.description
-
 				if 'datasources' in manifest && manifest.datasources.length > 0
 					div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12(style="margin-top:16px")
-						div.padded.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg.mdc-typography--title
-							| Data Sources
-						ul.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12.mdc-list
-							each datasource in manifest.datasources
-								if isDatasourceActive(datasource)
-									if hasSensors(datasource)
-										li.datasource.mdc-menu-anchor.mdc-list-item
-											i.material-icons.mdc-list-item__start-detail
-												| input
-											span.mdc-list-item__text
-												= datasource.type
-												span.mdc-list-item__text__secondary
-													if datasource.hypercat
-														= getMetadata(datasource.hypercat, 'urn:X-hypercat:rels:hasDescription:en')
-													else if datasource.required
-														div(style="color:#d50000; opacity: 0.8")
-															| Required
-													else
-														| Unbound
-												div.mdc-simple-menu.mdc-simple-menu--open-from-bottom-left
-													ul.mdc-simple-menu__items.mdc-list(role="menu")
-														each sensor in sensors
-															if getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type
-																li.mdc-list-item(role="menuitem", datasource=datasource.clientid, sensor=sensor.href)
-																	= getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')
+						div.mdc-theme--text-primary-on-dark.mdc-theme--primary-bg.mdc-typography--title(style="padding: 8px 16px")
+							| Select Data Sources
 
-									else
-										li.mdc-list-item
-											i.material-icons.mdc-list-item__start-detail
-												| input
-											span.mdc-list-item__text
-												= datasource.type
-												span.mdc-list-item__text__secondary
-													div(style="color:#d50000; opacity: 0.8")
-														| Required, but no sources found
+					each datasource in manifest.datasources
+						div.mdc-layout-grid__cell--span-12(style="padding: 0 16px; display: flex; flex-direction: column")
+							if isDatasourceActive(datasource)
+								label.mdc-typography--caption(style="display: block; color: #333", for=datasource.clientid)
+									= datasource.type
+								if hasSensors(datasource)
+									div.mdc-select(role="listbox", tabindex="0", style="width: 100%;", datasource=datasource.clientid, id=datasource.clientid)
+										span.mdc-select__selected-text
+											|
+										div.mdc-simple-menu.mdc-select__menu
+											ul.mdc-list.mdc-simple-menu__items
+												each sensor in sensors
+													if getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type
+														li.mdc-list-item(role="option", aria-selected=datasource.hypercat && sensor.href === datasource.hypercat.href, id=sensor.href)
+															= getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')
+
+									div.mdc-select__selected-text.mdc-typography--caption(style="color: #d50000;")
+										if !datasource.hypercat
+											| Required
+										else
+											| &nbsp;
 
 								else
-									li.mdc-list-item.disabled
-										i.material-icons.mdc-list-item__start-detail
-											| input
-										span.mdc-list-item__text
-											= datasource.type
+									div.mdc-select.mdc-select--disabled(style="width: 100%")
+									div.mdc-select__selected-text.mdc-typography--caption(style="color: #d50000;")
+										| Required, but no datasources found
+							else
+								div.mdc-typography--caption.disabled(style="display:block")
+									= datasource.type
+								div.mdc-select.mdc-select--disabled(role="listbox", tabindex="0", style="width: 100%")
+
+					if hasUnfulfilledDatasources()
+						div.mdc-layout-grid__cell.mdc-layout-grid__cell--span-12
+							div.padded(style="color:#d50000")
+								= 'Cannot find any datasources for ' + unfulfilledDatasources() + '. You may need to install and configure a driver to provide them'
+
 
 		section.mdc-card__actions
 			button(disabled=!isValid())#install_button.mdc-button.mdc-card__action.mdc-button--primary

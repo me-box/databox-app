@@ -34,16 +34,6 @@ div(style="padding: 16px")
 			div(style="padding: 0 16px")
 				| Moderate Risk
 		section.mdc-card__supporting-text
-			div(style="display: flex; padding-top: 16px")
-				i.material-icons(style="padding:8px 16px 0 0; color: #B71C1C")
-					| lock
-				span.mdc-list-item__text
-					| Data
-					span.mdc-list-item__text__secondary
-						div
-							| No granular data settings
-						div
-							| No data access API
 			if 'export-whitelist' in app[0].manifest && app[0].manifest['export-whitelist'].length > 0
 				div(style="display: flex; padding-top: 16px")
 					i.material-icons(style="padding:8px 16px 0 0; color: #F57F17")
@@ -55,26 +45,8 @@ div(style="padding: 16px")
 								div
 									= 'Accesses ' + url.url
 							div
-								| Potentially sends data to third-party
+								| Potentially leaks data to third-party
 
-			div(style="display: flex; padding-top: 16px")
-				i.material-icons(style="padding:8px 16px 0 0; color: #F57F17")
-					| lock
-				span.mdc-list-item__text
-					| Datasources
-					span.mdc-list-item__text__secondary
-						div
-							| Uses sensors with low security rating
-						div
-							| Uses sensors not compliant with standards
-			div(style="display: flex; padding-top: 16px")
-				i.material-icons(style="padding:8px 16px 0 0; color: #1B5E20")
-					| lock
-				div.mdc-list-item__text
-					| Apps
-					div.mdc-list-item__text__secondary
-						div
-							| Actuates class x physical devices
 		if(!app.installed)
 			section.mdc-card__actions
 				if(app.length > 1)

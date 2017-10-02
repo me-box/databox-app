@@ -1,21 +1,30 @@
-div(style="padding: 16px")
-	div.mdc-card
-		section.mdc-card__primary
-			h1.mdc-card__title.mdc-card__title--large
-				| Connection Error
-			h2.mdc-card__subtitle
-				| Could not find a Databox
-		section.mdc-card__supporting-text
-			div
-				| Enter the address of a databox to continue
-			label.mdc-textfield(style="width: 100%")
-				input#connectField.mdc-textfield__input(type='url', style="width: 100%", required=true, onkeypress='submit(event)')
-				span.mdc-textfield__label
-					| Databox Address
+div.mdc-layout-grid
+	div.mdc-layout-grid__inner
+		div.mdc-layout-grid__cell--span-2-desktop
+		div.mdc-card.mdc-layout-grid__cell.mdc-layout-grid__cell--span-8
+			if !error
+				section.mdc-card__primary
+					h1.mdc-card__title.mdc-card__title--large
+						| Connect to a Databox
+			else
+				section.mdc-card__primary
+					h1.mdc-card__title.mdc-card__title--large
+						| Connection Error
+					h2.mdc-card__subtitle
+						| Could not connect to the Databox at&nbsp;
+						span#error_host
+			section.mdc-card__supporting-text
+				label.mdc-textfield(style="width: 100%")
+					input#connectField.mdc-textfield__input(type='url', style="width: 100%", required=true, onkeypress='submit(event)')
+					span.mdc-textfield__label
+						| Databox Address
 
-		section.mdc-card__actions
-			button.mdc-card__action.mdc-button.mdc-button--primary(onclick='connect()')
-				| Connect
-			if(qr_scan)
-				button.mdc-card__action.mdc-button.mdc-button--primary(onclick='scanQR()')
-					| Scan QR Code
+			section.mdc-card__actions
+				button#connect_button.mdc-card__action.mdc-button.mdc-button--primary(disabled, onclick='connect()')
+					| Connect
+				if(qr_scan)
+					button.mdc-card__action.mdc-button.mdc-button--primary(onclick='scanQR()')
+						| Scan QR Code
+				if error
+					button.mdc-card__action.mdc-button.mdc-button--primary(onclick='connect(true)')
+						| Retry

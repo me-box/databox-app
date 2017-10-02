@@ -1,6 +1,6 @@
 const router = new Navigo(null, true, '#!');
 
-const stores = [
+let stores = [
 	// {
 	// 	"name": "Up In the Clouds Store",
 	// 	"url": "http://store.upintheclouds.org/"
@@ -28,8 +28,13 @@ function checkOk(res) {
 	return res;
 }
 
-function showSpinner() {
+function showSpinner(cancel) {
 	document.getElementById('content').innerHTML = spinnerTemplate();
+	if(cancel) {
+		const button = document.getElementById('cancel_button');
+		button.style.display = 'block';
+		button.addEventListener('click', cancel);
+	}
 }
 
 function scanQR() {
@@ -66,47 +71,59 @@ function submit(event) {
 	}
 }
 
-function connect() {
-	const field = document.getElementById('connectField');
-	if (field) {
-		let value = field.value;
-		if (value.indexOf('://') === -1) {
-			value = 'http://' + value;
+function connect(retry) {
+	if(!retry) {
+		const field = document.getElementById('connectField');
+		if (field) {
+			let value = field.value.trim();
+			if (value.indexOf('://') === -1) {
+				value = 'http://' + value;
+			}
+			const url = new URL(value);
+			if (!url.port) {
+				url.port = '8989';
+			}
+			localStorage.setItem('databoxURL', url.toString());
 		}
-		const url = new URL(value);
-		if (!url.port) {
-			url.port = '8989';
-		}
-		localStorage.setItem('databoxURL', url.toString());
 	}
-
 	let value = localStorage.getItem('databoxURL');
 	if (value) {
 		databoxURL = value;
 	}
 
 	toolbarDisabled();
-	showSpinner();
-	fetch(databoxURL + 'api/driver/list')
+	showSpinner(() => {
+		showConnect(false);
+	});
+	const fetchURL = databoxURL;
+	fetch(fetchURL + 'api/driver/list')
 		.then(checkOk)
 		.then(() => {
-			const url = new URL(databoxURL);
-			url.port = '8181';
-			stores.push({
-				"name": "Local Store",
-				"url": url.toString()
-			});
+			if(document.getElementById('spinner') && fetchURL === databoxURL) {
+				const url = new URL(databoxURL);
+				url.port = '8181';
+				document.getElementById('hostname').innerText = url.hostname;
+				stores = [{
+					"name": "Local Store",
+					"url": url.toString()
+				}];
 
-			router.resolve();
+				if(router.lastRouteResolved() !== null && router.lastRouteResolved().url === '/connect') {
+					router.navigate('/');
+				} else if(window.location.hash === '#!/connect') {
+					router.navigate('/');
+				} else {
+					router.resolve();
+				}
+			}
 		})
 		.catch((error) => {
-			console.log(error);
-			document.getElementById('content').innerHTML = connectTemplate({qr_scan: isApp});
-			const tfs = document.querySelectorAll('.mdc-textfield');
-			for (const tf of tfs) {
-				mdc.textfield.MDCTextfield.attachTo(tf);
+			if(document.getElementById('spinner') && fetchURL === databoxURL) {
+				console.log(error);
+				showConnect(true);
+				const url = new URL(databoxURL);
+				document.getElementById('error_host').innerText = url.hostname;
 			}
-			document.getElementById('connectField').focus();
 		});
 }
 
@@ -206,6 +223,10 @@ router.on(() => {
 		});
 });
 
+router.on('/connect', () => {
+	showConnect(false);
+});
+
 router.on('/driver/store', () => {
 	showSpinner();
 	listApps('driver')
@@ -216,6 +237,24 @@ router.on('/driver/store', () => {
 			});
 		});
 });
+
+function showConnect(error) {
+	document.getElementById('toolbartitle').innerText = 'Databox';
+	document.getElementById('content').innerHTML = connectTemplate({qr_scan: isApp, error: error});
+	document.getElementById('connectField').addEventListener('input', () => {
+		const field = document.getElementById('connectField');
+		if(field) {
+			const button = document.getElementById('connect_button');
+			button.disabled = field.value.trim().length <= 0;
+		}
+	});
+	const tfs = document.querySelectorAll('.mdc-textfield');
+	for (const tf of tfs) {
+		mdc.textfield.MDCTextfield.attachTo(tf);
+	}
+	const field = document.getElementById('connectField');
+	field.focus();
+}
 
 function showSensingInstall() {
 	document.getElementById('content').innerHTML = alertTemplate({

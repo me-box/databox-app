@@ -57,11 +57,13 @@ html(lang='en')
 
 		aside.mdc-temporary-drawer.mdc-typography
 			nav.mdc-temporary-drawer__drawer
-				header.mdc-toolbar.mdc-theme--dark
-					div.mdc-toolbar__row
-						section.mdc-toolbar__section.mdc-toolbar__section--align-start
-							span.mdc-toolbar__title(style='margin-left: 72px')
+				header.mdc-temporary-drawer__header.mdc-theme--dark
+					div.mdc-temporary-drawer__header-content(style="background: url('img/boxes_coloured.png'); background-size: cover; color: #FFF")
+						a(style="width: 100%;", onclick="router.navigate('/connect')")
+							div.mdc-typography--title
 								| Databox
+							div#hostname.mdc-typography--caption
+								| localhost
 				nav#nav.mdc-temporary-drawer__content.mdc-list
 					a.mdc-list-item(href="#!")
 						i.material-icons.mdc-list-item__start-detail

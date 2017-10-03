@@ -20,11 +20,11 @@ div.mdc-layout-grid
 						| Databox Address
 
 			section.mdc-card__actions
-				button#connect_button.mdc-card__action.mdc-button.mdc-button--primary(disabled, onclick='connect()')
-					| Connect
-				if(qr_scan)
-					button.mdc-card__action.mdc-button.mdc-button--primary(onclick='scanQR()')
-						| Scan QR Code
 				if error
 					button.mdc-card__action.mdc-button.mdc-button--primary(onclick='connect(true)')
 						| Retry
+				if(qr_scan)
+					button.mdc-card__action.mdc-button.mdc-button--primary(onclick='scanQR()')
+						| Scan QR Code
+				button#connect_button.mdc-card__action.mdc-button.mdc-button--primary(disabled, onclick='connect()')
+					| Connect

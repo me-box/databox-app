@@ -16,7 +16,7 @@ const isApp = typeof cordova !== 'undefined';
 let databoxURL = 'http://localhost:8989/';
 if (!isApp) {
 	const url = new URL(window.location);
-	databoxURL = url.protocol + '//' + url.host + '/';
+	databoxURL = url.protocol + '//' + url.hostname + ':8989' + '/';
 	document.getElementById('sensing').style.display = 'none';
 }
 
@@ -30,7 +30,7 @@ function checkOk(res) {
 
 function showSpinner(cancel) {
 	document.getElementById('content').innerHTML = spinnerTemplate();
-	if(cancel) {
+	if (cancel) {
 		const button = document.getElementById('cancel_button');
 		button.style.display = 'block';
 		button.addEventListener('click', cancel);
@@ -72,7 +72,7 @@ function submit(event) {
 }
 
 function connect(retry) {
-	if(!retry) {
+	if (!retry) {
 		const field = document.getElementById('connectField');
 		if (field) {
 			let value = field.value.trim();
@@ -96,21 +96,29 @@ function connect(retry) {
 		showConnect(false);
 	});
 	const fetchURL = databoxURL;
-	fetch(fetchURL + 'api/driver/list')
+	fetch(databoxURL + 'api/driver/list')
 		.then(checkOk)
 		.then(() => {
-			if(document.getElementById('spinner') && fetchURL === databoxURL) {
+			if (document.getElementById('spinner') && fetchURL === databoxURL) {
+				const hostlabel = document.getElementById('hostname');
+				if (isApp || localStorage.getItem('databoxURL')) {
+					hostlabel.innerText = url.hostname;
+					hostlabel.parentElement.addEventListener('click', () => {
+						router.navigate('/connect')
+					});
+					hostlabel.parentElement.style.cursor = 'pointer';
+				}
+
 				const url = new URL(databoxURL);
 				url.port = '8181';
-				document.getElementById('hostname').innerText = url.hostname;
 				stores = [{
 					"name": "Local Store",
 					"url": url.toString()
 				}];
 
-				if(router.lastRouteResolved() !== null && router.lastRouteResolved().url === '/connect') {
+				if (router.lastRouteResolved() !== null && router.lastRouteResolved().url === '/connect') {
 					router.navigate('/');
-				} else if(window.location.hash === '#!/connect') {
+				} else if (window.location.hash === '#!/connect') {
 					router.navigate('/');
 				} else {
 					router.resolve();
@@ -118,7 +126,7 @@ function connect(retry) {
 			}
 		})
 		.catch((error) => {
-			if(document.getElementById('spinner') && fetchURL === databoxURL) {
+			if (document.getElementById('spinner') && fetchURL === databoxURL) {
 				console.log(error);
 				showConnect(true);
 				const url = new URL(databoxURL);
@@ -241,18 +249,27 @@ router.on('/driver/store', () => {
 function showConnect(error) {
 	document.getElementById('toolbartitle').innerText = 'Databox';
 	document.getElementById('content').innerHTML = connectTemplate({qr_scan: isApp, error: error});
-	document.getElementById('connectField').addEventListener('input', () => {
-		const field = document.getElementById('connectField');
-		if(field) {
-			const button = document.getElementById('connect_button');
-			button.disabled = field.value.trim().length <= 0;
-		}
-	});
 	const tfs = document.querySelectorAll('.mdc-textfield');
 	for (const tf of tfs) {
 		mdc.textfield.MDCTextfield.attachTo(tf);
 	}
 	const field = document.getElementById('connectField');
+	const stored = localStorage.getItem('databoxURL');
+	if (stored) {
+		const url = new URL(stored);
+		if (url.port !== 8989) {
+			field.value = url.host;
+		} else {
+			field.value = url.hostname;
+		}
+	}
+	field.addEventListener('input', () => {
+		const field = document.getElementById('connectField');
+		if (field) {
+			const button = document.getElementById('connect_button');
+			button.disabled = field.value.trim().length <= 0;
+		}
+	});
 	field.focus();
 }
 
@@ -287,8 +304,7 @@ function showSensingInstall() {
 function showSensingStart() {
 	SensingKit.isRunning((result) => {
 		console.log(result);
-		if(result === 'true')
-		{
+		if (result === 'true') {
 			showSpinner();
 			SensingKit.start(databoxURL + sensorDriver, (error) => {
 				console.log(error);
@@ -303,8 +319,7 @@ function showSensingStart() {
 				content.appendChild(iframe);
 			});
 		}
-		else
-		{
+		else {
 			document.getElementById('content').innerHTML = alertTemplate({
 				icon: 'network_check',
 				button: 'Start Recording Mobile Sensor Data'

@@ -14,6 +14,10 @@ iframe {
 	border: 0;
 }
 
+.mdc-textfield__input {
+	border-radius: 0;
+}
+
 .mdc-card {
 	background-color: #fff;
 	overflow: hidden;

@@ -1,15 +1,6 @@
 const router = new Navigo(null, true, '#!');
 
-let stores = [
-	// {
-	// 	"name": "Up In the Clouds Store",
-	// 	"url": "http://store.upintheclouds.org/"
-	// },
-	// {
-	// 	"name": "IoT Databox Store",
-	// 	"url": "https://store.iotdatabox.com/"
-	// }
-];
+let stores = [];
 
 const sensorDriver = 'driver-sensingkit';
 const isApp = typeof cordova !== 'undefined';
@@ -101,6 +92,7 @@ function connect(retry) {
 		.then(() => {
 			if (document.getElementById('spinner') && fetchURL === databoxURL) {
 				const hostlabel = document.getElementById('hostname');
+				const url = new URL(databoxURL);
 				if (isApp || localStorage.getItem('databoxURL')) {
 					hostlabel.innerText = url.hostname;
 					hostlabel.parentElement.addEventListener('click', () => {
@@ -109,11 +101,14 @@ function connect(retry) {
 					hostlabel.parentElement.style.cursor = 'pointer';
 				}
 
-				const url = new URL(databoxURL);
 				url.port = '8181';
 				stores = [{
 					"name": "Local Store",
 					"url": url.toString()
+				},
+				{
+					"name": "IoT Databox Store",
+					"url": "https://store.iotdatabox.com/"
 				}];
 
 				if (router.lastRouteResolved() !== null && router.lastRouteResolved().url === '/connect') {
@@ -221,6 +216,11 @@ function listApps(type) {
 }
 
 router.on(() => {
+	toolbarDrawer();
+	document.getElementById('content').innerHTML = welcomeTemplate();
+});
+
+router.on('/driver/app', () => {
 	showSpinner();
 	listApps('app')
 		.then((apps) => {
@@ -257,7 +257,7 @@ function showConnect(error) {
 	const stored = localStorage.getItem('databoxURL');
 	if (stored) {
 		const url = new URL(stored);
-		if (url.port !== 8989) {
+		if (url.port !== '8989') {
 			field.value = url.host;
 		} else {
 			field.value = url.hostname;
@@ -274,6 +274,7 @@ function showConnect(error) {
 }
 
 function showSensingInstall() {
+	console.log("Show Sensing Install");
 	document.getElementById('content').innerHTML = alertTemplate({
 		icon: 'network_check',
 		button: 'Enable Mobile Sensor Data'
@@ -302,6 +303,7 @@ function showSensingInstall() {
 }
 
 function showSensingStart() {
+	console.log("Show Sensing Install");
 	SensingKit.isRunning((result) => {
 		console.log(result);
 		if (result === 'true') {
@@ -402,6 +404,31 @@ router.on('/:name', (params) => {
 					document.getElementById('content').innerHTML = appTemplate({
 						app: app
 					});
+
+					const installURL = "#!/" + app[0].manifest.name + "/config/";
+					const menuItems = document.getElementsByClassName('version-item');
+					for(const menuItem of menuItems) {
+						menuItem.addEventListener('click', function (event) {
+							document.getElementById('install_link').href = installURL + event.target.id;
+							const menuItems = document.getElementsByClassName('version-item');
+							for(const menuItem of menuItems) {
+								menuItem.classList.remove('mdc-simple-menu--selected');
+							}
+							event.target.classList.add('mdc-simple-menu--selected');
+						})
+					}
+
+					if(menuItems.length > 0) {
+						menuItems.item(0).classList.add('mdc-simple-menu--selected');
+					}
+
+					const menu = new mdc.menu.MDCSimpleMenu(document.getElementById('versionMenu'));
+					console.log(menu);
+					document.getElementById('versionButton').addEventListener('click', function () {
+						console.log(menu);
+						menu.open = !menu.open
+					});
+
 				})
 				.catch((error) => {
 					toolbarBack();

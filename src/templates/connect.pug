@@ -14,6 +14,16 @@ div.mdc-layout-grid
 						| Could not connect to the Databox at&nbsp;
 						span#error_host
 			section.mdc-card__supporting-text
+				| Databox lets you take control of your personal data and IoT devices. See the&nbsp;
+				a(href="https://github.com/me-box/databox")
+					| documentation
+				| &nbsp;for help in setting up a Databox.
+
+			if(qr_scan)
+				section.mdc-card__actions
+					button.mdc-button.mdc-button--primary(onclick='scanQR()')
+						| Scan QR Code
+			section.mdc-card__supporting-text
 				label.mdc-textfield(style="width: 100%")
 					input#connectField.mdc-textfield__input(type='url', style="width: 100%", required=true, onkeypress='submit(event)')
 					span.mdc-textfield__label
@@ -23,8 +33,5 @@ div.mdc-layout-grid
 				if error
 					button.mdc-card__action.mdc-button.mdc-button--primary(onclick='connect(true)')
 						| Retry
-				if(qr_scan)
-					button.mdc-card__action.mdc-button.mdc-button--primary(onclick='scanQR()')
-						| Scan QR Code
 				button#connect_button.mdc-card__action.mdc-button.mdc-button--primary(disabled, onclick='connect()')
 					| Connect

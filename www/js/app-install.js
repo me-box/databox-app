@@ -123,12 +123,21 @@ router.on('/:name/config', (params) => {
 		});
 });
 
+function getManifest(apps, name, id) {
+	const manifests = apps[name];
+	for(const manifest of manifests) {
+		if(manifest._id === id) {
+			return manifest.manifest;
+		}
+	}
+	return manifests[0].manifest
+}
+
 router.on('/:name/config/:id', (params) => {
 	console.log(params);
 	listApps()
 		.then((apps) => {
-			// TODO manifest from id
-			const manifest = JSON.parse(JSON.stringify(apps[params.name][0].manifest));
+			const manifest = JSON.parse(JSON.stringify(getManifest(apps, params.name, params.id)));
 			listDatasources(manifest)
 				.then((sensors) => {
 					appConfigDisplay(manifest, sensors);

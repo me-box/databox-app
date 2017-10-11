@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.databox.app" version="0.2.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.databox.app" version="0.3.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Databox</name>
     <description>
 		Databox App
@@ -19,23 +19,23 @@
     <preference name="StatusBarBackgroundColor" value="#2d3980" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="res/icons/android-icon-36x36.png" />
-        <icon density="mdpi" src="res/icons/android-icon-48x48.png" />
-        <icon density="hdpi" src="res/icons/android-icon-72x72.png" />
-        <icon density="xhdpi" src="res/icons/android-icon-96x96.png" />
-        <icon density="xxhdpi" src="res/icons/android-icon-144x144.png" />
-        <icon density="xxxhdpi" src="res/icons/android-icon-192x192.png" />
+        <icon density="ldpi" src="res/icons/android-icon-36.png" />
+        <icon density="mdpi" src="res/icons/android-icon-48.png" />
+        <icon density="hdpi" src="res/icons/android-icon-72.png" />
+        <icon density="xhdpi" src="res/icons/android-icon-96.png" />
+        <icon density="xxhdpi" src="res/icons/android-icon-144.png" />
+        <icon density="xxxhdpi" src="res/icons/android-icon-192.png" />
     </platform>
     <platform name="ios">
         <feature name="StatusBar">
             <param name="ios-package" onload="true" value="CDVStatusBar" />
         </feature>
-        <icon height="180" src="res/icons/apple-icon-180x180.png" width="180" />
-        <icon height="167" src="res/icons/apple-icon-167x167.png" width="167" />
-        <icon height="152" src="res/icons/apple-icon-152x152.png" width="152" />
-        <icon height="120" src="res/icons/apple-icon-120x120.png" width="120" />
-        <icon height="76" src="res/icons/apple-icon-76x76.png" width="76" />
-        <icon height="57" src="res/icons/apple-icon-57x57.png" width="57" />
+        <icon height="57" src="res/icons/apple-icon-57.png" width="57" />
+        <icon height="76" src="res/icons/apple-icon-76.png" width="76" />
+        <icon height="120" src="res/icons/apple-icon-120.png" width="120" />
+        <icon height="152" src="res/icons/apple-icon-152.png" width="152" />
+        <icon height="167" src="res/icons/apple-icon-167.png" width="167" />
+        <icon height="180" src="res/icons/apple-icon-180.png" width="180" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
@@ -43,7 +43,7 @@
     <engine name="browser" spec="^5.0.0" />
     <engine name="ios" spec="^4.5.1" />
     <plugin name="cordova-plugin-qrscanner" spec="^2.5.0" />
-    <plugin name="cordova-plugin-sensingKit" spec="../cordova-plugin-sensingKit" />
+    <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
     <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
 </widget>

@@ -23,7 +23,7 @@
         "navigo": "^5.3.1",
         "pug": "^2.0.0-rc.4",
         "pug-cli": "^1.0.0-alpha6",
-        "cordova-plugin-sensingKit": "../cordova-plugin-sensingKit"
+        "cordova-plugin-sensingKit": "https://github.com/ktg/cordova-plugin-sensingkit.git"
     },
     "cordova": {
         "plugins": {

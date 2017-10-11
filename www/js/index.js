@@ -106,10 +106,10 @@ function connect(retry) {
 					"name": "Local Store",
 					"url": url.toString()
 				},
-				{
-					"name": "IoT Databox Store",
-					"url": "https://store.iotdatabox.com/"
-				}];
+					{
+						"name": "IoT Databox Store",
+						"url": "https://store.iotdatabox.com/"
+					}];
 
 				if (router.lastRouteResolved() !== null && router.lastRouteResolved().url === '/connect') {
 					router.navigate('/');
@@ -118,6 +118,8 @@ function connect(retry) {
 				} else {
 					router.resolve();
 				}
+
+				restartSensors();
 			}
 		})
 		.catch((error) => {
@@ -304,35 +306,45 @@ function showSensingInstall() {
 }
 
 function showSensingStart() {
-	console.log("Show Sensing Install");
-	SensingKit.isRunning((result) => {
-		console.log(result);
-		if (result === 'true') {
-			showSpinner();
-			SensingKit.start(databoxURL + sensorDriver, (error) => {
-				console.log(error);
-				const url = databoxURL + sensorDriver + '/ui';
-				const iframe = document.createElement("iframe");
-				iframe.setAttribute("src", url);
+	fetch(databoxURL + sensorDriver + '/ui')
+		.then(checkOk)
+		.then(() => {
+			showSensors();
+		})
+		.catch(() => {
+			showSensingStart();
+		});
+}
 
-				const content = document.getElementById('content');
-
-				iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
-				content.innerHTML = '';
-				content.appendChild(iframe);
-			});
+function showSensors() {
+	SensingKit.listSensors((result) => {
+		let enabled_sensors = localStorage.getItem('sensors');
+		if(!enabled_sensors) {
+			enabled_sensors = [];
+		} else {
+			enabled_sensors = JSON.parse(enabled_sensors);
 		}
-		else {
-			document.getElementById('content').innerHTML = alertTemplate({
-				icon: 'network_check',
-				button: 'Start Recording Mobile Sensor Data'
-			});
-			document.getElementById('alert_button').addEventListener('click', () => {
-				SensingKit.start(databoxURL + sensorDriver, (error) => {
-					console.log(error);
-					showSensingStart();
+		result.sort();
+		document.getElementById('content').innerHTML = sensorListTemplate({
+			sensors: result,
+			enabled_sensors: enabled_sensors
+		});
+		const sensorCheckboxes = document.getElementsByClassName('mdc-checkbox__native-control');
+		for(const checkbox of sensorCheckboxes) {
+			checkbox.addEventListener('change', (event) => {
+				console.log(JSON.stringify(event));
+				let selected = [];
+				for(const checkbox of sensorCheckboxes) {
+					let name = checkbox.id.substring(0, checkbox.id.length - 9);
+					if(checkbox.checked) {
+						selected.push(name);
+					}
+				}
+				SensingKit.startSensors(selected, databoxURL + sensorDriver, () => {
+					console.log("Something?")
 				});
-			});
+				//showSensors();
+			})
 		}
 	});
 }
@@ -408,18 +420,18 @@ router.on('/:name', (params) => {
 
 					const installURL = "#!/" + app[0].manifest.name + "/config/";
 					const menuItems = document.getElementsByClassName('version-item');
-					for(const menuItem of menuItems) {
+					for (const menuItem of menuItems) {
 						menuItem.addEventListener('click', function (event) {
 							document.getElementById('install_link').href = installURL + event.target.id;
 							const menuItems = document.getElementsByClassName('version-item');
-							for(const menuItem of menuItems) {
+							for (const menuItem of menuItems) {
 								menuItem.classList.remove('mdc-simple-menu--selected');
 							}
 							event.target.classList.add('mdc-simple-menu--selected');
 						})
 					}
 
-					if(menuItems.length > 0) {
+					if (menuItems.length > 0) {
 						menuItems.item(0).classList.add('mdc-simple-menu--selected');
 					}
 
@@ -462,7 +474,37 @@ router.on('/:name/ui', (params) => {
 toolbarDisabled();
 window.onload = function () {
 	connect();
+	document.addEventListener("deviceready", onDeviceReady, false);
 };
+
+// device APIs are available
+//
+function onDeviceReady() {
+	document.addEventListener("pause", onPause, false);
+	document.addEventListener("resume", restartSensors, false);
+	// Add similar listeners for other events
+}
+
+function onPause() {
+	SensingKit.stop();
+}
+
+function restartSensors() {
+	if(isApp) {
+		fetch(databoxURL + sensorDriver + '/ui')
+			.then(checkOk)
+			.then(() => {
+				let enabled_sensors = localStorage.getItem('sensors');
+				if(enabled_sensors) {
+					enabled_sensors = JSON.parse(enabled_sensors);
+					SensingKit.startSensors(enabled_sensors, databoxURL + sensorDriver, () => {
+
+					});
+				}
+
+			});
+	}
+}
 
 let searchTimer;
 const drawer = new mdc.drawer.MDCTemporaryDrawer(document.querySelector('.mdc-temporary-drawer'));

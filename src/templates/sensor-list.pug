@@ -1,37 +1,14 @@
-if apps.length === 0
-	div
-		| Empty
-else
-	div(style="padding: 24px 0")
-		div.mdc-grid-list.mdc-elevation--z3(style="background-color: white;")
-			div.mdc-grid-list__tiles
-				each appItem in apps
-					a(href="#!/" + appItem[0].manifest.name + '/', title=appItem[0].manifest.name).mdc-grid-tile
-						div.mdc-grid-tile__primary
-							img.mdc-grid-tile__primary-content(src="icons/android-icon-144x144.png")
-						div
-							= appItem[0].displayName
-						div.ratings
-							div
-								i.material-icons.rating
-									| lock
-								i.material-icons.rating
-									| lock
-								i.material-icons.rating
-									| lock
-								i.material-icons.rating.disabled
-									| lock
-								i.material-icons.rating.disabled
-									| lock
-							div(style="flex: 1")
-							div
-								i.material-icons.rating
-									| star
-								i.material-icons.rating
-									| star
-								i.material-icons.rating
-									| star
-								i.material-icons.rating.disabled
-									| star
-								i.material-icons.rating.disabled
-									| star
+div.mdc-grid-list.mdc-elevation--z3(style="background-color: white; padding: 16px")
+	div.mdc-typography--title(style="padding: 8px")
+		| Sensors
+	each sensor in sensors
+		div
+			div.mdc-form-field
+				div.mdc-checkbox
+					input.mdc-checkbox__native-control(type="checkbox", id=sensor + '-checkbox', checked=enabled_sensors.includes(sensor))
+					div.mdc-checkbox__background
+						svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+							path.mdc-checkbox__checkmark__path(fill="none", stroke="white", d="M1.73,12.91 8.1,19.28 22.79,4.59")
+						div.mdc-checkbox__mixedmark
+				label(for=sensor + '-checkbox')
+					= sensor

@@ -2,6 +2,7 @@ const router = new Navigo(null, true, '#!');
 
 let stores = [];
 
+const localStoreName = "Local Store";
 const sensorDriver = 'driver-sensingkit';
 const isApp = typeof cordova !== 'undefined';
 let databoxURL = 'http://localhost:8989/';
@@ -9,6 +10,63 @@ if (!isApp) {
 	const url = new URL(window.location);
 	databoxURL = url.protocol + '//' + url.hostname + ':8989' + '/';
 	document.getElementById('sensing').style.display = 'none';
+}
+
+function isPositiveInteger(x) {
+	// http://stackoverflow.com/a/1019526/11236
+	return /^\d+$/.test(x);
+}
+
+function compareManifests(m1, m2){
+	const v1parts = m1.manifest.version.split('.');
+	const v2parts = m2.manifest.version.split('.');
+
+	// First, validate both numbers are true version numbers
+	function validateParts(parts) {
+		for (let i = 0; i < parts.length; ++i) {
+			if (!isPositiveInteger(parts[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	if (!validateParts(v1parts) || !validateParts(v2parts)) {
+		return NaN;
+	}
+
+	for (let i = 0; i < v1parts.length; ++i) {
+		if (v2parts.length === i) {
+			return 1;
+		}
+
+		if (v1parts[i] === v2parts[i]) {
+			continue;
+		}
+		if (v1parts[i] > v2parts[i]) {
+			return 1;
+		}
+		return -1;
+	}
+
+	if (v1parts.length !== v2parts.length) {
+		return -1;
+	}
+
+	if(m1.store === localStoreName) {
+		return -1;
+	} else if (m2.store === localStoreName) {
+		return 1;
+	}
+
+	return 0;
+}
+
+function bestManifest(app) {
+	if(!app || app.length === 0) {
+		return null;
+	}
+	app.sort(compareManifests);
+	return app[0].manifest;
 }
 
 function checkOk(res) {
@@ -103,7 +161,7 @@ function connect(retry) {
 
 				url.port = '8181';
 				stores = [{
-					"name": "Local Store",
+					"name": localStoreName,
 					"url": url.toString()
 				},
 					{
@@ -206,9 +264,10 @@ function listApps(type) {
 			.then((apps) => {
 				let filtered = {};
 				for (const name in apps) {
-					let app = apps[name];
-					if (app[0].manifest['databox-type'] === appType) {
-						filtered[app[0].manifest.name] = app;
+					const app = apps[name];
+					const manifest = bestManifest(app);
+					if (manifest['databox-type'] === appType) {
+						filtered[manifest.name] = app;
 					}
 				}
 				return filtered;
@@ -287,19 +346,31 @@ function showSensingInstall() {
 		listApps('driver')
 			.then((apps) => {
 				const osApp = apps[sensorDriver];
-				const manifest = osApp[0].manifest;
-				if (osApp) {
-					fetch(databoxURL + "api/install", {
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						method: "POST",
-						body: JSON.stringify(manifest),
-					})
-						.then(checkOk)
-						.then((res) => {
-							showSensingStart();
+				if(osApp) {
+					const manifest = bestManifest(osApp);
+					if (manifest) {
+						fetch(databoxURL + "api/install", {
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							method: "POST",
+							body: JSON.stringify(manifest),
+						})
+							.then(checkOk)
+							.then((res) => {
+								showSensingStart();
+							});
+					} else {
+						document.getElementById('content').innerHTML = alertTemplate({
+							icon: 'warning',
+							title: 'SensingKit Driver not Found'
 						});
+					}
+				} else {
+					document.getElementById('content').innerHTML = alertTemplate({
+						icon: 'warning',
+						title: 'SensingKit Driver not Found'
+					});
 				}
 			});
 	});
@@ -413,12 +484,13 @@ router.on('/:name', (params) => {
 				.then((json) => {
 					toolbarBack();
 					const app = apps[params.name];
-					app.installed = json.indexOf(app[0].manifest.name) !== -1;
+					const manifest = bestManifest(app);
+					app.installed = json.indexOf(manifest.name) !== -1;
 					document.getElementById('content').innerHTML = appTemplate({
 						app: app
 					});
 
-					const installURL = "#!/" + app[0].manifest.name + "/config/";
+					const installURL = "#!/" + manifest.name + "/config/";
 					const menuItems = document.getElementsByClassName('version-item');
 					for (const menuItem of menuItems) {
 						menuItem.addEventListener('click', function (event) {

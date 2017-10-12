@@ -30,6 +30,7 @@
         <feature name="StatusBar">
             <param name="ios-package" onload="true" value="CDVStatusBar" />
         </feature>
+        <icon height="40" src="res/icons/apple-icon-40.png" width="40" />
         <icon height="57" src="res/icons/apple-icon-57.png" width="57" />
         <icon height="76" src="res/icons/apple-icon-76.png" width="76" />
         <icon height="120" src="res/icons/apple-icon-120.png" width="120" />

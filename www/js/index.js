@@ -17,7 +17,7 @@ function isPositiveInteger(x) {
 	return /^\d+$/.test(x);
 }
 
-function compareManifests(m1, m2){
+function compareManifests(m1, m2) {
 	const v1parts = m1.manifest.version.split('.');
 	const v2parts = m2.manifest.version.split('.');
 
@@ -30,29 +30,30 @@ function compareManifests(m1, m2){
 		}
 		return true;
 	}
+
 	if (!validateParts(v1parts) || !validateParts(v2parts)) {
 		return NaN;
 	}
 
 	for (let i = 0; i < v1parts.length; ++i) {
 		if (v2parts.length === i) {
-			return 1;
+			return -1;
 		}
 
 		if (v1parts[i] === v2parts[i]) {
 			continue;
 		}
 		if (v1parts[i] > v2parts[i]) {
-			return 1;
+			return -1;
 		}
-		return -1;
+		return 1;
 	}
 
 	if (v1parts.length !== v2parts.length) {
-		return -1;
+		return 1;
 	}
 
-	if(m1.store === localStoreName) {
+	if (m1.store === localStoreName) {
 		return -1;
 	} else if (m2.store === localStoreName) {
 		return 1;
@@ -62,7 +63,7 @@ function compareManifests(m1, m2){
 }
 
 function bestManifest(app) {
-	if(!app || app.length === 0) {
+	if (!app || app.length === 0) {
 		return null;
 	}
 	app.sort(compareManifests);
@@ -230,9 +231,14 @@ function listApps(type) {
 			.then((json) => {
 				for (const app of json.apps) {
 					app.url = store.url + 'app/get/?name=' + app.manifest.name;
-					app.manifest.storeUrl = app.url;
+
 					app.store = store.name;
 					app.displayName = app.manifest.name.replace('databox', '').replace('driver-', '').replace('app-', '').split('-').join(' ').trim();
+					if(store.name === localStoreName) {
+						app.manifest.storeUrl = 'http://localhost:8181/app/get/?name=' + app.manifest.name;
+					} else {
+						app.manifest.storeUrl = app.url;
+					}
 				}
 				return json;
 			})
@@ -337,18 +343,20 @@ function showConnect(error) {
 
 function showSensingInstall() {
 	console.log("Show Sensing Install");
-	document.getElementById('content').innerHTML = alertTemplate({
-		icon: 'network_check',
-		button: 'Enable Mobile Sensor Data'
-	});
-	document.getElementById('alert_button').addEventListener('click', () => {
-		showSpinner();
-		listApps('driver')
-			.then((apps) => {
-				const osApp = apps[sensorDriver];
-				if(osApp) {
-					const manifest = bestManifest(osApp);
-					if (manifest) {
+	showSpinner();
+	listApps('driver')
+		.then((apps) => {
+			const osApp = apps[sensorDriver];
+			if (osApp) {
+				const manifest = bestManifest(osApp);
+				if (manifest) {
+					console.log(JSON.stringify(manifest));
+					document.getElementById('content').innerHTML = alertTemplate({
+						icon: 'network_check',
+						button: 'Enable Mobile Sensor Data'
+					});
+					document.getElementById('alert_button').addEventListener('click', () => {
+						showSpinner();
 						fetch(databoxURL + "api/install", {
 							headers: {
 								'Content-Type': 'application/json'
@@ -360,20 +368,20 @@ function showSensingInstall() {
 							.then((res) => {
 								showSensingStart();
 							});
-					} else {
-						document.getElementById('content').innerHTML = alertTemplate({
-							icon: 'warning',
-							title: 'SensingKit Driver not Found'
-						});
-					}
+					});
 				} else {
 					document.getElementById('content').innerHTML = alertTemplate({
 						icon: 'warning',
 						title: 'SensingKit Driver not Found'
 					});
 				}
-			});
-	});
+			} else {
+				document.getElementById('content').innerHTML = alertTemplate({
+					icon: 'warning',
+					title: 'SensingKit Driver not Found'
+				});
+			}
+		});
 }
 
 function showSensingStart() {
@@ -390,7 +398,7 @@ function showSensingStart() {
 function showSensors() {
 	SensingKit.listSensors((result) => {
 		let enabled_sensors = localStorage.getItem('sensors');
-		if(!enabled_sensors) {
+		if (!enabled_sensors) {
 			enabled_sensors = [];
 		} else {
 			enabled_sensors = JSON.parse(enabled_sensors);
@@ -401,13 +409,13 @@ function showSensors() {
 			enabled_sensors: enabled_sensors
 		});
 		const sensorCheckboxes = document.getElementsByClassName('mdc-checkbox__native-control');
-		for(const checkbox of sensorCheckboxes) {
+		for (const checkbox of sensorCheckboxes) {
 			checkbox.addEventListener('change', (event) => {
 				console.log(JSON.stringify(event));
 				let selected = [];
-				for(const checkbox of sensorCheckboxes) {
+				for (const checkbox of sensorCheckboxes) {
 					let name = checkbox.id.substring(0, checkbox.id.length - 9);
-					if(checkbox.checked) {
+					if (checkbox.checked) {
 						selected.push(name);
 					}
 				}
@@ -562,12 +570,12 @@ function onPause() {
 }
 
 function restartSensors() {
-	if(isApp) {
+	if (isApp) {
 		fetch(databoxURL + sensorDriver + '/ui')
 			.then(checkOk)
 			.then(() => {
 				let enabled_sensors = localStorage.getItem('sensors');
-				if(enabled_sensors) {
+				if (enabled_sensors) {
 					enabled_sensors = JSON.parse(enabled_sensors);
 					SensingKit.startSensors(enabled_sensors, databoxURL + sensorDriver, () => {
 

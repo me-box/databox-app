@@ -234,7 +234,7 @@ function listApps(type) {
 
 					app.store = store.name;
 					app.displayName = app.manifest.name.replace('databox', '').replace('driver-', '').replace('app-', '').split('-').join(' ').trim();
-					if(store.name === localStoreName) {
+					if (store.name === localStoreName) {
 						app.manifest.storeUrl = 'http://localhost:8181/app/get/?name=' + app.manifest.name;
 					} else {
 						app.manifest.storeUrl = app.url;
@@ -411,7 +411,6 @@ function showSensors() {
 		const sensorCheckboxes = document.getElementsByClassName('mdc-checkbox__native-control');
 		for (const checkbox of sensorCheckboxes) {
 			checkbox.addEventListener('change', (event) => {
-				console.log(JSON.stringify(event));
 				let selected = [];
 				for (const checkbox of sensorCheckboxes) {
 					let name = checkbox.id.substring(0, checkbox.id.length - 9);
@@ -419,9 +418,12 @@ function showSensors() {
 						selected.push(name);
 					}
 				}
-				SensingKit.startSensors(selected, databoxURL + sensorDriver, () => {
-					console.log("Something?")
-				});
+				if (selected.length === 4) {
+					event.target.checked = false;
+				} else {
+					SensingKit.startSensors(selected, databoxURL + sensorDriver, () => {
+					});
+				}
 				//showSensors();
 			})
 		}
@@ -533,9 +535,12 @@ router.on('/:name', (params) => {
 
 router.on('/:name/ui', (params) => {
 	showSpinner();
+	let appname = params.name;
+	if(isApp && appname === sensorDriver) {
+		router.navigate('/sensing');
+	}
 
 	document.getElementById('toolbartitle').innerText = params.name;
-	let appname = params.name;
 	if (appname === 'databox_arbiter') {
 		appname = 'arbiter';
 	}

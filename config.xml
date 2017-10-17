@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.databox.app" version="0.3.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.databox.app" version="0.3.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Databox</name>
     <description>
 		Databox App
@@ -17,6 +17,8 @@
     <allow-intent href="geo:*" />
     <preference name="StatusBarOverlaysWebView" value="false" />
     <preference name="StatusBarBackgroundColor" value="#2d3980" />
+    <preference name="android-minSdkVersion" value="19" />
+    <preference name="DisallowOverscroll" value="true" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="res/icons/android-icon-36.png" />
@@ -44,7 +46,7 @@
     <engine name="browser" spec="^5.0.0" />
     <engine name="ios" spec="^4.5.1" />
     <plugin name="cordova-plugin-qrscanner" spec="^2.5.0" />
-    <plugin name="cordova-plugin-sensingKit" spec="../cordova-plugin-sensingKit" />
+    <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
     <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
 </widget>

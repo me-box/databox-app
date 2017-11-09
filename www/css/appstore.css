@@ -7,7 +7,6 @@ body {
 	margin: 0;
 }
 
-
 iframe {
 	width: 100%;
 	height: 100%;
@@ -52,7 +51,7 @@ iframe {
 	justify-content: center;
 }
 
-@media(max-width: 479px) {
+@media (max-width: 479px) {
 	.mdc-grid-tile {
 		--mdc-grid-list-tile-width: 120px;
 	}
@@ -83,6 +82,39 @@ iframe {
 
 #toolbar-search label {
 	padding-top: 12px;
+}
+
+.app-icon-letter {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 8px;
+	color: #fff;
+	border-radius: 15px;
+	font-size: 98px;
+	background: #3f51b5;
+	background: linear-gradient(#6f7dcd, #3f51b5);
+	width: 134px;
+	height: 134px;
+}
+
+.app-icon-letter-small {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 8px;
+	color: #fff;
+	border-radius: 5px;
+	background: #3f51b5;
+	background: linear-gradient(#6f7dcd, #3f51b5);
+}
+
+@media (max-width: 479px) {
+	.app-icon-letter {
+		width: 104px;
+		height: 104px;
+		font-size: 80px;
+	}
 }
 
 .app-small {

@@ -8,7 +8,8 @@ else
 				each appItem in apps
 					a(href="#!/" + appItem[0].manifest.name + '/', title=appItem[0].manifest.name).mdc-grid-tile
 						div.mdc-grid-tile__primary
-							img.mdc-grid-tile__primary-content(src="icons/android-icon-144.png")
+							div.app-icon-letter
+								= appItem[0].displayName.charAt(0).toUpperCase()
 						div
 							= appItem[0].displayName
 						div.ratings

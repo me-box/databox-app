@@ -107,10 +107,11 @@
 div(style="padding: 16px")
 	div.mdc-card
 		section(style="display:flex").mdc-card__primary
-			img(src='icons/android-icon-144.png')
+			div.app-icon-letter
+				= manifest.displayName.charAt(0).toUpperCase()
 			div(style="padding-left: 16px")
 				div.mdc-card__title--large
-					= manifest.name
+					= manifest.displayName
 				div.mdc-card__subtitle.mdc-typography--caption
 					= manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
 				div

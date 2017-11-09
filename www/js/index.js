@@ -234,6 +234,7 @@ function listApps(type) {
 
 					app.store = store.name;
 					app.displayName = app.manifest.name.replace('databox', '').replace('driver-', '').replace('app-', '').split('-').join(' ').trim();
+					app.manifest.displayName = app.displayName;
 					if (store.name === localStoreName) {
 						app.manifest.storeUrl = 'http://localhost:8181/app/get/?name=' + app.manifest.name;
 					} else {

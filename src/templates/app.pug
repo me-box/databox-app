@@ -1,7 +1,8 @@
 div(style="padding: 16px")
 	div.mdc-card
 		section(style="display:flex").mdc-card__primary
-			img(src='icons/android-icon-144.png')
+			div.app-icon-letter
+				= app[0].displayName.charAt(0).toUpperCase()
 			div(style="padding-left: 16px")
 				div.mdc-card__title--large
 					= app[0].displayName

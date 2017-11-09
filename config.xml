@@ -21,12 +21,14 @@
     <preference name="DisallowOverscroll" value="true" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="res/icons/android-icon-36.png" />
         <icon density="mdpi" src="res/icons/android-icon-48.png" />
         <icon density="hdpi" src="res/icons/android-icon-72.png" />
         <icon density="xhdpi" src="res/icons/android-icon-96.png" />
         <icon density="xxhdpi" src="res/icons/android-icon-144.png" />
         <icon density="xxxhdpi" src="res/icons/android-icon-192.png" />
+        <resource-file src="res/colours.xml" target="res/values/colours.xml" />
+        <resource-file src="res/icons/ic_launcher_foreground.xml" target="res/drawable/ic_launcher_foreground.xml" />
+        <resource-file src="res/icons/android-icon-adaptive.xml" target="res/mipmap-anydpi-v26/icon.xml" />
     </platform>
     <platform name="ios">
         <feature name="StatusBar">
@@ -42,11 +44,11 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
+    <engine name="ios" spec="^4.5.3" />
     <engine name="android" spec="^6.3.0" />
-    <engine name="browser" spec="^5.0.0" />
-    <engine name="ios" spec="^4.5.1" />
-    <plugin name="cordova-plugin-qrscanner" spec="^2.5.0" />
-    <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
+    <plugin name="cordova-plugin-qrscanner" spec="^2.5.0" />
+    <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
+    <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
+    <plugin name="cordova-plugin-compat" spec="^1.2.0" />
 </widget>

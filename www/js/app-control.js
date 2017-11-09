@@ -1,8 +1,4 @@
 function app_uninstall(event, app) {
-	const spinner = document.getElementById(app + '_spinner');
-	const button = document.getElementById(app + '_controls');
-	button.style.display = 'none';
-	spinner.style.display = 'block';
 	fetch(databoxURL + "api/uninstall", {
 		headers: {
 			'Content-Type': 'application/json'
@@ -14,10 +10,6 @@ function app_uninstall(event, app) {
 }
 
 function app_restart(event, app) {
-	const spinner = document.getElementById(app + '_spinner');
-	const button = document.getElementById(app + '_controls');
-	button.style.display = 'none';
-	spinner.style.display = 'block';
 	fetch(databoxURL + "api/restart", {
 		headers: {
 			'Content-Type': 'application/json'

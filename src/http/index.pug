@@ -1,0 +1,59 @@
+doctype html
+html(lang='en')
+	head
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		meta(name='mobile-web-app-capable', content="yes")
+		meta(name="apple-mobile-web-app-capable", content="yes")
+		meta(name="theme-color", content="#3f51b5")
+		link(rel="manifest", href="icons/manifest.json")
+		link(rel="apple-touch-icon", sizes="57x57", href="icons/apple-icon-57.png")
+		link(rel="apple-touch-icon", sizes="76x76", href="icons/apple-icon-76.png")
+		link(rel="apple-touch-icon", sizes="120x120", href="icons/apple-icon-120.png")
+		link(rel="apple-touch-icon", sizes="152x152", href="icons/apple-icon-152.png")
+		link(rel="apple-touch-icon", sizes="180x180", href="icons/apple-icon-180.png")
+		link(rel="icon", type="image/png", sizes="16x16", href="icons/favicon-16.png")
+		link(rel="icon", type="image/png", sizes="32x32", href="icons/favicon-32.png")
+		link(rel="icon", type="image/png", sizes="96x96", href="icons/android-icon-96.png")
+		link(rel="icon", type="image/png", sizes="192x192", href="icons/android-icon-192.png")
+		link(rel='stylesheet', href='https://fonts.googleapis.com/icon?family=Material+Icons')
+		link(rel='stylesheet', href='css/material-components-web.min.css')
+		title Databox
+		script(src='js/material-components-web.min.js', defer=true)
+	body(style="background: #EEE")
+		header.mdc-toolbar.mdc-toolbar--fixed.mdc-toolbar--fixed.mdc-theme--dark
+			div#toolbar.mdc-toolbar__row
+				section.mdc-toolbar__section.mdc-toolbar__section--align-start
+					span#toolbartitle.mdc-toolbar__title
+						| Databox
+
+		main#content.mdc-toolbar-fixed-adjust.mdc-typography
+			div.mdc-layout-grid
+				div.mdc-layout-grid__inner
+					div.mdc-layout-grid__cell--span-2-desktop
+					div.mdc-card.mdc-layout-grid__cell.mdc-layout-grid__cell--span-8(style="background: #FFF")
+						section.mdc-card__primary
+							h2
+								| Welcome to Databox
+							div
+								| Databox lets you take control of your personal data and IoT devices.
+							div(style="background: #EE9;margin: 16px 0;padding: 8px;display: flex;align-items: center;")
+								span.material-icons(style="padding: 4px 12px; color: #990")
+									| warning
+								| In order to use Databox securely, we ask that you install the certificate for this site
+							ul
+								li
+									a(href="", title="Sorry, just a placeholder")
+										| How to Install the certificate on Windows
+								li
+									a(href="", title="Sorry, just a placeholder")
+										| How to Install the certificate on Mac OS X
+						section.mdc-card__actions(style="align-self: flex-end")
+							a.mdc-button.mdc-card__action(href="/cert.pem")
+								| Download Certificate
+							a#secure_link.mdc-button.mdc-card__action(href="")
+								| Secure Website
+
+		script.
+			var link = document.getElementById('secure_link');
+			link.href = "https://" + document.location.hostname + ":8989"

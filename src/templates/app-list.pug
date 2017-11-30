@@ -8,9 +8,9 @@ else
 				each appItem in apps
 					a(href="#!/" + appItem[0].manifest.name + '/', title=appItem[0].manifest.name).mdc-grid-tile
 						div.mdc-grid-tile__primary
-							div.app-icon-letter
+							div.app-icon-letter.mdc-elevation--z1
 								= appItem[0].displayName.charAt(0).toUpperCase()
-						div
+						div(style="text-align:center; color: #333")
 							= appItem[0].displayName
 						div.ratings
 							div

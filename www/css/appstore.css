@@ -59,6 +59,7 @@ iframe {
 
 .mdc-grid-tile__primary {
 	background-color: transparent;
+	display: contents;
 }
 
 .mdc-toolbar__section .material-icons {
@@ -90,7 +91,7 @@ iframe {
 	align-items: center;
 	padding: 8px;
 	color: #fff;
-	border-radius: 15px;
+	border-radius: 5px;
 	font-size: 98px;
 	background: #3f51b5;
 	background: linear-gradient(#6f7dcd, #3f51b5);
@@ -104,7 +105,7 @@ iframe {
 	align-items: center;
 	padding: 8px;
 	color: #fff;
-	border-radius: 5px;
+	border-radius: 2px;
 	background: #3f51b5;
 	background: linear-gradient(#6f7dcd, #3f51b5);
 }

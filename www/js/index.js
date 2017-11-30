@@ -5,7 +5,7 @@ let stores = [];
 const localStoreName = "Local Store";
 const sensorDriver = 'driver-sensingkit';
 const isApp = typeof cordova !== 'undefined';
-let databoxURL = 'http://localhost:8989/';
+let databoxURL = 'https://localhost:8989/';
 if (!isApp) {
 	const url = new URL(window.location);
 	databoxURL = url.protocol + '//' + url.hostname + ':8989' + '/';
@@ -127,7 +127,7 @@ function connect(retry) {
 		if (field) {
 			let value = field.value.trim();
 			if (value.indexOf('://') === -1) {
-				value = 'http://' + value;
+				value = 'https://' + value;
 			}
 			const url = new URL(value);
 			if (!url.port) {
@@ -160,10 +160,9 @@ function connect(retry) {
 					hostlabel.parentElement.style.cursor = 'pointer';
 				}
 
-				url.port = '8181';
 				stores = [{
 					"name": localStoreName,
-					"url": url.toString()
+					"url": new URL('/store', databoxURL).toString()
 				},
 					{
 						"name": "IoT Databox Store",
@@ -182,12 +181,28 @@ function connect(retry) {
 			}
 		})
 		.catch((error) => {
-			if (document.getElementById('spinner') && fetchURL === databoxURL) {
-				console.log(error);
-				showConnect(true);
-				const url = new URL(databoxURL);
-				document.getElementById('error_host').innerText = url.hostname;
+			if(isApp) {
+				SensingKit.installCert(fetchURL, (bar) => {
+					if(bar === 'OK') {
+						connect(true);
+					} else {
+						if (document.getElementById('spinner') && fetchURL === databoxURL) {
+							console.log(error);
+							showConnect(true);
+							const url = new URL(databoxURL);
+							document.getElementById('error_host').innerText = url.hostname;
+						}
+					}
+				});
+			} else {
+				if (document.getElementById('spinner') && fetchURL === databoxURL) {
+					console.log(error);
+					showConnect(true);
+					const url = new URL(databoxURL);
+					document.getElementById('error_host').innerText = url.hostname;
+				}
 			}
+
 		});
 }
 

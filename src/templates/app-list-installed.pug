@@ -3,7 +3,7 @@ if(containers && containers.length > 0)
 		div.mdc-list.mdc-list--two-line.mdc-elevation--z3(style="background-color: white;")
 			each container in containers
 				a.mdc-list-item(href="#!/" + container.name + '/ui', data-mdc-auto-init="MDCRipple")
-					span.mdc-list-item__start-detail.app-icon-letter-small
+					span.mdc-list-item__start-detail.app-icon-letter-small.mdc-elevation--z1
 						= container.name.replace('databox_', '').replace('app-','').replace('driver-','').charAt(0).toUpperCase()
 					span.mdc-list-item__text
 						= container.name.replace('databox_', '').replace('app-','').replace('driver-','').replace(/-/g,' ')

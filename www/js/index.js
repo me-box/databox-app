@@ -234,7 +234,6 @@ function toolbarBack() {
 	document.getElementById('backicon').style.display = 'block';
 }
 
-
 function listApps(type) {
 	let promise;
 
@@ -333,10 +332,7 @@ router.on('/driver/store', () => {
 function showConnect(error) {
 	document.getElementById('toolbartitle').innerText = 'Databox';
 	document.getElementById('content').innerHTML = connectTemplate({qr_scan: isApp, error: error});
-	const tfs = document.querySelectorAll('.mdc-textfield');
-	for (const tf of tfs) {
-		mdc.textfield.MDCTextfield.attachTo(tf);
-	}
+	mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
 	const field = document.getElementById('connectField');
 	const stored = localStorage.getItem('databoxURL');
 	if (stored) {
@@ -406,8 +402,9 @@ function showSensingStart() {
 		.then(() => {
 			showSensors();
 		})
-		.catch(() => {
-			showSensingStart();
+		.catch((err) => {
+			console.log(err);
+			setTimeout(showSensingStart, 1000);
 		});
 }
 

@@ -5,10 +5,10 @@ let stores = [];
 const localStoreName = "Local Store";
 const sensorDriver = 'driver-sensingkit';
 const isApp = typeof cordova !== 'undefined';
-let databoxURL = 'https://localhost:8989/';
+let databoxURL = 'https://localhost/';
 if (!isApp) {
 	const url = new URL(window.location);
-	databoxURL = url.protocol + '//' + url.hostname + ':8989' + '/';
+	databoxURL = url.protocol + '//' + url.host + '/';
 	document.getElementById('sensing').style.display = 'none';
 }
 
@@ -130,9 +130,6 @@ function connect(retry) {
 				value = 'https://' + value;
 			}
 			const url = new URL(value);
-			if (!url.port) {
-				url.port = '8989';
-			}
 			localStorage.setItem('databoxURL', url.toString());
 		}
 	}
@@ -146,6 +143,7 @@ function connect(retry) {
 		showConnect(false);
 	});
 	const fetchURL = databoxURL;
+	console.log(fetchURL);
 	fetch(databoxURL + 'api/driver/list')
 		.then(checkOk)
 		.then(() => {
@@ -181,9 +179,9 @@ function connect(retry) {
 			}
 		})
 		.catch((error) => {
-			if(isApp) {
+			if (isApp) {
 				SensingKit.installCert(fetchURL, (bar) => {
-					if(bar === 'OK') {
+					if (bar === 'OK') {
 						connect(true);
 					} else {
 						if (document.getElementById('spinner') && fetchURL === databoxURL) {
@@ -202,7 +200,6 @@ function connect(retry) {
 					document.getElementById('error_host').innerText = url.hostname;
 				}
 			}
-
 		});
 }
 
@@ -257,7 +254,7 @@ function listApps(type) {
 				}
 				return json;
 			})
-			.catch((error) => {
+			.catch(() => {
 				return {'apps': []}
 			}));
 	}
@@ -337,11 +334,7 @@ function showConnect(error) {
 	const stored = localStorage.getItem('databoxURL');
 	if (stored) {
 		const url = new URL(stored);
-		if (url.port !== '8989') {
-			field.value = url.host;
-		} else {
-			field.value = url.hostname;
-		}
+		field.value = url.host;
 	}
 	field.addEventListener('input', () => {
 		const field = document.getElementById('connectField');
@@ -377,7 +370,7 @@ function showSensingInstall() {
 							body: JSON.stringify(manifest),
 						})
 							.then(checkOk)
-							.then((res) => {
+							.then(() => {
 								showSensingStart();
 							});
 					});
@@ -536,7 +529,7 @@ router.on('/:name', (params) => {
 					});
 
 				})
-				.catch((error) => {
+				.catch(() => {
 					toolbarBack();
 					const app = apps[params.name];
 					document.getElementById('content').innerHTML = appTemplate({
@@ -549,7 +542,7 @@ router.on('/:name', (params) => {
 router.on('/:name/ui', (params) => {
 	showSpinner();
 	let appname = params.name;
-	if(isApp && appname === sensorDriver) {
+	if (isApp && appname === sensorDriver) {
 		router.navigate('/sensing');
 	}
 

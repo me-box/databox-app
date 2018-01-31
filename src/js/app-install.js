@@ -1,6 +1,12 @@
+const templates = require("./templates");
+const toolbar = require('./toolbar');
+const containerManager = require('./container-manager');
+const stores = require('./app-store');
+const router = require('./router');
+
 function listDatasources(manifest) {
 	if ('datasources' in manifest && manifest.datasources.length > 0) {
-		return fetch(databoxURL + 'api/datasource/list')
+		return containerManager.fetch('api/datasource/list')
 			.then((res) => {
 				return res.json();
 			})
@@ -16,14 +22,14 @@ function listDatasources(manifest) {
 }
 
 function appConfigDisplay(manifest, sensors) {
-	toolbarBack('Configure ' + manifest.displayName);
+	toolbar.showBack('Configure ' + manifest.displayName);
 	if('packages' in manifest && manifest.packages.length > 0) {
 		const firstPackage = manifest.packages[0];
 		if(!('enabled' in firstPackage)) {
 			firstPackage.enabled = true;
 		}
 	}
-	document.getElementById('content').innerHTML = appConfigTemplate({
+	document.getElementById('content').innerHTML = templates.appInstall({
 		manifest: manifest,
 		sensors: sensors
 	});
@@ -43,8 +49,8 @@ function appConfigDisplay(manifest, sensors) {
 	}
 
 	document.getElementById('install_button').addEventListener('click', () => {
-		document.getElementById('content').innerHTML = spinnerTemplate();
-		fetch(databoxURL + "api/install", {
+		toolbar.showSpinner();
+		containerManager.fetch("api/install", {
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -52,7 +58,7 @@ function appConfigDisplay(manifest, sensors) {
 			body: JSON.stringify(manifest),
 		})
 			.then(() => {
-				router.navigate('/' + manifest['databox-type'] + '/installed');
+				router.navigate('/list/' + manifest['databox-type']);
 			});
 	});
 
@@ -83,7 +89,7 @@ function appConfigDisplay(manifest, sensors) {
 	}
 
 	const MDCSelect = mdc.select.MDCSelect;
-	let mdcSelects = document.getElementsByClassName('mdc-select');
+	const mdcSelects = document.getElementsByClassName('mdc-select');
 	for(const mdcSelect of mdcSelects) {
 		const select = new MDCSelect(mdcSelect);
 		select.listen('MDCSelect:change', () => {
@@ -111,9 +117,9 @@ function appConfigDisplay(manifest, sensors) {
 	}
 }
 
-router.on('/:name/config', (params) => {
-	showSpinner();
-	listApps()
+router.on('/store/:name/install', (params) => {
+	toolbar.showSpinner();
+	stores.listApps()
 		.then((apps) => {
 			const manifest = JSON.parse(JSON.stringify(apps[params.name][0].manifest));
 			listDatasources(manifest)
@@ -133,9 +139,9 @@ function getManifest(apps, name, id) {
 	return manifests[0].manifest
 }
 
-router.on('/:name/config/:id', (params) => {
+router.on('/store/:name/install/:id', (params) => {
 	console.log(params);
-	listApps()
+	stores.listApps()
 		.then((apps) => {
 			const manifest = JSON.parse(JSON.stringify(getManifest(apps, params.name, params.id)));
 			listDatasources(manifest)

@@ -22,19 +22,7 @@ html(lang='en')
 		title Databox
 		script(src="cordova.js", defer=true)
 		script(src='js/material-components-web.min.js', defer=true)
-		script(src="js/navigo.min.js", defer=true)
-		script(src="js/templates/alert.js", defer=true)
-		script(src="js/templates/app.js", defer=true)
-		script(src="js/templates/app-config.js", defer=true)
-		script(src="js/templates/app-list.js", defer=true)
-		script(src="js/templates/app-list-installed.js", defer=true)
-		script(src="js/templates/connect.js", defer=true)
-		script(src="js/templates/sensor-list.js", defer=true)
-		script(src="js/templates/spinner.js", defer=true)
-		script(src="js/templates/welcome.js", defer=true)
-		script(src="js/index.js", defer=true)
-		script(src="js/app-install.js", defer=true)
-		script(src="js/app-control.js", defer=true)
+		script(src="js/bundle.js", defer=true)
 	body
 		header.mdc-toolbar.mdc-toolbar--fixed.mdc-toolbar--fixed.mdc-theme--dark
 			div#toolbar.mdc-toolbar__row
@@ -49,55 +37,58 @@ html(lang='en')
 				section.mdc-toolbar__section.mdc-toolbar__section--align-end.mdc-toolbar__section--shrink-to-fit
 					a#searchicon.mdc-icon-toggle.material-icons.search.align-icons(title="Search", href="#!/search/")
 						| search
+				section#toolbaractions.mdc-toolbar__section.mdc-toolbar__section--align-end.mdc-toolbar__section--shrink-to-fit
+
 
 			div#toolbar-search.mdc-toolbar__row
 				section.mdc-toolbar__section.mdc-toolbar__section--align-start
 					a#searchbackicon.mdc-icon-toggle.material-icons
 						| arrow_back
-					label.mdc-textfield
-						input#toolbar-search__input.mdc-textfield__input(placeholder='Search')
+					label.mdc-text-field
+						input#toolbar-search__input.mdc-text-field__input(placeholder='Search')
 
-		aside.mdc-temporary-drawer.mdc-typography
-			nav.mdc-temporary-drawer__drawer
-				header.mdc-temporary-drawer__header.mdc-theme--dark
-					div.mdc-temporary-drawer__header-content(style="background: url('img/boxes_coloured.png'); background-size: cover; color: #FFF")
+
+		aside.mdc-drawer.mdc-drawer--temporary.mdc-typography
+			nav.mdc-drawer__drawer
+				header.mdc-drawer__header.mdc-theme--dark
+					div.mdc-drawer__header-content(style="background: url('img/boxes_coloured.png'); background-size: cover; color: #FFF")
 						div(style="width: 100%;")
 							div.mdc-typography--title
 								| Databox
 							div#hostname.mdc-typography--caption
-				nav#nav.mdc-temporary-drawer__content.mdc-list
+				nav#nav.mdc-drawer__content.mdc-list
 					a.mdc-list-item(href="#!")
-						i.material-icons.mdc-list-item__start-detail
+						i.material-icons.mdc-list-item__graphic
 							| home
 						| Welcome
-					a.mdc-list-item(href="#!/driver/app")
-						i.material-icons.mdc-list-item__start-detail
+					a.mdc-list-item(href="#!/store/list/app")
+						i.material-icons.mdc-list-item__graphic
 							| store
 						| App Store
-					a.mdc-list-item(href="#!/driver/store")
-						i.material-icons.mdc-list-item__start-detail
+					a.mdc-list-item(href="#!/store/list/driver")
+						i.material-icons.mdc-list-item__graphic
 							| store
 						| Driver Store
-					a.mdc-list-item#sensing(href="#!/sensing")
-						i.material-icons.mdc-list-item__start-detail
+					a.mdc-list-item#sensing(href="#!/sensing" style="display: none")
+						i.material-icons.mdc-list-item__graphic
 							| network_check
 						| Mobile Sensor Data
 					div.mdc-list-group__subheader(style="margin: 16px 0 0 16px")
 						| Installed
-					a.mdc-list-item(href="#!/app/installed")
-						i.material-icons.mdc-list-item__start-detail
+					a.mdc-list-item(href="#!/list/app")
+						i.material-icons.mdc-list-item__graphic
 							| extension
 						| Apps
-					a.mdc-list-item(href="#!/driver/installed")
-						i.material-icons.mdc-list-item__start-detail
+					a.mdc-list-item(href="#!/list/driver")
+						i.material-icons.mdc-list-item__graphic
 							| developer_board
 						| Drivers
-					a.mdc-list-item(href="#!/store/installed")
-						i.material-icons.mdc-list-item__start-detail
+					a.mdc-list-item(href="#!/list/store")
+						i.material-icons.mdc-list-item__graphic
 							| dns
 						| Stores
-					a.mdc-list-item(href="#!/system/installed")
-						i.material-icons.mdc-list-item__start-detail
+					a.mdc-list-item(href="#!/list/system")
+						i.material-icons.mdc-list-item__graphic
 							| settings_applications
 						| System
 

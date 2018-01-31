@@ -50,7 +50,7 @@ div(style="padding: 16px")
 
 		if(!app.installed)
 			section.mdc-card__actions
-				a(id="install_link" href="#!/" + app[0].manifest.name + "/config").mdc-button.mdc-card__action.mdc-button--primary
+				a(id="install_link" href="#!/store/" + app[0].manifest.name + "/install").mdc-button.mdc-card__action.mdc-button--primary
 					| Install
 				if(app.length > 1)
 					a#versionButton.mdc-button(style="min-width: 16px; color: #666")

@@ -67,7 +67,7 @@ module.exports.connect = function () {
 				stores.setStores([
 					{
 						"name": stores.localStoreName,
-						"url": 'https://localhost:8181/'
+						"url": 'https://' + url.hostname + ':8181/'
 					},
 					{
 						"name": "IoT Databox Store",

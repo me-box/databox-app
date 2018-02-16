@@ -995,7 +995,7 @@ pug_html = pug_html + "documentation\u003C\u002Fa\u003E";
 ;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "&nbsp;for help in setting up a Databox.\u003C\u002Fsection\u003E";
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\" id=\"error_details\" style=\"display:none;\"\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\" id=\"error_details\" style=\"display: none;\"\u003E";
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "\u003Ch1 class=\"mdc-card__title mdc-card__title--large\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
@@ -1028,6 +1028,100 @@ pug_html = pug_html + "Scan QR Code\u003C\u002Fbutton\u003E";
 pug_html = pug_html + "\u003Cbutton class=\"mdc-card__action mdc-button mdc-button--primary\" id=\"connectButton\" disabled=\"disabled\"\u003E";
 ;pug_debug_line = 30;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "Connect\u003C\u002Fbutton\u003E\u003C\u002Fsection\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
+
+module.exports['driverList'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;var locals_for_with = (locals || {});(function (containers) {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+if ((containers && containers.length > 0)) {
+;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 24px 0;\"\u003E";
+;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-list mdc-list--two-line mdc-elevation--z3\" style=\"background-color: white;\"\u003E";
+;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+// iterate containers
+;(function(){
+  var $$obj = containers;
+  if ('number' == typeof $$obj.length) {
+      for (var pug_index0 = 0, $$l = $$obj.length; pug_index0 < $$l; pug_index0++) {
+        var container = $$obj[pug_index0];
+;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Ca" + (" class=\"mdc-list-item\""+pug.attr("href", "#!/" + container.name + '/ui', true, false)+" data-mdc-auto-init=\"MDCRipple\"") + "\u003E";
+;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__graphic app-icon-letter-small mdc-elevation--z1\"\u003E";
+;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = container.name.replace('databox_', '').replace('app-','').replace('driver-','').charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E";
+;pug_debug_line = 8;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text\"\u003E";
+;pug_debug_line = 9;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = container.name.replace('databox_', '').replace('app-','').replace('driver-','').replace(/-/g,' ')) ? "" : pug_interp));
+;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan" + (" class=\"mdc-list-item__secondary-text\""+pug.attr("style", pug.style(container.state === 'running' ? '' : 'color: #F00'), true, false)) + "\u003E";
+;pug_debug_line = 11;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fspan\u003E";
+;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+if (container.type !== 'system') {
+;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan style=\"display: flex; margin-left: auto;\"\u003E";
+;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+if (container.desiredState === 'running') {
+;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan" + (" class=\"material-icons mdc-list-item__meta mdc-icon-toggle\""+pug.attr("id", 'restart_' + container.name, true, false)) + "\u003E";
+;pug_debug_line = 16;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "refresh\u003C\u002Fspan\u003E";
+}
+;pug_debug_line = 17;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan" + (" class=\"material-icons mdc-list-item__meta mdc-icon-toggle\""+pug.attr("id", 'uninstall_' + container.name, true, false)) + "\u003E";
+;pug_debug_line = 18;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "close\u003C\u002Fspan\u003E\u003C\u002Fspan\u003E";
+}
+pug_html = pug_html + "\u003C\u002Fa\u003E";
+      }
+  } else {
+    var $$l = 0;
+    for (var pug_index0 in $$obj) {
+      $$l++;
+      var container = $$obj[pug_index0];
+;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Ca" + (" class=\"mdc-list-item\""+pug.attr("href", "#!/" + container.name + '/ui', true, false)+" data-mdc-auto-init=\"MDCRipple\"") + "\u003E";
+;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__graphic app-icon-letter-small mdc-elevation--z1\"\u003E";
+;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = container.name.replace('databox_', '').replace('app-','').replace('driver-','').charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E";
+;pug_debug_line = 8;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text\"\u003E";
+;pug_debug_line = 9;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = container.name.replace('databox_', '').replace('app-','').replace('driver-','').replace(/-/g,' ')) ? "" : pug_interp));
+;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan" + (" class=\"mdc-list-item__secondary-text\""+pug.attr("style", pug.style(container.state === 'running' ? '' : 'color: #F00'), true, false)) + "\u003E";
+;pug_debug_line = 11;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fspan\u003E";
+;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+if (container.type !== 'system') {
+;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan style=\"display: flex; margin-left: auto;\"\u003E";
+;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+if (container.desiredState === 'running') {
+;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan" + (" class=\"material-icons mdc-list-item__meta mdc-icon-toggle\""+pug.attr("id", 'restart_' + container.name, true, false)) + "\u003E";
+;pug_debug_line = 16;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "refresh\u003C\u002Fspan\u003E";
+}
+;pug_debug_line = 17;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cspan" + (" class=\"material-icons mdc-list-item__meta mdc-icon-toggle\""+pug.attr("id", 'uninstall_' + container.name, true, false)) + "\u003E";
+;pug_debug_line = 18;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "close\u003C\u002Fspan\u003E\u003C\u002Fspan\u003E";
+}
+pug_html = pug_html + "\u003C\u002Fa\u003E";
+    }
+  }
+}).call(this);
+
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+}
+else {
+;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 48px; text-align: center;\"\u003E";
+;pug_debug_line = 21;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
+pug_html = pug_html + "Empty\u003C\u002Fdiv\u003E";
+}}.call(this,"containers" in locals_for_with?locals_for_with.containers:typeof containers!=="undefined"?containers:undefined));} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
 
 module.exports['login'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid\"\u003E";
@@ -1265,9 +1359,9 @@ pug_html = pug_html + "\u003Cdiv style=\"display: flex;justify-content: center;a
 ;pug_debug_line = 26;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "\u003Ca href=\"https:\u002F\u002Fplay.google.com\u002Fstore\u002Fapps\u002Fdetails?id=io.databox.app\" target=\"_top\" style=\"margin-top: 5px; margin-right: 20px;\"\u003E";
 ;pug_debug_line = 27;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
-pug_html = pug_html + "\u003Cimg alt=\"Get it on Google Play\" height=\"60\" src=\"https:\u002F\u002Fplay.google.com\u002Fintl\u002Fen_us\u002Fbadges\u002Fimages\u002Fgeneric\u002Fen_badge_web_generic.png\"\u002F\u003E\u003C\u002Fa\u003E";
+pug_html = pug_html + "\u003Cimg alt=\"Get Databox on Google Play\" height=\"60\" src=\"https:\u002F\u002Fplay.google.com\u002Fintl\u002Fen_us\u002Fbadges\u002Fimages\u002Fgeneric\u002Fen_badge_web_generic.png\"\u002F\u003E\u003C\u002Fa\u003E";
 ;pug_debug_line = 28;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
-pug_html = pug_html + "\u003Ca href=\"https:\u002F\u002Fitunes.apple.com\u002Fus\u002Fapp\u002Fdatabox-controller\u002Fid1295071825?mt=8\" target=\"_top\" style=\"display:inline-block;overflow:hidden;background:url(\u002F\u002Flinkmaker.itunes.apple.com\u002Fassets\u002Fshared\u002Fbadges\u002Fen-us\u002Fappstore-lrg.svg) no-repeat;width:135px;height:40px;background-size:contain;\"\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Ca href=\"https:\u002F\u002Fitunes.apple.com\u002Fus\u002Fapp\u002Fdatabox-controller\u002Fid1295071825?mt=8\" target=\"_top\" style=\"display:inline-block;overflow:hidden;background:url(\u002F\u002Flinkmaker.itunes.apple.com\u002Fassets\u002Fshared\u002Fbadges\u002Fen-us\u002Fappstore-lrg.svg) no-repeat;width:135px;height:40px;background-size:contain;\" title=\"Get Databox on Apple App Store\"\u003E\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 29;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "\u003Cdiv style=\"display: flex;justify-content: center;align-items: center;\"\u003E";
 ;pug_debug_line = 30;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";

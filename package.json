@@ -12,6 +12,8 @@
 	"license": "Apache-2.0",
 	"dependencies": {
 		"cordova-android": "^7.0.0",
+		"cordova-ios": "^4.5.4",
+		"cordova-plugin-add-swift-support": "git+https://github.com/akofman/cordova-plugin-add-swift-support.git",
 		"cordova-plugin-qrscanner": "git+https://github.com/ktg/cordova-plugin-qrscanner.git",
 		"cordova-plugin-sensingKit": "git+https://github.com/ktg/cordova-plugin-sensingkit.git",
 		"cordova-plugin-statusbar": "^2.4.1",
@@ -23,13 +25,15 @@
 	},
 	"cordova": {
 		"plugins": {
-			"cordova-plugin-whitelist": {},
 			"cordova-plugin-statusbar": {},
 			"cordova-plugin-qrscanner": {},
+			"cordova-plugin-add-swift-support": {},
+			"cordova-plugin-whitelist": {},
 			"cordova-plugin-sensingKit": {}
 		},
 		"platforms": [
-			"android"
+			"android",
+			"ios"
 		]
 	},
 	"devDependencies": {

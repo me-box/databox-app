@@ -26,9 +26,26 @@
         <resource-file src="res/icons/ic_launcher_foreground.xml" target="app/main/src/res/drawable/ic_launcher_foreground.xml" />
         <resource-file src="res/icons/android-icon-adaptive.xml" target="app/main/src/res/mipmap-anydpi-v26/icon.xml" />
     </platform>
+    <platform name="ios">
+        <feature name="StatusBar">
+            <param name="ios-package" onload="true" value="CDVStatusBar" />
+        </feature>
+        <icon height="40" src="res/icons/apple-icon-40.png" width="40" />
+        <icon height="57" src="res/icons/apple-icon-57.png" width="57" />
+        <icon height="76" src="res/icons/apple-icon-76.png" width="76" />
+        <icon height="120" src="res/icons/apple-icon-120.png" width="120" />
+        <icon height="152" src="res/icons/apple-icon-152.png" width="152" />
+        <icon height="167" src="res/icons/apple-icon-167.png" width="167" />
+        <icon height="180" src="res/icons/apple-icon-180.png" width="180" />
+        <icon height="1024" src="res/icon-1024.png" width="1024" />
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
-    <plugin name="cordova-plugin-qrscanner" spec="https://github.com/ktg/cordova-plugin-qrscanner.git" />
+    <plugin name="cordova-plugin-qrscanner" spec="git+https://github.com/ktg/cordova-plugin-qrscanner.git" />
+    <plugin name="cordova-plugin-add-swift-support" spec="git+https://github.com/akofman/cordova-plugin-add-swift-support.git" />
     <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
     <engine name="android" spec="^7.0.0" />
+    <engine name="ios" spec="^4.5.4" />
 </widget>

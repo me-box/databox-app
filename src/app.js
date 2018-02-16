@@ -47,9 +47,7 @@ containerManager.onShowConnect = function () {
 					if (err) {
 						console.error(err);
 					} else {
-						QRScanner.destroy(function (status) {
-							console.log(status);
-						});
+						QRScanner.destroy();
 						const auth = JSON.parse(text);
 						localStorage.setItem("databoxURL", 'https://' + auth.ip + '/');
 						localStorage.setItem("databoxToken", auth.token);
@@ -58,9 +56,8 @@ containerManager.onShowConnect = function () {
 				});
 
 				document.getElementById('content').innerHTML = '';
-				QRScanner.show((status) => {
-					console.log(status);
-				});
+				toolbar.showBack();
+				QRScanner.show();
 			}
 		});
 	});

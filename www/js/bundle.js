@@ -476,9 +476,7 @@ containerManager.onShowConnect = function () {
 					if (err) {
 						console.error(err);
 					} else {
-						QRScanner.destroy(function (status) {
-							console.log(status);
-						});
+						QRScanner.destroy();
 						const auth = JSON.parse(text);
 						localStorage.setItem("databoxURL", 'https://' + auth.ip + '/');
 						localStorage.setItem("databoxToken", auth.token);
@@ -488,9 +486,7 @@ containerManager.onShowConnect = function () {
 
 				document.getElementById('content').innerHTML = '';
 				toolbar.showBack();
-				QRScanner.show((status) => {
-					console.log(status);
-				});
+				QRScanner.show();
 			}
 		});
 	});
@@ -675,7 +671,8 @@ function reloadAppList(type) {
 					const newList = templates.appList({
 						containers: containers
 					});
-					if (document.getElementById('content').innerHTML !== newList) {
+					const innerHTML = document.getElementById('content').innerHTML.replace(/>contains [^<]*<\/span>/g, '>running</span>');
+					if (innerHTML !== newList) {
 						document.getElementById('content').innerHTML = newList;
 						const actions = document.getElementsByClassName('mdc-icon-toggle');
 						for (const action of actions) {
@@ -703,6 +700,28 @@ function reloadAppList(type) {
 									});
 									event.preventDefault();
 								});
+							}
+						}
+
+						for(const container of containers) {
+							if(container.type === "store" && container.state === "running") {
+								containerManager.fetch('api/store/cat/' + container.name)
+									.then((res) => res.json())
+									.then((cat) => {
+										let types = [];
+										let comma = false;
+										for(const item of cat.items) {
+											for(const metadata of item['item-metadata']) {
+												if (metadata.rel === "urn:X-databox:rels:hasType") {
+													types.push(metadata.val);
+												}
+											}
+										}
+
+										if(types.length !== 0) {
+											document.getElementById('types_' + container.name).innerText = 'contains ' + types.join(', ');
+										}
+									});
 							}
 						}
 					}
@@ -1943,7 +1962,7 @@ pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text\"\u003E";
 ;pug_debug_line = 9;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = container.name.replace('databox_', '').replace('app-','').replace('driver-','').replace(/-/g,' ')) ? "" : pug_interp));
 ;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
-pug_html = pug_html + "\u003Cspan" + (" class=\"mdc-list-item__secondary-text\""+pug.attr("style", pug.style(container.state === 'running' ? '' : 'color: #F00'), true, false)) + "\u003E";
+pug_html = pug_html + "\u003Cspan" + (" class=\"mdc-list-item__secondary-text\""+pug.attr("id", 'types_' + container.name, true, false)+pug.attr("style", pug.style(container.state === 'running' ? '' : 'color: #F00'), true, false)) + "\u003E";
 ;pug_debug_line = 11;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fspan\u003E";
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
@@ -1980,7 +1999,7 @@ pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text\"\u003E";
 ;pug_debug_line = 9;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = container.name.replace('databox_', '').replace('app-','').replace('driver-','').replace(/-/g,' ')) ? "" : pug_interp));
 ;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
-pug_html = pug_html + "\u003Cspan" + (" class=\"mdc-list-item__secondary-text\""+pug.attr("style", pug.style(container.state === 'running' ? '' : 'color: #F00'), true, false)) + "\u003E";
+pug_html = pug_html + "\u003Cspan" + (" class=\"mdc-list-item__secondary-text\""+pug.attr("id", 'types_' + container.name, true, false)+pug.attr("style", pug.style(container.state === 'running' ? '' : 'color: #F00'), true, false)) + "\u003E";
 ;pug_debug_line = 11;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : pug_interp)) + "\u003C\u002Fspan\u003E\u003C\u002Fspan\u003E";
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";

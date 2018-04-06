@@ -23,9 +23,9 @@ function listDatasources(manifest) {
 
 function appConfigDisplay(manifest, sensors) {
 	toolbar.showBack('Configure ' + manifest.displayName);
-	if('packages' in manifest && manifest.packages.length > 0) {
+	if ('packages' in manifest && manifest.packages.length > 0) {
 		const firstPackage = manifest.packages[0];
-		if(!('enabled' in firstPackage)) {
+		if (!('enabled' in firstPackage)) {
 			firstPackage.enabled = true;
 		}
 	}
@@ -34,12 +34,12 @@ function appConfigDisplay(manifest, sensors) {
 		sensors: sensors
 	});
 
-	if('packages' in manifest && manifest.packages.length > 1) {
-		for(let index = 0; index < manifest.packages.length; index++) {
+	if ('packages' in manifest && manifest.packages.length > 1) {
+		for (let index = 0; index < manifest.packages.length; index++) {
 			let databoxPackage = manifest.packages[index];
 			let packageID = "pack_" + (databoxPackage.id || index);
 			let element = document.getElementById(packageID);
-			if(!databoxPackage.required) {
+			if (!databoxPackage.required) {
 				element.addEventListener('click', () => {
 					databoxPackage.enabled = !databoxPackage.enabled;
 					appConfigDisplay(manifest, sensors);
@@ -63,19 +63,19 @@ function appConfigDisplay(manifest, sensors) {
 	});
 
 	let selects = document.getElementsByTagName('select');
-	for(const selectElements of selects) {
+	for (const selectElements of selects) {
 		selectElements.addEventListener('change', (event) => {
 			const selectElement = event.currentTarget;
 			const clientid = selectElement.getAttribute('datasource');
-			for(const datasource of manifest.datasources) {
-				if(datasource.clientid === clientid) {
-					if(selectElement.selectedIndex === 0) {
+			for (const datasource of manifest.datasources) {
+				if (datasource.clientid === clientid) {
+					if (selectElement.selectedIndex === 0) {
 						datasource.hypercat = null;
 						appConfigDisplay(manifest, sensors);
 					} else {
 						const sensorHref = selectElement.value;
 						for (const sensor of sensors) {
-							if(sensor.href === sensorHref) {
+							if (sensor.href === sensorHref) {
 								datasource.hypercat = sensor;
 								appConfigDisplay(manifest, sensors);
 								break;
@@ -88,30 +88,32 @@ function appConfigDisplay(manifest, sensors) {
 		});
 	}
 
-	const MDCSelect = mdc.select.MDCSelect;
 	const mdcSelects = document.getElementsByClassName('mdc-select');
-	for(const mdcSelect of mdcSelects) {
-		const select = new MDCSelect(mdcSelect);
-		select.listen('MDCSelect:change', () => {
-			const selectElement = select;
-			const clientid = mdcSelect.getAttribute('datasource');
-			for(const datasource of manifest.datasources) {
-				if(datasource.clientid === clientid) {
-					const sensorHref = selectElement.value;
-					for (const sensor of sensors) {
-						if(sensor.href === sensorHref) {
-							datasource.hypercat = sensor;
-							appConfigDisplay(manifest, sensors);
-							break;
+	for (const mdcSelect of mdcSelects) {
+		const select = new mdc.select.MDCSelect(mdcSelect);
+		const native = mdcSelect.querySelector('.mdc-select__native-control');
+		mdcSelect.addEventListener('change', () => {
+			const item = native.selectedOptions[0];
+			if (item) {
+				const clientid = mdcSelect.getAttribute('datasource');
+				for (const datasource of manifest.datasources) {
+					if (datasource.clientid === clientid) {
+						const sensorHref = native.value;
+						for (const sensor of sensors) {
+							if (sensor.href === sensorHref) {
+								datasource.hypercat = sensor;
+								appConfigDisplay(manifest, sensors);
+								break;
+							}
 						}
+						break;
 					}
-					break;
 				}
 			}
 		});
 	}
 
-	for(const mdcSelect of mdcSelects) {
+	for (const mdcSelect of mdcSelects) {
 		mdcSelect.style.minWidth = mdcSelect.style.width;
 		mdcSelect.style.width = null;
 	}
@@ -131,8 +133,8 @@ router.on('/store/:name/install', (params) => {
 
 function getManifest(apps, name, id) {
 	const manifests = apps[name];
-	for(const manifest of manifests) {
-		if(manifest._id === id) {
+	for (const manifest of manifests) {
+		if (manifest._id === id) {
 			return manifest.manifest;
 		}
 	}

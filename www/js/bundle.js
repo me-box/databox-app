@@ -1,5 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("Navigo",[],t):"object"==typeof exports?exports.Navigo=t():e.Navigo=t()}(this,function(){return function(e){function t(o){if(n[o])return n[o].exports;var i=n[o]={exports:{},id:o,loaded:!1};return e[o].call(i.exports,i,i.exports,t),i.loaded=!0,i.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([function(e,t){"use strict";function n(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}function o(){return!("undefined"==typeof window||!window.history||!window.history.pushState)}function i(e,t,n){this.root=null,this._routes=[],this._useHash=t,this._hash="undefined"==typeof n?"#":n,this._paused=!1,this._destroyed=!1,this._lastRouteResolved=null,this._notFoundHandler=null,this._defaultHandler=null,this._usePushState=!t&&o(),this._onLocationChange=this._onLocationChange.bind(this),this._genericHooks=null,this._historyAPIUpdateMethod="pushState",e?this.root=t?e.replace(/\/$/,"/"+this._hash):e.replace(/\/$/,""):t&&(this.root=this._cLoc().split(this._hash)[0].replace(/\/$/,"/"+this._hash)),this._listen(),this.updatePageLinks()}function s(e){return e instanceof RegExp?e:e.replace(/\/+$/,"").replace(/^\/+/,"^/")}function r(e,t){return 0===t.length?null:e?e.slice(1,e.length).reduce(function(e,n,o){return null===e&&(e={}),e[t[o]]=decodeURIComponent(n),e},null):null}function a(e){var t,n=[];return t=e instanceof RegExp?e:new RegExp(e.replace(i.PARAMETER_REGEXP,function(e,t,o){return n.push(o),i.REPLACE_VARIABLE_REGEXP}).replace(i.WILDCARD_REGEXP,i.REPLACE_WILDCARD)+i.FOLLOWED_BY_SLASH_REGEXP,i.MATCH_REGEXP_FLAGS),{regexp:t,paramNames:n}}function u(e){return e.replace(/\/$/,"").split("/").length}function h(e,t){return u(t)-u(e)}function l(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[];return t.map(function(t){var n=a(s(t.route)),o=n.regexp,i=n.paramNames,u=e.replace(/^\/+/,"/").match(o),h=r(u,i);return!!u&&{match:u,route:t,params:h}}).filter(function(e){return e})}function d(e,t){return l(e,t)[0]||!1}function c(e,t){var n=t.map(function(t){return""===t.route||"*"===t.route?e:e.split(new RegExp(t.route+"($|/)"))[0]}),o=s(e);return n.length>1?n.reduce(function(e,t){return e.length>t.length&&(e=t),e},n[0]):1===n.length?n[0]:o}function f(){return!!("undefined"!=typeof window&&"onhashchange"in window)}function _(e){return e.split(/\?(.*)?$/).slice(1).join("")}function p(e,t,n){var i,s=e,r=function(e){return e.split(/\?(.*)?$/)[0]};return"undefined"==typeof n&&(n="#"),o()&&!t?s=r(e).split(n)[0]:(i=e.split(n),s=r(i.length>1?i[1]:i[0])),s}function v(e,t,n){if(t&&"object"===("undefined"==typeof t?"undefined":g(t))){if(t.before)return void t.before(function(){var o=!(arguments.length>0&&void 0!==arguments[0])||arguments[0];o&&(e(),t.after&&t.after(n))},n);if(t.after)return e(),void(t.after&&t.after(n))}e()}function R(e,t,n){if(o()&&!t)return!1;if(!e.match(n))return!1;var i=e.split(n);return i.length<2||""===i[1]}Object.defineProperty(t,"__esModule",{value:!0});var g="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};i.prototype={helpers:{match:d,root:c,clean:s,getOnlyURL:p},navigate:function(e,t){var n;return e=e||"",this._usePushState?(n=(t?"":this._getRoot()+"/")+e.replace(/^\/+/,"/"),n=n.replace(/([^:])(\/{2,})/g,"$1/"),history[this._historyAPIUpdateMethod]({},"",n),this.resolve()):"undefined"!=typeof window&&(e=e.replace(new RegExp("^"+this._hash),""),window.location.href=window.location.href.replace(/#$/,"").replace(new RegExp(this._hash+".*$"),"")+this._hash+e),this},on:function(){for(var e=this,t=arguments.length,n=Array(t),o=0;o<t;o++)n[o]=arguments[o];if("function"==typeof n[0])this._defaultHandler={handler:n[0],hooks:n[1]};else if(n.length>=2)if("/"===n[0]){var i=n[1];"object"===g(n[1])&&(i=n[1].uses),this._defaultHandler={handler:i,hooks:n[2]}}else this._add(n[0],n[1],n[2]);else if("object"===g(n[0])){var s=Object.keys(n[0]).sort(h);s.forEach(function(t){e.on(t,n[0][t])})}return this},off:function(e){return null!==this._defaultHandler&&e===this._defaultHandler.handler?this._defaultHandler=null:null!==this._notFoundHandler&&e===this._notFoundHandler.handler&&(this._notFoundHandler=null),this._routes=this._routes.reduce(function(t,n){return n.handler!==e&&t.push(n),t},[]),this},notFound:function(e,t){return this._notFoundHandler={handler:e,hooks:t},this},resolve:function(e){var t,o,i=this,s=(e||this._cLoc()).replace(this._getRoot(),"");this._useHash&&(s=s.replace(new RegExp("^/"+this._hash),"/"));var r=_(e||this._cLoc()),a=p(s,this._useHash,this._hash);return!this._paused&&(this._lastRouteResolved&&a===this._lastRouteResolved.url&&r===this._lastRouteResolved.query?(this._lastRouteResolved.hooks&&this._lastRouteResolved.hooks.already&&this._lastRouteResolved.hooks.already(this._lastRouteResolved.params),!1):(o=d(a,this._routes))?(this._callLeave(),this._lastRouteResolved={url:a,query:r,hooks:o.route.hooks,params:o.params,name:o.route.name},t=o.route.handler,v(function(){v(function(){o.route.route instanceof RegExp?t.apply(void 0,n(o.match.slice(1,o.match.length))):t(o.params,r)},o.route.hooks,o.params,i._genericHooks)},this._genericHooks,o.params),o):this._defaultHandler&&(""===a||"/"===a||a===this._hash||R(a,this._useHash,this._hash))?(v(function(){v(function(){i._callLeave(),i._lastRouteResolved={url:a,query:r,hooks:i._defaultHandler.hooks},i._defaultHandler.handler(r)},i._defaultHandler.hooks)},this._genericHooks),!0):(this._notFoundHandler&&v(function(){v(function(){i._callLeave(),i._lastRouteResolved={url:a,query:r,hooks:i._notFoundHandler.hooks},i._notFoundHandler.handler(r)},i._notFoundHandler.hooks)},this._genericHooks),!1))},destroy:function(){this._routes=[],this._destroyed=!0,this._lastRouteResolved=null,this._genericHooks=null,clearTimeout(this._listeningInterval),"undefined"!=typeof window&&(window.removeEventListener("popstate",this._onLocationChange),window.removeEventListener("hashchange",this._onLocationChange))},updatePageLinks:function(){var e=this;"undefined"!=typeof document&&this._findLinks().forEach(function(t){t.hasListenerAttached||(t.addEventListener("click",function(n){var o=e.getLinkPath(t);e._destroyed||(n.preventDefault(),e.navigate(o.replace(/\/+$/,"").replace(/^\/+/,"/")))}),t.hasListenerAttached=!0)})},generate:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=this._routes.reduce(function(n,o){var i;if(o.name===e){n=o.route;for(i in t)n=n.toString().replace(":"+i,t[i])}return n},"");return this._useHash?this._hash+n:n},link:function(e){return this._getRoot()+e},pause:function(){var e=!(arguments.length>0&&void 0!==arguments[0])||arguments[0];this._paused=e,e?this._historyAPIUpdateMethod="replaceState":this._historyAPIUpdateMethod="pushState"},resume:function(){this.pause(!1)},historyAPIUpdateMethod:function(e){return"undefined"==typeof e?this._historyAPIUpdateMethod:(this._historyAPIUpdateMethod=e,e)},disableIfAPINotAvailable:function(){o()||this.destroy()},lastRouteResolved:function(){return this._lastRouteResolved},getLinkPath:function(e){return e.getAttribute("href")},hooks:function(e){this._genericHooks=e},_add:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:null;return"string"==typeof e&&(e=encodeURI(e)),"object"===("undefined"==typeof t?"undefined":g(t))?this._routes.push({route:e,handler:t.uses,name:t.as,hooks:n||t.hooks}):this._routes.push({route:e,handler:t,hooks:n}),this._add},_getRoot:function(){return null!==this.root?this.root:(this.root=c(this._cLoc().split("?")[0],this._routes),this.root)},_listen:function(){var e=this;if(this._usePushState)window.addEventListener("popstate",this._onLocationChange);else if(f())window.addEventListener("hashchange",this._onLocationChange);else{var t=this._cLoc(),n=void 0,o=void 0;o=function(){n=e._cLoc(),t!==n&&(t=n,e.resolve()),e._listeningInterval=setTimeout(o,200)},o()}},_cLoc:function(){return"undefined"!=typeof window?"undefined"!=typeof window.__NAVIGO_WINDOW_LOCATION_MOCK__?window.__NAVIGO_WINDOW_LOCATION_MOCK__:s(window.location.href):""},_findLinks:function(){return[].slice.call(document.querySelectorAll("[data-navigo]"))},_onLocationChange:function(){this.resolve()},_callLeave:function(){this._lastRouteResolved&&this._lastRouteResolved.hooks&&this._lastRouteResolved.hooks.leave&&this._lastRouteResolved.hooks.leave(this._lastRouteResolved.params)}},i.PARAMETER_REGEXP=/([:*])(\w+)/g,i.WILDCARD_REGEXP=/\*/g,i.REPLACE_VARIABLE_REGEXP="([^/]+)",i.REPLACE_WILDCARD="(?:.*)",i.FOLLOWED_BY_SLASH_REGEXP="(?:/$|$)",i.MATCH_REGEXP_FLAGS="",t["default"]=i,e.exports=t["default"]}])});
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):e.Navigo=t()}(this,function(){"use strict";var e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};function t(){return!("undefined"==typeof window||!window.history||!window.history.pushState)}function n(e,n,o){this.root=null,this._routes=[],this._useHash=n,this._hash=void 0===o?"#":o,this._paused=!1,this._destroyed=!1,this._lastRouteResolved=null,this._notFoundHandler=null,this._defaultHandler=null,this._usePushState=!n&&t(),this._onLocationChange=this._onLocationChange.bind(this),this._genericHooks=null,this._historyAPIUpdateMethod="pushState",e?this.root=n?e.replace(/\/$/,"/"+this._hash):e.replace(/\/$/,""):n&&(this.root=this._cLoc().split(this._hash)[0].replace(/\/$/,"/"+this._hash)),this._listen(),this.updatePageLinks()}function o(e){return e instanceof RegExp?e:e.replace(/\/+$/,"").replace(/^\/+/,"^/")}function i(e){return e.replace(/\/$/,"").split("/").length}function s(e,t){return i(t)-i(e)}function r(e,t){return function(e){return(arguments.length>1&&void 0!==arguments[1]?arguments[1]:[]).map(function(t){var i=function(e){var t=[];return{regexp:e instanceof RegExp?e:new RegExp(e.replace(n.PARAMETER_REGEXP,function(e,o,i){return t.push(i),n.REPLACE_VARIABLE_REGEXP}).replace(n.WILDCARD_REGEXP,n.REPLACE_WILDCARD)+n.FOLLOWED_BY_SLASH_REGEXP,n.MATCH_REGEXP_FLAGS),paramNames:t}}(o(t.route)),s=i.regexp,r=i.paramNames,a=e.replace(/^\/+/,"/").match(s),h=function(e,t){return 0===t.length?null:e?e.slice(1,e.length).reduce(function(e,n,o){return null===e&&(e={}),e[t[o]]=decodeURIComponent(n),e},null):null}(a,r);return!!a&&{match:a,route:t,params:h}}).filter(function(e){return e})}(e,t)[0]||!1}function a(e,t){var n=t.map(function(t){return""===t.route||"*"===t.route?e:e.split(new RegExp(t.route+"($|/)"))[0]}),i=o(e);return n.length>1?n.reduce(function(e,t){return e.length>t.length&&(e=t),e},n[0]):1===n.length?n[0]:i}function h(e,n,o){var i,s=function(e){return e.split(/\?(.*)?$/)[0]};return void 0===o&&(o="#"),t()&&!n?s(e).split(o)[0]:(i=e.split(o)).length>1?s(i[1]):s(i[0])}function u(t,n,o){if(n&&"object"===(void 0===n?"undefined":e(n))){if(n.before)return void n.before(function(){(!(arguments.length>0&&void 0!==arguments[0])||arguments[0])&&(t(),n.after&&n.after(o))},o);if(n.after)return t(),void(n.after&&n.after(o))}t()}return n.prototype={helpers:{match:r,root:a,clean:o,getOnlyURL:h},navigate:function(e,t){var n;return e=e||"",this._usePushState?(n=(n=(t?"":this._getRoot()+"/")+e.replace(/^\/+/,"/")).replace(/([^:])(\/{2,})/g,"$1/"),history[this._historyAPIUpdateMethod]({},"",n),this.resolve()):"undefined"!=typeof window&&(e=e.replace(new RegExp("^"+this._hash),""),window.location.href=window.location.href.replace(/#$/,"").replace(new RegExp(this._hash+".*$"),"")+this._hash+e),this},on:function(){for(var t=this,n=arguments.length,o=Array(n),i=0;i<n;i++)o[i]=arguments[i];if("function"==typeof o[0])this._defaultHandler={handler:o[0],hooks:o[1]};else if(o.length>=2)if("/"===o[0]){var r=o[1];"object"===e(o[1])&&(r=o[1].uses),this._defaultHandler={handler:r,hooks:o[2]}}else this._add(o[0],o[1],o[2]);else"object"===e(o[0])&&Object.keys(o[0]).sort(s).forEach(function(e){t.on(e,o[0][e])});return this},off:function(e){return null!==this._defaultHandler&&e===this._defaultHandler.handler?this._defaultHandler=null:null!==this._notFoundHandler&&e===this._notFoundHandler.handler&&(this._notFoundHandler=null),this._routes=this._routes.reduce(function(t,n){return n.handler!==e&&t.push(n),t},[]),this},notFound:function(e,t){return this._notFoundHandler={handler:e,hooks:t},this},resolve:function(e){var n,o,i=this,s=(e||this._cLoc()).replace(this._getRoot(),"");this._useHash&&(s=s.replace(new RegExp("^/"+this._hash),"/"));var a=function(e){return e.split(/\?(.*)?$/).slice(1).join("")}(e||this._cLoc()),l=h(s,this._useHash,this._hash);return!this._paused&&(this._lastRouteResolved&&l===this._lastRouteResolved.url&&a===this._lastRouteResolved.query?(this._lastRouteResolved.hooks&&this._lastRouteResolved.hooks.already&&this._lastRouteResolved.hooks.already(this._lastRouteResolved.params),!1):(o=r(l,this._routes))?(this._callLeave(),this._lastRouteResolved={url:l,query:a,hooks:o.route.hooks,params:o.params,name:o.route.name},n=o.route.handler,u(function(){u(function(){o.route.route instanceof RegExp?n.apply(void 0,o.match.slice(1,o.match.length)):n(o.params,a)},o.route.hooks,o.params,i._genericHooks)},this._genericHooks,o.params),o):this._defaultHandler&&(""===l||"/"===l||l===this._hash||function(e,n,o){if(t()&&!n)return!1;if(!e.match(o))return!1;var i=e.split(o);return i.length<2||""===i[1]}(l,this._useHash,this._hash))?(u(function(){u(function(){i._callLeave(),i._lastRouteResolved={url:l,query:a,hooks:i._defaultHandler.hooks},i._defaultHandler.handler(a)},i._defaultHandler.hooks)},this._genericHooks),!0):(this._notFoundHandler&&u(function(){u(function(){i._callLeave(),i._lastRouteResolved={url:l,query:a,hooks:i._notFoundHandler.hooks},i._notFoundHandler.handler(a)},i._notFoundHandler.hooks)},this._genericHooks),!1))},destroy:function(){this._routes=[],this._destroyed=!0,this._lastRouteResolved=null,this._genericHooks=null,clearTimeout(this._listeningInterval),"undefined"!=typeof window&&(window.removeEventListener("popstate",this._onLocationChange),window.removeEventListener("hashchange",this._onLocationChange))},updatePageLinks:function(){var e=this;"undefined"!=typeof document&&this._findLinks().forEach(function(t){t.hasListenerAttached||(t.addEventListener("click",function(n){var o=e.getLinkPath(t);e._destroyed||(n.preventDefault(),e.navigate(o.replace(/\/+$/,"").replace(/^\/+/,"/")))}),t.hasListenerAttached=!0)})},generate:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=this._routes.reduce(function(n,o){var i;if(o.name===e)for(i in n=o.route,t)n=n.toString().replace(":"+i,t[i]);return n},"");return this._useHash?this._hash+n:n},link:function(e){return this._getRoot()+e},pause:function(){var e=!(arguments.length>0&&void 0!==arguments[0])||arguments[0];this._paused=e,this._historyAPIUpdateMethod=e?"replaceState":"pushState"},resume:function(){this.pause(!1)},historyAPIUpdateMethod:function(e){return void 0===e?this._historyAPIUpdateMethod:(this._historyAPIUpdateMethod=e,e)},disableIfAPINotAvailable:function(){t()||this.destroy()},lastRouteResolved:function(){return this._lastRouteResolved},getLinkPath:function(e){return e.getAttribute("href")},hooks:function(e){this._genericHooks=e},_add:function(t){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:null;return"string"==typeof t&&(t=encodeURI(t)),this._routes.push("object"===(void 0===n?"undefined":e(n))?{route:t,handler:n.uses,name:n.as,hooks:o||n.hooks}:{route:t,handler:n,hooks:o}),this._add},_getRoot:function(){return null!==this.root?this.root:(this.root=a(this._cLoc().split("?")[0],this._routes),this.root)},_listen:function(){var e=this;if(this._usePushState)window.addEventListener("popstate",this._onLocationChange);else if("undefined"!=typeof window&&"onhashchange"in window)window.addEventListener("hashchange",this._onLocationChange);else{var t=this._cLoc(),n=void 0,o=void 0;(o=function(){n=e._cLoc(),t!==n&&(t=n,e.resolve()),e._listeningInterval=setTimeout(o,200)})()}},_cLoc:function(){return"undefined"!=typeof window?void 0!==window.__NAVIGO_WINDOW_LOCATION_MOCK__?window.__NAVIGO_WINDOW_LOCATION_MOCK__:o(window.location.href):""},_findLinks:function(){return[].slice.call(document.querySelectorAll("[data-navigo]"))},_onLocationChange:function(){this.resolve()},_callLeave:function(){var e=this._lastRouteResolved;e&&e.hooks&&e.hooks.leave&&e.hooks.leave(e.params)}},n.PARAMETER_REGEXP=/([:*])(\w+)/g,n.WILDCARD_REGEXP=/\*/g,n.REPLACE_VARIABLE_REGEXP="([^/]+)",n.REPLACE_WILDCARD="(?:.*)",n.FOLLOWED_BY_SLASH_REGEXP="(?:/$|$)",n.MATCH_REGEXP_FLAGS="",n});
+
 
 },{}],2:[function(require,module,exports){
 
@@ -203,7 +204,9 @@ function pug_merge(a, b) {
       a[key] = (Array.isArray(valA) ? valA : [valA]).concat(b[key] || []);
     } else if (key === 'style') {
       var valA = pug_style(a[key]);
+      valA = valA && valA[valA.length - 1] !== ';' ? valA + ';' : valA;
       var valB = pug_style(b[key]);
+      valB = valB && valB[valB.length - 1] !== ';' ? valB + ';' : valB;
       a[key] = valA + valB;
     } else {
       a[key] = b[key];
@@ -282,10 +285,7 @@ function pug_style(val) {
     }
     return out;
   } else {
-    val += '';
-    if (val[val.length - 1] !== ';') 
-      return val + ';';
-    return val;
+    return val + '';
   }
 };
 
@@ -524,9 +524,9 @@ function listDatasources(manifest) {
 
 function appConfigDisplay(manifest, sensors) {
 	toolbar.showBack('Configure ' + manifest.displayName);
-	if('packages' in manifest && manifest.packages.length > 0) {
+	if ('packages' in manifest && manifest.packages.length > 0) {
 		const firstPackage = manifest.packages[0];
-		if(!('enabled' in firstPackage)) {
+		if (!('enabled' in firstPackage)) {
 			firstPackage.enabled = true;
 		}
 	}
@@ -535,12 +535,12 @@ function appConfigDisplay(manifest, sensors) {
 		sensors: sensors
 	});
 
-	if('packages' in manifest && manifest.packages.length > 1) {
-		for(let index = 0; index < manifest.packages.length; index++) {
+	if ('packages' in manifest && manifest.packages.length > 1) {
+		for (let index = 0; index < manifest.packages.length; index++) {
 			let databoxPackage = manifest.packages[index];
 			let packageID = "pack_" + (databoxPackage.id || index);
 			let element = document.getElementById(packageID);
-			if(!databoxPackage.required) {
+			if (!databoxPackage.required) {
 				element.addEventListener('click', () => {
 					databoxPackage.enabled = !databoxPackage.enabled;
 					appConfigDisplay(manifest, sensors);
@@ -564,19 +564,19 @@ function appConfigDisplay(manifest, sensors) {
 	});
 
 	let selects = document.getElementsByTagName('select');
-	for(const selectElements of selects) {
+	for (const selectElements of selects) {
 		selectElements.addEventListener('change', (event) => {
 			const selectElement = event.currentTarget;
 			const clientid = selectElement.getAttribute('datasource');
-			for(const datasource of manifest.datasources) {
-				if(datasource.clientid === clientid) {
-					if(selectElement.selectedIndex === 0) {
+			for (const datasource of manifest.datasources) {
+				if (datasource.clientid === clientid) {
+					if (selectElement.selectedIndex === 0) {
 						datasource.hypercat = null;
 						appConfigDisplay(manifest, sensors);
 					} else {
 						const sensorHref = selectElement.value;
 						for (const sensor of sensors) {
-							if(sensor.href === sensorHref) {
+							if (sensor.href === sensorHref) {
 								datasource.hypercat = sensor;
 								appConfigDisplay(manifest, sensors);
 								break;
@@ -589,30 +589,32 @@ function appConfigDisplay(manifest, sensors) {
 		});
 	}
 
-	const MDCSelect = mdc.select.MDCSelect;
 	const mdcSelects = document.getElementsByClassName('mdc-select');
-	for(const mdcSelect of mdcSelects) {
-		const select = new MDCSelect(mdcSelect);
-		select.listen('MDCSelect:change', () => {
-			const selectElement = select;
-			const clientid = mdcSelect.getAttribute('datasource');
-			for(const datasource of manifest.datasources) {
-				if(datasource.clientid === clientid) {
-					const sensorHref = selectElement.value;
-					for (const sensor of sensors) {
-						if(sensor.href === sensorHref) {
-							datasource.hypercat = sensor;
-							appConfigDisplay(manifest, sensors);
-							break;
+	for (const mdcSelect of mdcSelects) {
+		const select = new mdc.select.MDCSelect(mdcSelect);
+		const native = mdcSelect.querySelector('.mdc-select__native-control');
+		mdcSelect.addEventListener('change', () => {
+			const item = native.selectedOptions[0];
+			if (item) {
+				const clientid = mdcSelect.getAttribute('datasource');
+				for (const datasource of manifest.datasources) {
+					if (datasource.clientid === clientid) {
+						const sensorHref = native.value;
+						for (const sensor of sensors) {
+							if (sensor.href === sensorHref) {
+								datasource.hypercat = sensor;
+								appConfigDisplay(manifest, sensors);
+								break;
+							}
 						}
+						break;
 					}
-					break;
 				}
 			}
 		});
 	}
 
-	for(const mdcSelect of mdcSelects) {
+	for (const mdcSelect of mdcSelects) {
 		mdcSelect.style.minWidth = mdcSelect.style.width;
 		mdcSelect.style.width = null;
 	}
@@ -632,8 +634,8 @@ router.on('/store/:name/install', (params) => {
 
 function getManifest(apps, name, id) {
 	const manifests = apps[name];
-	for(const manifest of manifests) {
-		if(manifest._id === id) {
+	for (const manifest of manifests) {
+		if (manifest._id === id) {
 			return manifest.manifest;
 		}
 	}
@@ -747,30 +749,31 @@ router.on('/:name/ui', (params) => {
 	toolbar.showSpinner();
 	let appname = params.name;
 
-	document.getElementById('toolbartitle').innerText = params.name;
-
 	if (appname === 'databox_arbiter') {
 		appname = 'arbiter';
 	}
+	document.getElementById('toolbartitle').innerText = appname;
 	const url = localStorage.getItem('databoxURL') + appname + '/ui';
 	toolbar.showBack();
 	const toolbarActions = document.getElementById('toolbaractions');
 	toolbarActions.innerHTML = '';
 	const button = document.createElement('a');
-	button.classList.add('mdc-icon-toggle');
+	button.classList.add('mdc-toolbar__icon');
 	button.classList.add('material-icons');
 	button.innerText = 'fullscreen';
 	button.href = url;
 	toolbarActions.appendChild(button);
 
 	const iframe = document.createElement("iframe");
-	iframe.setAttribute("src", url);
-
 	const content = document.getElementById('content');
 
-	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
 	content.innerHTML = '';
 	content.appendChild(iframe);
+
+	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
+	iframe.src = url;
+	iframe.name = "Test";
+	console.log(iframe)
 });
 
 },{"./container-manager":9,"./router":11,"./templates":14,"./toolbar":15}],8:[function(require,module,exports){
@@ -1040,10 +1043,10 @@ module.exports.connect = function () {
 				const hostlabel = document.getElementById('hostname');
 				const url = new URL(databoxURL);
 				hostlabel.innerText = url.hostname;
-				hostlabel.parentElement.addEventListener('click', () => {
+				hostlabel.addEventListener('click', () => {
 					router.navigate('/connect')
 				});
-				hostlabel.parentElement.style.cursor = 'pointer';
+				hostlabel.style.cursor = 'pointer';
 
 				stores.setStores([
 					{
@@ -1394,13 +1397,13 @@ const pug = require('pug-runtime');
 
 
 module.exports['alert'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;var locals_for_with = (locals || {});(function (button, icon, title) {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Falert.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 16px; display: flex; justify-content: center;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 16px; display: flex; justify-content: center\"\u003E";
 ;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Falert.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card\"\u003E";
 ;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Falert.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__primary\" style=\"display: flex; flex-direction: column; align-items: center;\"\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__primary\" style=\"display: flex; flex-direction: column; align-items: center; padding: 16px\"\u003E";
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Falert.pug";
-pug_html = pug_html + "\u003Cdiv class=\"material-icons\" style=\"font-size: 128pt; color: #666;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"material-icons\" style=\"font-size: 128pt; color: #666\"\u003E";
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Falert.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = icon) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Falert.pug";
@@ -1500,17 +1503,17 @@ function isValid() {
 }
 
 ;pug_debug_line = 82;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 16px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 83;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card\"\u003E";
 ;pug_debug_line = 84;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__primary\" style=\"display:flex;\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"display:flex; padding: 16px;\"\u003E";
 ;pug_debug_line = 85;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"app-icon-letter\"\u003E";
 ;pug_debug_line = 86;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = manifest.displayName.charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 87;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding-left: 16px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 88;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card__title--large\"\u003E";
 ;pug_debug_line = 89;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
@@ -1540,11 +1543,11 @@ pug_html = pug_html + "star\u003C\u002Fi\u003E";
 ;pug_debug_line = 101;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
 ;pug_debug_line = 102;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "star\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "star\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 103;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding-top: 8px;\"\u003E";
 ;pug_debug_line = 104;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = manifest.description) ? "" : pug_interp)) + "\u003C\u002Fsection\u003E";
+pug_html = pug_html + (pug.escape(null == (pug_interp = manifest.description) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 106;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid\"\u003E";
 ;pug_debug_line = 107;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
@@ -1563,7 +1566,7 @@ if (manifest.packages.length > 1) {
 ;pug_debug_line = 111;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv" + (pug.attr("class", pug.classes(["mdc-layout-grid__cell","mdc-layout-grid__cell--span-4","package",(pack.required || pack.enabled) ? '' : 'transparent'], [false,false,false,true]), false, false)+pug.attr("id", ("pack_" + (pack.id || index)), true, false)) + "\u003E";
 ;pug_debug_line = 112;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-theme--text-primary-on-dark dark\" style=\"display: flex; align-items: center;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-theme--text-primary-on-dark dark\" style=\"display: flex; align-items: center\"\u003E";
 ;pug_debug_line = 113;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-typography--title fill padded\"\u003E";
 ;pug_debug_line = 114;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
@@ -1664,7 +1667,7 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 111;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv" + (pug.attr("class", pug.classes(["mdc-layout-grid__cell","mdc-layout-grid__cell--span-4","package",(pack.required || pack.enabled) ? '' : 'transparent'], [false,false,false,true]), false, false)+pug.attr("id", ("pack_" + (pack.id || index)), true, false)) + "\u003E";
 ;pug_debug_line = 112;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-theme--text-primary-on-dark dark\" style=\"display: flex; align-items: center;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-theme--text-primary-on-dark dark\" style=\"display: flex; align-items: center\"\u003E";
 ;pug_debug_line = 113;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-typography--title fill padded\"\u003E";
 ;pug_debug_line = 114;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
@@ -1765,9 +1768,9 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 138;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 if ('datasources' in manifest && manifest.datasources.length > 0) {
 ;pug_debug_line = 139;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell mdc-layout-grid__cell--span-12\" style=\"margin-top:16px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell mdc-layout-grid__cell--span-12\" style=\"margin-top:16px\"\u003E";
 ;pug_debug_line = 140;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-theme--text-primary-on-dark mdc-theme--primary-bg mdc-typography--title\" style=\"padding: 8px 16px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-theme--text-primary-on-dark mdc-theme--primary-bg mdc-typography--title\" style=\"padding: 8px 16px\"\u003E";
 ;pug_debug_line = 141;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "Select Data Sources\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 143;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
@@ -1778,40 +1781,30 @@ pug_html = pug_html + "Select Data Sources\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u
       for (var pug_index5 = 0, $$l = $$obj.length; pug_index5 < $$l; pug_index5++) {
         var datasource = $$obj[pug_index5];
 ;pug_debug_line = 144;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-12\" style=\"padding: 0 16px; display: flex; flex-direction: column;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-12\" style=\"padding: 0 16px; display: flex; flex-direction: column\"\u003E";
 ;pug_debug_line = 145;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-var active = isDatasourceActive(datasource)
+var active = isDatasourceActive(datasource);
 ;pug_debug_line = 146;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-var sensorsExist = hasSensors(datasource)
+var sensorsExist = hasSensors(datasource);
 ;pug_debug_line = 147;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv" + (" class=\"mdc-select\""+" role=\"listbox\" style=\"width: 100%;\""+pug.attr("datasource", datasource.clientid, true, false)+pug.attr("id", datasource.clientid, true, false)+pug.attr("aria-disabled", active && sensorsExist ? 'false' : 'true', true, false)) + "\u003E";
 ;pug_debug_line = 148;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-select__surface\" tabindex=\"0\"\u003E";
+pug_html = pug_html + "\u003Cselect class=\"mdc-select__native-control\"\u003E";
 ;pug_debug_line = 149;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv" + (pug.attr("class", pug.classes(["mdc-select__label",datasource.hypercat ? 'mdc-select__label--float-above' : ''], [false,true]), false, false)) + "\u003E";
+pug_html = pug_html + "\u003Coption" + (" value=\"\" disabled=\"disabled\""+pug.attr("selected", (!datasource.hypercat), true, false)+" style=\"display: none\"") + "\u003E\u003C\u002Foption\u003E";
 ;pug_debug_line = 150;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = datasource.type) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
-;pug_debug_line = 151;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-select__selected-text\"\u003E\u003C\u002Fdiv\u003E";
-;pug_debug_line = 152;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-select__bottom-line\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
-;pug_debug_line = 153;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-simple-menu mdc-select__menu\"\u003E";
-;pug_debug_line = 154;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cul class=\"mdc-list mdc-simple-menu__items\"\u003E";
-;pug_debug_line = 155;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 // iterate sensors
 ;(function(){
   var $$obj = sensors;
   if ('number' == typeof $$obj.length) {
       for (var pug_index6 = 0, $$l = $$obj.length; pug_index6 < $$l; pug_index6++) {
         var sensor = $$obj[pug_index6];
-;pug_debug_line = 156;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 151;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 if (getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type) {
-;pug_debug_line = 157;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item\""+" role=\"option\""+pug.attr("aria-selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("id", sensor.href, true, false)) + "\u003E";
-;pug_debug_line = 158;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Fli\u003E";
+;pug_debug_line = 152;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Coption" + (pug.attr("selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("value", sensor.href, true, false)) + "\u003E";
+;pug_debug_line = 153;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Foption\u003E";
 }
       }
   } else {
@@ -1819,32 +1812,38 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn
     for (var pug_index6 in $$obj) {
       $$l++;
       var sensor = $$obj[pug_index6];
-;pug_debug_line = 156;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 151;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 if (getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type) {
-;pug_debug_line = 157;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item\""+" role=\"option\""+pug.attr("aria-selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("id", sensor.href, true, false)) + "\u003E";
-;pug_debug_line = 158;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Fli\u003E";
+;pug_debug_line = 152;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Coption" + (pug.attr("selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("value", sensor.href, true, false)) + "\u003E";
+;pug_debug_line = 153;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Foption\u003E";
 }
     }
   }
 }).call(this);
 
-pug_html = pug_html + "\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
-;pug_debug_line = 159;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003C\u002Fselect\u003E";
+;pug_debug_line = 154;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Cdiv" + (pug.attr("class", pug.classes(["mdc-select__label",!datasource.hypercat ? '' : 'mdc-select__label--float-above'], [false,true]), false, false)) + "\u003E";
+;pug_debug_line = 155;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = datasource.type) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
+;pug_debug_line = 156;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-select__bottom-line\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+;pug_debug_line = 157;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-typography--caption\" style=\"color: #d50000;\"\u003E";
-;pug_debug_line = 160;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 158;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 if (!sensorsExist) {
-;pug_debug_line = 161;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 159;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "Required, but no datasources found";
 }
 else
 if (!datasource.hypercat) {
-;pug_debug_line = 163;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 161;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "Required";
 }
 else {
-;pug_debug_line = 165;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 163;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "&nbsp;";
 }
 pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
@@ -1855,40 +1854,30 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
       $$l++;
       var datasource = $$obj[pug_index5];
 ;pug_debug_line = 144;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-12\" style=\"padding: 0 16px; display: flex; flex-direction: column;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-12\" style=\"padding: 0 16px; display: flex; flex-direction: column\"\u003E";
 ;pug_debug_line = 145;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-var active = isDatasourceActive(datasource)
+var active = isDatasourceActive(datasource);
 ;pug_debug_line = 146;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-var sensorsExist = hasSensors(datasource)
+var sensorsExist = hasSensors(datasource);
 ;pug_debug_line = 147;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv" + (" class=\"mdc-select\""+" role=\"listbox\" style=\"width: 100%;\""+pug.attr("datasource", datasource.clientid, true, false)+pug.attr("id", datasource.clientid, true, false)+pug.attr("aria-disabled", active && sensorsExist ? 'false' : 'true', true, false)) + "\u003E";
 ;pug_debug_line = 148;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-select__surface\" tabindex=\"0\"\u003E";
+pug_html = pug_html + "\u003Cselect class=\"mdc-select__native-control\"\u003E";
 ;pug_debug_line = 149;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv" + (pug.attr("class", pug.classes(["mdc-select__label",datasource.hypercat ? 'mdc-select__label--float-above' : ''], [false,true]), false, false)) + "\u003E";
+pug_html = pug_html + "\u003Coption" + (" value=\"\" disabled=\"disabled\""+pug.attr("selected", (!datasource.hypercat), true, false)+" style=\"display: none\"") + "\u003E\u003C\u002Foption\u003E";
 ;pug_debug_line = 150;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = datasource.type) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
-;pug_debug_line = 151;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-select__selected-text\"\u003E\u003C\u002Fdiv\u003E";
-;pug_debug_line = 152;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-select__bottom-line\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
-;pug_debug_line = 153;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-simple-menu mdc-select__menu\"\u003E";
-;pug_debug_line = 154;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cul class=\"mdc-list mdc-simple-menu__items\"\u003E";
-;pug_debug_line = 155;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 // iterate sensors
 ;(function(){
   var $$obj = sensors;
   if ('number' == typeof $$obj.length) {
       for (var pug_index7 = 0, $$l = $$obj.length; pug_index7 < $$l; pug_index7++) {
         var sensor = $$obj[pug_index7];
-;pug_debug_line = 156;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 151;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 if (getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type) {
-;pug_debug_line = 157;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item\""+" role=\"option\""+pug.attr("aria-selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("id", sensor.href, true, false)) + "\u003E";
-;pug_debug_line = 158;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Fli\u003E";
+;pug_debug_line = 152;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Coption" + (pug.attr("selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("value", sensor.href, true, false)) + "\u003E";
+;pug_debug_line = 153;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Foption\u003E";
 }
       }
   } else {
@@ -1896,32 +1885,38 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn
     for (var pug_index7 in $$obj) {
       $$l++;
       var sensor = $$obj[pug_index7];
-;pug_debug_line = 156;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 151;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 if (getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type) {
-;pug_debug_line = 157;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item\""+" role=\"option\""+pug.attr("aria-selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("id", sensor.href, true, false)) + "\u003E";
-;pug_debug_line = 158;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Fli\u003E";
+;pug_debug_line = 152;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Coption" + (pug.attr("selected", (datasource.hypercat && sensor.href === datasource.hypercat.href), true, false)+pug.attr("value", sensor.href, true, false)) + "\u003E";
+;pug_debug_line = 153;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')) ? "" : pug_interp)) + "\u003C\u002Foption\u003E";
 }
     }
   }
 }).call(this);
 
-pug_html = pug_html + "\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
-;pug_debug_line = 159;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003C\u002Fselect\u003E";
+;pug_debug_line = 154;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Cdiv" + (pug.attr("class", pug.classes(["mdc-select__label",!datasource.hypercat ? '' : 'mdc-select__label--float-above'], [false,true]), false, false)) + "\u003E";
+;pug_debug_line = 155;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + (pug.escape(null == (pug_interp = datasource.type) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
+;pug_debug_line = 156;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-select__bottom-line\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+;pug_debug_line = 157;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-typography--caption\" style=\"color: #d50000;\"\u003E";
-;pug_debug_line = 160;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 158;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 if (!sensorsExist) {
-;pug_debug_line = 161;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 159;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "Required, but no datasources found";
 }
 else
 if (!datasource.hypercat) {
-;pug_debug_line = 163;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 161;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "Required";
 }
 else {
-;pug_debug_line = 165;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 163;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "&nbsp;";
 }
 pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
@@ -1931,17 +1926,17 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 
 }
 pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
-;pug_debug_line = 167;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 165;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Csection class=\"mdc-card__actions\"\u003E";
-;pug_debug_line = 168;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 166;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cbutton" + (" class=\"mdc-button mdc-card__action mdc-button--primary\""+pug.attr("disabled", !isValid(), true, false)+" id=\"install_button\"") + "\u003E";
-;pug_debug_line = 169;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
+;pug_debug_line = 167;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "Install\u003C\u002Fbutton\u003E\u003C\u002Fsection\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";}.call(this,"manifest" in locals_for_with?locals_for_with.manifest:typeof manifest!=="undefined"?manifest:undefined,"sensors" in locals_for_with?locals_for_with.sensors:typeof sensors!=="undefined"?sensors:undefined));} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
 
 module.exports['appList'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;var locals_for_with = (locals || {});(function (containers) {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 if ((containers && containers.length > 0)) {
 ;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 24px 0;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 24px 0\"\u003E";
 ;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-list mdc-list--two-line mdc-elevation--z3\" style=\"background-color: white;\"\u003E";
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
@@ -1968,7 +1963,7 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : 
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 if (container.type !== 'system') {
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
-pug_html = pug_html + "\u003Cspan style=\"display: flex;margin-left: auto;\"\u003E";
+pug_html = pug_html + "\u003Cspan style=\"display: flex;margin-left: auto\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 if (container.desiredState === 'running') {
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
@@ -2005,7 +2000,7 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : 
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 if (container.type !== 'system') {
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
-pug_html = pug_html + "\u003Cspan style=\"display: flex;margin-left: auto;\"\u003E";
+pug_html = pug_html + "\u003Cspan style=\"display: flex;margin-left: auto\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 if (container.desiredState === 'running') {
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
@@ -2027,109 +2022,111 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 }
 else {
 ;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 48px; text-align: center;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 48px; text-align: center\"\u003E";
 ;pug_debug_line = 21;pug_debug_filename = "src\u002Ftemplates\u002Fapp-list.pug";
 pug_html = pug_html + "Empty\u003C\u002Fdiv\u003E";
 }}.call(this,"containers" in locals_for_with?locals_for_with.containers:typeof containers!=="undefined"?containers:undefined));} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
 
 module.exports['appStoreItem'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;var locals_for_with = (locals || {});(function (app) {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 16px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card\"\u003E";
 ;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__primary\" style=\"display:flex;\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv class=\"app-icon-letter\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"display:flex\"\u003E";
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].displayName.charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"app-icon-letter\"\u003E";
 ;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding-left: 16px;\"\u003E";
+pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].displayName.charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-card__title--large\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding-left: 16px\"\u003E";
 ;pug_debug_line = 8;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].displayName) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-card__title--large\"\u003E";
 ;pug_debug_line = 9;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-card__subtitle mdc-typography--caption\"\u003E";
+pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].displayName) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-card__subtitle mdc-typography--caption\"\u003E";
 ;pug_debug_line = 11;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv\u003E";
+pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
+pug_html = pug_html + "\u003Cdiv\u003E";
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "star\u003C\u002Fi\u003E";
+pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
+pug_html = pug_html + "star\u003C\u002Fi\u003E";
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "star\u003C\u002Fi\u003E";
+pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
 ;pug_debug_line = 16;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
+pug_html = pug_html + "star\u003C\u002Fi\u003E";
 ;pug_debug_line = 17;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "star\u003C\u002Fi\u003E";
+pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
 ;pug_debug_line = 18;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
-;pug_debug_line = 19;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + "star\u003C\u002Fi\u003E";
+;pug_debug_line = 19;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
 ;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
+pug_html = pug_html + "star\u003C\u002Fi\u003E";
 ;pug_debug_line = 21;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "star\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
 ;pug_debug_line = 22;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\"\u003E";
+pug_html = pug_html + "star\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 23;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].manifest.description) ? "" : pug_interp)) + "\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding-top: 8px;\"\u003E";
 ;pug_debug_line = 24;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\" style=\"display: flex;\"\u003E";
+pug_html = pug_html + (pug.escape(null == (pug_interp = app[0].manifest.description) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 25;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
-;pug_debug_line = 26;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "lock\u003C\u002Fi\u003E";
-;pug_debug_line = 27;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
-;pug_debug_line = 28;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "lock\u003C\u002Fi\u003E";
-;pug_debug_line = 29;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
-;pug_debug_line = 30;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "lock\u003C\u002Fi\u003E";
-;pug_debug_line = 31;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
-;pug_debug_line = 32;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "lock_open\u003C\u002Fi\u003E";
-;pug_debug_line = 33;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
-;pug_debug_line = 34;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "lock_open\u003C\u002Fi\u003E";
-;pug_debug_line = 35;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 0 16px;\"\u003E";
-;pug_debug_line = 36;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "Moderate Risk\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
-;pug_debug_line = 37;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\"\u003E";
-;pug_debug_line = 38;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-if ('export-whitelist' in app[0].manifest && app[0].manifest['export-whitelist'].length > 0) {
-;pug_debug_line = 39;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + "\u003Cdiv style=\"display: flex; padding-top: 16px;\"\u003E";
-;pug_debug_line = 40;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\" style=\"padding:8px 16px 0 0; color: #F57F17;\"\u003E";
-;pug_debug_line = 41;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+;pug_debug_line = 26;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
+;pug_debug_line = 27;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + "lock\u003C\u002Fi\u003E";
+;pug_debug_line = 28;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
+;pug_debug_line = 29;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "lock\u003C\u002Fi\u003E";
+;pug_debug_line = 30;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Ci class=\"material-icons\"\u003E";
+;pug_debug_line = 31;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "lock\u003C\u002Fi\u003E";
+;pug_debug_line = 32;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
+;pug_debug_line = 33;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "lock_open\u003C\u002Fi\u003E";
+;pug_debug_line = 34;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Ci class=\"material-icons disabled\"\u003E";
+;pug_debug_line = 35;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "lock_open\u003C\u002Fi\u003E";
+;pug_debug_line = 36;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 0 16px\"\u003E";
+;pug_debug_line = 37;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "Moderate Risk\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+;pug_debug_line = 38;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cdiv\u003E";
+;pug_debug_line = 39;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+if ('export-whitelist' in app[0].manifest && app[0].manifest['export-whitelist'].length > 0) {
+;pug_debug_line = 40;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cdiv style=\"display: flex; padding-top: 16px; align-items: center\"\u003E";
+;pug_debug_line = 41;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Ci class=\"material-icons\" style=\"padding:8px 16px 0 0; color: #F57F17\"\u003E";
 ;pug_debug_line = 42;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text\"\u003E";
+pug_html = pug_html + "lock\u003C\u002Fi\u003E";
 ;pug_debug_line = 43;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "External Access";
+pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text\"\u003E";
 ;pug_debug_line = 44;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text__secondary\"\u003E";
+pug_html = pug_html + "External Access";
 ;pug_debug_line = 45;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cspan class=\"mdc-list-item__text__secondary\"\u003E";
+;pug_debug_line = 46;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 // iterate app[0].manifest['export-whitelist']
 ;(function(){
   var $$obj = app[0].manifest['export-whitelist'];
   if ('number' == typeof $$obj.length) {
       for (var pug_index0 = 0, $$l = $$obj.length; pug_index0 < $$l; pug_index0++) {
         var url = $$obj[pug_index0];
-;pug_debug_line = 46;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv\u003E";
 ;pug_debug_line = 47;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cdiv\u003E";
+;pug_debug_line = 48;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = 'Accesses ' + url.url) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
       }
   } else {
@@ -2137,50 +2134,50 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = 'Accesses ' + url.url) ?
     for (var pug_index0 in $$obj) {
       $$l++;
       var url = $$obj[pug_index0];
-;pug_debug_line = 46;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv\u003E";
 ;pug_debug_line = 47;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cdiv\u003E";
+;pug_debug_line = 48;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = 'Accesses ' + url.url) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
     }
   }
 }).call(this);
 
-;pug_debug_line = 48;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv\u003E";
 ;pug_debug_line = 49;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cdiv\u003E";
+;pug_debug_line = 50;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + "Potentially leaks data to third-party\u003C\u002Fdiv\u003E\u003C\u002Fspan\u003E\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E";
 }
-pug_html = pug_html + "\u003C\u002Fsection\u003E";
-;pug_debug_line = 51;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-if ((!app.installed)) {
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 52;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__actions\"\u003E";
+if ((!app.installed)) {
 ;pug_debug_line = 53;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ca" + (" class=\"mdc-button mdc-card__action mdc-button--primary\""+" id=\"install_link\""+pug.attr("href", "#!/store/" + app[0].manifest.name + "/install", true, false)) + "\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__actions\"\u003E";
 ;pug_debug_line = 54;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "Install\u003C\u002Fa\u003E";
+pug_html = pug_html + "\u003Ca" + (" class=\"mdc-button mdc-card__action mdc-button--primary\""+" id=\"install_link\""+pug.attr("href", "#!/store/" + app[0].manifest.name + "/install", true, false)) + "\u003E";
 ;pug_debug_line = 55;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-if ((app.length > 1)) {
+pug_html = pug_html + "Install\u003C\u002Fa\u003E";
 ;pug_debug_line = 56;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ca class=\"mdc-button\" id=\"versionButton\" style=\"min-width: 16px; color: #666;\"\u003E";
+if ((app.length > 1)) {
 ;pug_debug_line = 57;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Ci class=\"material-icons\" style=\"font-size: 12pt;\"\u003E";
+pug_html = pug_html + "\u003Ca class=\"mdc-button\" id=\"versionButton\" style=\"min-width: 16px; color: #666\"\u003E";
 ;pug_debug_line = 58;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "arrow_drop_down\u003C\u002Fi\u003E\u003C\u002Fa\u003E";
+pug_html = pug_html + "\u003Ci class=\"material-icons\" style=\"font-size: 12pt\"\u003E";
 ;pug_debug_line = 59;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-simple-menu\" id=\"versionMenu\"\u003E";
+pug_html = pug_html + "arrow_drop_down\u003C\u002Fi\u003E\u003C\u002Fa\u003E";
 ;pug_debug_line = 60;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cul class=\"mdc-list mdc-simple-menu__items\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-menu\" id=\"versionMenu\"\u003E";
 ;pug_debug_line = 61;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cul class=\"mdc-list mdc-menu__items\"\u003E";
+;pug_debug_line = 62;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 // iterate app
 ;(function(){
   var $$obj = app;
   if ('number' == typeof $$obj.length) {
       for (var pug_index1 = 0, $$l = $$obj.length; pug_index1 < $$l; pug_index1++) {
         var appItem = $$obj[pug_index1];
-;pug_debug_line = 62;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item version-item\""+" role=\"option\""+pug.attr("id", appItem._id, true, false)) + "\u003E";
 ;pug_debug_line = 63;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item version-item\""+" role=\"option\""+pug.attr("id", appItem._id, true, false)) + "\u003E";
+;pug_debug_line = 64;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = 'v' + appItem.manifest.version + ' on ' + appItem.store) ? "" : pug_interp)) + "\u003C\u002Fli\u003E";
       }
   } else {
@@ -2188,9 +2185,9 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = 'v' + appItem.manifest.v
     for (var pug_index1 in $$obj) {
       $$l++;
       var appItem = $$obj[pug_index1];
-;pug_debug_line = 62;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item version-item\""+" role=\"option\""+pug.attr("id", appItem._id, true, false)) + "\u003E";
 ;pug_debug_line = 63;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cli" + (" class=\"mdc-list-item version-item\""+" role=\"option\""+pug.attr("id", appItem._id, true, false)) + "\u003E";
+;pug_debug_line = 64;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = 'v' + appItem.manifest.version + ' on ' + appItem.store) ? "" : pug_interp)) + "\u003C\u002Fli\u003E";
     }
   }
@@ -2201,11 +2198,11 @@ pug_html = pug_html + "\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E";
 pug_html = pug_html + "\u003C\u002Fsection\u003E";
 }
 else {
-;pug_debug_line = 66;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__actions\"\u003E";
 ;pug_debug_line = 67;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
-pug_html = pug_html + "\u003Cbutton class=\"mdc-button mdc-card__action mdc-button--primary\" disabled=\"disabled\"\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__actions\"\u003E";
 ;pug_debug_line = 68;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
+pug_html = pug_html + "\u003Cbutton class=\"mdc-button mdc-card__action mdc-button--primary\" disabled=\"disabled\"\u003E";
+;pug_debug_line = 69;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store-item.pug";
 pug_html = pug_html + "Installed\u003C\u002Fbutton\u003E\u003C\u002Fsection\u003E";
 }
 pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";}.call(this,"app" in locals_for_with?locals_for_with.app:typeof app!=="undefined"?app:undefined));} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
@@ -2219,7 +2216,7 @@ pug_html = pug_html + "Empty\u003C\u002Fdiv\u003E";
 }
 else {
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 24px 0;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 24px 0\"\u003E";
 ;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-grid-list mdc-elevation--z3\" style=\"background-color: white;\"\u003E";
 ;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
@@ -2240,7 +2237,7 @@ pug_html = pug_html + "\u003Cdiv class=\"app-icon-letter mdc-elevation--z1\"\u00
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = appItem[0].displayName.charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
-pug_html = pug_html + "\u003Cdiv style=\"text-align:center; color: #333;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"text-align:center; color: #333\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = appItem[0].displayName) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
@@ -2268,7 +2265,7 @@ pug_html = pug_html + "\u003Ci class=\"material-icons rating disabled\"\u003E";
 ;pug_debug_line = 26;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + "lock\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 27;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
-pug_html = pug_html + "\u003Cdiv style=\"flex: 1;\"\u003E\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"flex: 1\"\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 28;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + "\u003Cdiv\u003E";
 ;pug_debug_line = 29;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
@@ -2306,7 +2303,7 @@ pug_html = pug_html + "\u003Cdiv class=\"app-icon-letter mdc-elevation--z1\"\u00
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = appItem[0].displayName.charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
-pug_html = pug_html + "\u003Cdiv style=\"text-align:center; color: #333;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"text-align:center; color: #333\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = appItem[0].displayName) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
@@ -2334,7 +2331,7 @@ pug_html = pug_html + "\u003Ci class=\"material-icons rating disabled\"\u003E";
 ;pug_debug_line = 26;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + "lock\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 27;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
-pug_html = pug_html + "\u003Cdiv style=\"flex: 1;\"\u003E\u003C\u002Fdiv\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"flex: 1\"\u003E\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 28;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
 pug_html = pug_html + "\u003Cdiv\u003E";
 ;pug_debug_line = 29;pug_debug_filename = "src\u002Ftemplates\u002Fapp-store.pug";
@@ -2373,9 +2370,9 @@ pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-2-desktop\"
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card mdc-layout-grid__cell mdc-layout-grid__cell--span-8\"\u003E";
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px;\"\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px\"\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "Databox lets you take control of your personal data and IoT devices. See the&nbsp;";
 ;pug_debug_line = 8;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
@@ -2385,7 +2382,7 @@ pug_html = pug_html + "documentation\u003C\u002Fa\u003E";
 ;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "&nbsp;for help in setting up a Databox.\u003C\u002Fsection\u003E";
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\" id=\"error_details\" style=\"display: none;\"\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\" id=\"error_details\" style=\"display: none\"\u003E";
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "\u003Ch1 class=\"mdc-card__title mdc-card__title--large\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
@@ -2397,17 +2394,17 @@ pug_html = pug_html + "Could not connect to the Databox at&nbsp;";
 ;pug_debug_line = 17;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "\u003Cspan id=\"error_host\"\u003E\u003C\u002Fspan\u003E\u003C\u002Fh2\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 19;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-text-field\" style=\"width: 100%;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-text-field\" style=\"width: 100%\"\u003E";
 ;pug_debug_line = 21;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Cinput class=\"mdc-text-field__input\" id=\"connectField\" type=\"url\" style=\"width: 100%;\" required=\"required\"\u002F\u003E";
+pug_html = pug_html + "\u003Cinput class=\"mdc-text-field__input\" id=\"connectField\" type=\"url\" style=\"width: 100%\" required=\"required\"\u002F\u003E";
 ;pug_debug_line = 22;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Clabel class=\"mdc-text-field__label\" for=\"connectField\"\u003E";
+pug_html = pug_html + "\u003Clabel class=\"mdc-floating-label\" for=\"connectField\"\u003E";
 ;pug_debug_line = 23;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "Databox Address\u003C\u002Flabel\u003E";
 ;pug_debug_line = 24;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-text-field__bottom-line\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-line-ripple\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 26;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
 pug_html = pug_html + "\u003Csection class=\"mdc-card__actions\"\u003E";
 ;pug_debug_line = 27;pug_debug_filename = "src\u002Ftemplates\u002Fconnect.pug";
@@ -2422,7 +2419,7 @@ pug_html = pug_html + "Connect\u003C\u002Fbutton\u003E\u003C\u002Fsection\u003E\
 module.exports['driverList'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;var locals_for_with = (locals || {});(function (containers) {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
 if ((containers && containers.length > 0)) {
 ;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 24px 0;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 24px 0\"\u003E";
 ;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-list mdc-list--two-line mdc-elevation--z3\" style=\"background-color: white;\"\u003E";
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
@@ -2449,7 +2446,7 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : 
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
 if (container.type !== 'system') {
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
-pug_html = pug_html + "\u003Cspan style=\"display: flex; margin-left: auto;\"\u003E";
+pug_html = pug_html + "\u003Cspan style=\"display: flex; margin-left: auto\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
 if (container.desiredState === 'running') {
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
@@ -2486,7 +2483,7 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = container.state) ? "" : 
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
 if (container.type !== 'system') {
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
-pug_html = pug_html + "\u003Cspan style=\"display: flex; margin-left: auto;\"\u003E";
+pug_html = pug_html + "\u003Cspan style=\"display: flex; margin-left: auto\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
 if (container.desiredState === 'running') {
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
@@ -2508,7 +2505,7 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
 }
 else {
 ;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 48px; text-align: center;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 48px; text-align: center\"\u003E";
 ;pug_debug_line = 21;pug_debug_filename = "src\u002Ftemplates\u002Fdriver-list.pug";
 pug_html = pug_html + "Empty\u003C\u002Fdiv\u003E";
 }}.call(this,"containers" in locals_for_with?locals_for_with.containers:typeof containers!=="undefined"?containers:undefined));} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
@@ -2522,9 +2519,9 @@ pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-2-desktop\"
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card mdc-layout-grid__cell mdc-layout-grid__cell--span-8\"\u003E";
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px;\"\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px\"\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
 pug_html = pug_html + "Databox lets you take control of your personal data and IoT devices. See the&nbsp;";
 ;pug_debug_line = 8;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
@@ -2534,17 +2531,17 @@ pug_html = pug_html + "documentation\u003C\u002Fa\u003E";
 ;pug_debug_line = 10;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
 pug_html = pug_html + "&nbsp;for help in setting up a Databox.\u003C\u002Fsection\u003E";
 ;pug_debug_line = 12;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__supporting-text\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"padding: 16px\"\u003E";
 ;pug_debug_line = 13;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-text-field\" style=\"width: 100%;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-text-field\" style=\"width: 100%\"\u003E";
 ;pug_debug_line = 14;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
-pug_html = pug_html + "\u003Cinput class=\"mdc-text-field__input\" id=\"loginField\" type=\"url\" style=\"width: 100%;\" required=\"required\"\u002F\u003E";
+pug_html = pug_html + "\u003Cinput class=\"mdc-text-field__input\" id=\"loginField\" type=\"url\" style=\"width: 100%\" required=\"required\"\u002F\u003E";
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
-pug_html = pug_html + "\u003Clabel class=\"mdc-text-field__label\" for=\"loginField\"\u003E";
+pug_html = pug_html + "\u003Clabel class=\"mdc-floating-label\" for=\"loginField\"\u003E";
 ;pug_debug_line = 16;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
 pug_html = pug_html + "Databox Password\u003C\u002Flabel\u003E";
 ;pug_debug_line = 17;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-text-field__bottom-line\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-line-ripple\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 19;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
 pug_html = pug_html + "\u003Csection class=\"mdc-card__actions\"\u003E";
 ;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Flogin.pug";
@@ -2553,7 +2550,7 @@ pug_html = pug_html + "\u003Cbutton class=\"mdc-card__action mdc-button mdc-butt
 pug_html = pug_html + "Login\u003C\u002Fbutton\u003E\u003C\u002Fsection\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
 
 module.exports['qrcode'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Fqrcode.pug";
-pug_html = pug_html + "\u003Cdiv style=\"display: flex; justify-content: center;padding: 16px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"display: flex; justify-content: center;padding: 16px\"\u003E";
 ;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Fqrcode.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card\"\u003E";
 ;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Fqrcode.pug";
@@ -2562,9 +2559,9 @@ pug_html = pug_html + "\u003Csection class=\"mdc-card__media\"\u003E";
 pug_html = pug_html + "\u003Cimg id=\"qrimage\"\u002F\u003E\u003C\u002Fsection\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
 
 module.exports['sensorList'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;var locals_for_with = (locals || {});(function (enabled_sensors, sensors) {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Fsensor-list.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-grid-list mdc-elevation--z3\" style=\"background-color: white; padding: 16px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-grid-list mdc-elevation--z3\" style=\"background-color: white; padding: 16px\"\u003E";
 ;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Fsensor-list.pug";
-pug_html = pug_html + "\u003Cdiv class=\"mdc-typography--title\" style=\"padding: 8px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv class=\"mdc-typography--title\" style=\"padding: 8px\"\u003E";
 ;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Fsensor-list.pug";
 pug_html = pug_html + "Sensors\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fsensor-list.pug";
@@ -2627,13 +2624,13 @@ pug_html = pug_html + (pug.escape(null == (pug_interp = sensor) ? "" : pug_inter
 pug_html = pug_html + "\u003C\u002Fdiv\u003E";}.call(this,"enabled_sensors" in locals_for_with?locals_for_with.enabled_sensors:typeof enabled_sensors!=="undefined"?enabled_sensors:undefined,"sensors" in locals_for_with?locals_for_with.sensors:typeof sensors!=="undefined"?sensors:undefined));} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
 
 module.exports['spinner'] = function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {;pug_debug_line = 1;pug_debug_filename = "src\u002Ftemplates\u002Fspinner.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 16px; display: flex; justify-content: center; margin-top: 200px;\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 16px; display: flex; justify-content: center; margin-top: 200px\"\u003E";
 ;pug_debug_line = 2;pug_debug_filename = "src\u002Ftemplates\u002Fspinner.pug";
 pug_html = pug_html + "\u003Csvg id=\"spinner\" width=\"35px\" height=\"35px\" viewBox=\"0 0 66 66\" xmlns=\"http:\u002F\u002Fwww.w3.org\u002F2000\u002Fsvg\"\u003E";
 ;pug_debug_line = 3;pug_debug_filename = "src\u002Ftemplates\u002Fspinner.pug";
 pug_html = pug_html + "\u003Ccircle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"square\" cx=\"33\" cy=\"33\" r=\"30\"\u003E\u003C\u002Fcircle\u003E\u003C\u002Fsvg\u003E";
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fspinner.pug";
-pug_html = pug_html + "\u003Cbutton class=\"mdc-button\" id=\"cancel_button\" style=\"position: absolute; bottom: 16px; display: none;\"\u003E";
+pug_html = pug_html + "\u003Cbutton class=\"mdc-button\" id=\"cancel_button\" style=\"position: absolute; bottom: 16px; display: none\"\u003E";
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fspinner.pug";
 pug_html = pug_html + "Cancel\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E";} catch (err) {pug.rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;};
 
@@ -2646,9 +2643,9 @@ pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-2-desktop\"
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card mdc-layout-grid__cell mdc-layout-grid__cell--span-8\"\u003E";
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px;\"\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px\"\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__primary\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"padding:16px\"\u003E";
 ;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
 pug_html = pug_html + "\u003Ch3\u003E";
 ;pug_debug_line = 8;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
@@ -2672,7 +2669,7 @@ pug_html = pug_html + "\u003Cli\u003E";
 ;pug_debug_line = 17;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
 pug_html = pug_html + "Install a driver from the&nbsp;";
 ;pug_debug_line = 18;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
-pug_html = pug_html + "\u003Ca href=\"#!\u002Fdriver\u002Fstore\"\u003E";
+pug_html = pug_html + "\u003Ca href=\"#!\u002Fstore\u002Flist\u002Fdriver\"\u003E";
 ;pug_debug_line = 19;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
 pug_html = pug_html + "driver store\u003C\u002Fa\u003E";
 ;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
@@ -2682,7 +2679,7 @@ pug_html = pug_html + "\u003Cli\u003E";
 ;pug_debug_line = 22;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
 pug_html = pug_html + "Install an app from the&nbsp;";
 ;pug_debug_line = 23;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
-pug_html = pug_html + "\u003Ca href=\"#!\u002Fdriver\u002Fapp\"\u003E";
+pug_html = pug_html + "\u003Ca href=\"#!\u002Fstore\u002Flist\u002Fapp\"\u003E";
 ;pug_debug_line = 24;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
 pug_html = pug_html + "app store\u003C\u002Fa\u003E";
 ;pug_debug_line = 25;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-app.pug";
@@ -2707,9 +2704,9 @@ pug_html = pug_html + "\u003Cdiv class=\"mdc-layout-grid__cell--span-2-desktop\"
 ;pug_debug_line = 4;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card mdc-layout-grid__cell mdc-layout-grid__cell--span-8\"\u003E";
 ;pug_debug_line = 5;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px;\"\u003E\u003C\u002Fsection\u003E";
+pug_html = pug_html + "\u003Csection class=\"mdc-card__media\" style=\"background-image: url('img\u002Flogo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px\"\u003E\u003C\u002Fsection\u003E";
 ;pug_debug_line = 6;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
-pug_html = pug_html + "\u003Csection class=\"mdc-card__primary\"\u003E";
+pug_html = pug_html + "\u003Csection style=\"padding:16px\"\u003E";
 ;pug_debug_line = 7;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "\u003Ch3\u003E";
 ;pug_debug_line = 8;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
@@ -2729,7 +2726,7 @@ pug_html = pug_html + "\u003Cli\u003E";
 ;pug_debug_line = 15;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "Install a driver from the&nbsp;";
 ;pug_debug_line = 16;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
-pug_html = pug_html + "\u003Ca href=\"#!\u002Fdriver\u002Fstore\"\u003E";
+pug_html = pug_html + "\u003Ca href=\"#!\u002Fstore\u002Flist\u002Fdriver\"\u003E";
 ;pug_debug_line = 17;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "driver store\u003C\u002Fa\u003E";
 ;pug_debug_line = 18;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
@@ -2739,7 +2736,7 @@ pug_html = pug_html + "\u003Cli\u003E";
 ;pug_debug_line = 20;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "Install an app from the&nbsp;";
 ;pug_debug_line = 21;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
-pug_html = pug_html + "\u003Ca href=\"#!\u002Fdriver\u002Fapp\"\u003E";
+pug_html = pug_html + "\u003Ca href=\"#!\u002Fstore\u002Flist\u002Fapp\"\u003E";
 ;pug_debug_line = 22;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "app store\u003C\u002Fa\u003E";
 ;pug_debug_line = 23;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
@@ -2747,7 +2744,7 @@ pug_html = pug_html + ".\u003C\u002Fli\u003E\u003C\u002Ful\u003E";
 ;pug_debug_line = 25;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "\u003Cdiv style=\"display: flex;justify-content: center;align-items: center;\"\u003E";
 ;pug_debug_line = 26;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
-pug_html = pug_html + "\u003Ca href=\"https:\u002F\u002Fplay.google.com\u002Fstore\u002Fapps\u002Fdetails?id=io.databox.app\" target=\"_top\" style=\"margin-top: 5px; margin-right: 20px;\"\u003E";
+pug_html = pug_html + "\u003Ca href=\"https:\u002F\u002Fplay.google.com\u002Fstore\u002Fapps\u002Fdetails?id=io.databox.app\" target=\"_top\" style=\"margin-top: 5px; margin-right: 20px\"\u003E";
 ;pug_debug_line = 27;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";
 pug_html = pug_html + "\u003Cimg alt=\"Get Databox on Google Play\" height=\"60\" src=\"https:\u002F\u002Fplay.google.com\u002Fintl\u002Fen_us\u002Fbadges\u002Fimages\u002Fgeneric\u002Fen_badge_web_generic.png\"\u002F\u003E\u003C\u002Fa\u003E";
 ;pug_debug_line = 28;pug_debug_filename = "src\u002Ftemplates\u002Fwelcome-web.pug";

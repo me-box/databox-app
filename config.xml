@@ -1,10 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.databox.app" version="0.5.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.databox.app" version="0.5.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>databox</name>
     <description>Databox App</description>
     <author href="http://databox.io">Kevin Glover</author>
     <content src="index.html" />
     <access origin="*" />
+    <allow-navigation href="https:*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
@@ -46,6 +47,6 @@
     <plugin name="cordova-plugin-qrscanner" spec="git+https://github.com/ktg/cordova-plugin-qrscanner.git" />
     <plugin name="cordova-plugin-add-swift-support" spec="git+https://github.com/akofman/cordova-plugin-add-swift-support.git" />
     <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
-    <engine name="android" spec="^7.0.0" />
+    <engine name="android" spec="^7.1.0" />
     <engine name="ios" spec="^4.5.4" />
 </widget>

@@ -3,7 +3,7 @@ div.mdc-layout-grid
 		div.mdc-layout-grid__cell--span-2-desktop
 		div.mdc-card.mdc-layout-grid__cell.mdc-layout-grid__cell--span-8
 			section.mdc-card__media(style="background-image: url('img/logo.png');background-size: contain; background-repeat: no-repeat; height: 80px; margin: 16px")
-			section.mdc-card__supporting-text
+			section(style="padding: 16px")
 				| Databox lets you take control of your personal data and IoT devices. See the&nbsp;
 				a(href="https://github.com/me-box/databox")
 					| documentation
@@ -16,12 +16,12 @@ div.mdc-layout-grid
 					| Could not connect to the Databox at&nbsp;
 					span#error_host
 
-			section.mdc-card__supporting-text
+			section(style="padding: 16px")
 				div.mdc-text-field(style="width: 100%")
 					input#connectField.mdc-text-field__input(type='url', style="width: 100%", required=true)
-					label.mdc-text-field__label(for='connectField')
+					label.mdc-floating-label(for='connectField')
 						| Databox Address
-					div.mdc-text-field__bottom-line
+					div.mdc-line-ripple
 
 			section.mdc-card__actions
 				button#qrbutton.mdc-button.mdc-button--primary

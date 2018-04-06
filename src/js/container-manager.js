@@ -59,10 +59,10 @@ module.exports.connect = function () {
 				const hostlabel = document.getElementById('hostname');
 				const url = new URL(databoxURL);
 				hostlabel.innerText = url.hostname;
-				hostlabel.parentElement.addEventListener('click', () => {
+				hostlabel.addEventListener('click', () => {
 					router.navigate('/connect')
 				});
-				hostlabel.parentElement.style.cursor = 'pointer';
+				hostlabel.style.cursor = 'pointer';
 
 				stores.setStores([
 					{

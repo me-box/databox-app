@@ -27,22 +27,22 @@ html(lang='en')
 		header.mdc-toolbar.mdc-toolbar--fixed.mdc-toolbar--fixed.mdc-theme--dark
 			div#toolbar.mdc-toolbar__row
 				section.mdc-toolbar__section.mdc-toolbar__section--align-start
-					a#navicon.mdc-icon-toggle.material-icons
+					a#navicon.mdc-toolbar__menu-icon.material-icons
 						| menu
-					a#backicon.mdc-icon-toggle.material-icons
+					a#backicon.mdc-toolbar__menu-icon.material-icons
 						| arrow_back
 					span#toolbartitle.mdc-toolbar__title
 						| Databox
 
 				section.mdc-toolbar__section.mdc-toolbar__section--align-end.mdc-toolbar__section--shrink-to-fit
-					a#searchicon.mdc-icon-toggle.material-icons.search.align-icons(title="Search", href="#!/search/")
+					a#searchicon.mdc-toolbar__icon.material-icons.search.align-icons(title="Search", href="#!/search/")
 						| search
 				section#toolbaractions.mdc-toolbar__section.mdc-toolbar__section--align-end.mdc-toolbar__section--shrink-to-fit
 
 
 			div#toolbar-search.mdc-toolbar__row
 				section.mdc-toolbar__section.mdc-toolbar__section--align-start
-					a#searchbackicon.mdc-icon-toggle.material-icons
+					a#searchbackicon.mdc-toolbar__icon.material-icons
 						| arrow_back
 					label.mdc-text-field
 						input#toolbar-search__input.mdc-text-field__input(placeholder='Search')
@@ -55,7 +55,7 @@ html(lang='en')
 						div(style="width: 100%;")
 							div.mdc-typography--title
 								| Databox
-							div#hostname.mdc-typography--caption
+							div#hostname.mdc-typography--caption(style="display: none")
 				nav#nav.mdc-drawer__content.mdc-list
 					a.mdc-list-item(href="#!")
 						i.material-icons.mdc-list-item__graphic

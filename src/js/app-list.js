@@ -17,7 +17,8 @@ function reloadAppList(type) {
 					const newList = templates.appList({
 						containers: containers
 					});
-					if (document.getElementById('content').innerHTML !== newList) {
+					const innerHTML = document.getElementById('content').innerHTML.replace(/>contains [^<]*<\/span>/g, '>running</span>');
+					if (innerHTML !== newList) {
 						document.getElementById('content').innerHTML = newList;
 						const actions = document.getElementsByClassName('mdc-icon-toggle');
 						for (const action of actions) {
@@ -47,6 +48,28 @@ function reloadAppList(type) {
 								});
 							}
 						}
+
+						for(const container of containers) {
+							if(container.type === "store" && container.state === "running") {
+								containerManager.fetch('api/store/cat/' + container.name)
+									.then((res) => res.json())
+									.then((cat) => {
+										let types = [];
+										let comma = false;
+										for(const item of cat.items) {
+											for(const metadata of item['item-metadata']) {
+												if (metadata.rel === "urn:X-databox:rels:hasType") {
+													types.push(metadata.val);
+												}
+											}
+										}
+
+										if(types.length !== 0) {
+											document.getElementById('types_' + container.name).innerText = 'contains ' + types.join(', ');
+										}
+									});
+							}
+						}
 					}
 
 					setTimeout(function () {
@@ -70,28 +93,29 @@ router.on('/:name/ui', (params) => {
 	toolbar.showSpinner();
 	let appname = params.name;
 
-	document.getElementById('toolbartitle').innerText = params.name;
-
 	if (appname === 'databox_arbiter') {
 		appname = 'arbiter';
 	}
+	document.getElementById('toolbartitle').innerText = appname;
 	const url = localStorage.getItem('databoxURL') + appname + '/ui';
 	toolbar.showBack();
 	const toolbarActions = document.getElementById('toolbaractions');
 	toolbarActions.innerHTML = '';
 	const button = document.createElement('a');
-	button.classList.add('mdc-icon-toggle');
+	button.classList.add('mdc-toolbar__icon');
 	button.classList.add('material-icons');
 	button.innerText = 'fullscreen';
 	button.href = url;
 	toolbarActions.appendChild(button);
 
 	const iframe = document.createElement("iframe");
-	iframe.setAttribute("src", url);
-
 	const content = document.getElementById('content');
 
-	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
 	content.innerHTML = '';
 	content.appendChild(iframe);
+
+	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
+	iframe.src = url;
+	iframe.name = "Test";
+	console.log(iframe)
 });

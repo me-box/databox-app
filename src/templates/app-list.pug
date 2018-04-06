@@ -7,7 +7,7 @@ if(containers && containers.length > 0)
 						= container.name.replace('databox_', '').replace('app-','').replace('driver-','').charAt(0).toUpperCase()
 					span.mdc-list-item__text
 						= container.name.replace('databox_', '').replace('app-','').replace('driver-','').replace(/-/g,' ')
-						span.mdc-list-item__secondary-text(style=container.state === 'running' ? '' : 'color: #F00')
+						span.mdc-list-item__secondary-text(id='types_' + container.name, style=container.state === 'running' ? '' : 'color: #F00')
 							= container.state
 					if container.type !== 'system'
 						span(style="display: flex;margin-left: auto")

@@ -81,10 +81,10 @@
 
 div(style="padding: 16px")
 	div.mdc-card
-		section(style="display:flex").mdc-card__primary
+		section(style="display:flex; padding: 16px;")
 			div.app-icon-letter
 				= manifest.displayName.charAt(0).toUpperCase()
-			div(style="padding-left: 16px")
+			div(style="padding: 16px")
 				div.mdc-card__title--large
 					= manifest.displayName
 				div.mdc-card__subtitle.mdc-typography--caption
@@ -100,8 +100,8 @@ div(style="padding: 16px")
 						| star
 					i.material-icons.disabled
 						| star
-		section.mdc-card__supporting-text
-			= manifest.description
+				div(style="padding-top: 8px;")
+					= manifest.description
 
 		div.mdc-layout-grid
 			div.mdc-layout-grid__inner
@@ -142,20 +142,18 @@ div(style="padding: 16px")
 
 					each datasource in manifest.datasources
 						div.mdc-layout-grid__cell--span-12(style="padding: 0 16px; display: flex; flex-direction: column")
-							- var active = isDatasourceActive(datasource)
-							- var sensorsExist = hasSensors(datasource)
+							- var active = isDatasourceActive(datasource);
+							- var sensorsExist = hasSensors(datasource);
 							div.mdc-select(role="listbox", style="width: 100%;", datasource=datasource.clientid, id=datasource.clientid, aria-disabled=active && sensorsExist ? 'false' : 'true')
-								div.mdc-select__surface(tabindex="0")
-									div.mdc-select__label(class=datasource.hypercat ? 'mdc-select__label--float-above' : '')
-										= datasource.type
-									div.mdc-select__selected-text
-									div.mdc-select__bottom-line
-								div.mdc-simple-menu.mdc-select__menu
-									ul.mdc-list.mdc-simple-menu__items
-										each sensor in sensors
-											if getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type
-												li.mdc-list-item(role="option", aria-selected=(datasource.hypercat && sensor.href === datasource.hypercat.href), id=sensor.href)
-													= getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')
+								select.mdc-select__native-control
+									option(value="", disabled, selected=(!datasource.hypercat), style="display: none")
+									each sensor in sensors
+										if getMetadata(sensor, 'urn:X-databox:rels:hasType') === datasource.type
+											option(selected=(datasource.hypercat && sensor.href === datasource.hypercat.href), value=sensor.href)
+												= getMetadata(sensor, 'urn:X-hypercat:rels:hasDescription:en')
+								div.mdc-select__label(class=!datasource.hypercat ? '' : 'mdc-select__label--float-above')
+									= datasource.type
+								div.mdc-select__bottom-line
 							div.mdc-typography--caption(style="color: #d50000;")
 								if !sensorsExist
 									| Required, but no datasources found

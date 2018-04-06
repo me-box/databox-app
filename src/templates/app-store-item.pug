@@ -1,52 +1,53 @@
 div(style="padding: 16px")
 	div.mdc-card
-		section(style="display:flex").mdc-card__primary
-			div.app-icon-letter
-				= app[0].displayName.charAt(0).toUpperCase()
-			div(style="padding-left: 16px")
-				div.mdc-card__title--large
-					= app[0].displayName
-				div.mdc-card__subtitle.mdc-typography--caption
-					= app[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
-				div
-					i.material-icons
-						| star
-					i.material-icons
-						| star
-					i.material-icons
-						| star
-					i.material-icons.disabled
-						| star
-					i.material-icons.disabled
-						| star
-		section.mdc-card__supporting-text
-			= app[0].manifest.description
-		section.mdc-card__supporting-text(style="display: flex")
-			i.material-icons
-				| lock
-			i.material-icons
-				| lock
-			i.material-icons
-				| lock
-			i.material-icons.disabled
-				| lock_open
-			i.material-icons.disabled
-				| lock_open
-			div(style="padding: 0 16px")
-				| Moderate Risk
-		section.mdc-card__supporting-text
-			if 'export-whitelist' in app[0].manifest && app[0].manifest['export-whitelist'].length > 0
-				div(style="display: flex; padding-top: 16px")
-					i.material-icons(style="padding:8px 16px 0 0; color: #F57F17")
-						| lock
-					span.mdc-list-item__text
-						| External Access
-						span.mdc-list-item__text__secondary
-							each url in app[0].manifest['export-whitelist']
+		section(style="padding: 16px")
+			div(style="display:flex")
+				div.app-icon-letter
+					= app[0].displayName.charAt(0).toUpperCase()
+				div(style="padding-left: 16px")
+					div.mdc-card__title--large
+						= app[0].displayName
+					div.mdc-card__subtitle.mdc-typography--caption
+						= app[0].manifest.author.replace(/\s*\(.*?\)\s*/g, '').replace(/\s*<.*?>\s*/g, '')
+					div
+						i.material-icons
+							| star
+						i.material-icons
+							| star
+						i.material-icons
+							| star
+						i.material-icons.disabled
+							| star
+						i.material-icons.disabled
+							| star
+					div(style="padding-top: 8px;")
+						= app[0].manifest.description
+			div(style="display: flex; padding-top: 16px;")
+				i.material-icons
+					| lock
+				i.material-icons
+					| lock
+				i.material-icons
+					| lock
+				i.material-icons.disabled
+					| lock_open
+				i.material-icons.disabled
+					| lock_open
+				div(style="padding: 0 16px")
+					| Moderate Risk
+			div
+				if 'export-whitelist' in app[0].manifest && app[0].manifest['export-whitelist'].length > 0
+					div(style="display: flex; padding-top: 16px; align-items: center")
+						i.material-icons(style="padding:8px 16px 0 0; color: #F57F17")
+							| lock
+						span.mdc-list-item__text
+							| External Access
+							span.mdc-list-item__text__secondary
+								each url in app[0].manifest['export-whitelist']
+									div
+										= 'Accesses ' + url.url
 								div
-									= 'Accesses ' + url.url
-							div
-								| Potentially leaks data to third-party
+									| Potentially leaks data to third-party
 
 		if(!app.installed)
 			section.mdc-card__actions
@@ -56,8 +57,8 @@ div(style="padding: 16px")
 					a#versionButton.mdc-button(style="min-width: 16px; color: #666")
 						i.material-icons(style="font-size: 12pt")
 							| arrow_drop_down
-					div#versionMenu.mdc-simple-menu
-						ul.mdc-list.mdc-simple-menu__items
+					div#versionMenu.mdc-menu
+						ul.mdc-list.mdc-menu__items
 							each appItem in app
 								li.mdc-list-item.version-item(role="option", id=appItem._id)
 									= 'v' + appItem.manifest.version + ' on ' + appItem.store

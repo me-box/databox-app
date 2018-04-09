@@ -49,22 +49,22 @@ function reloadAppList(type) {
 							}
 						}
 
-						for(const container of containers) {
-							if(container.type === "store" && container.state === "running") {
+						for (const container of containers) {
+							if (container.type === "store" && container.state === "running") {
 								containerManager.fetch('api/store/cat/' + container.name)
 									.then((res) => res.json())
 									.then((cat) => {
 										let types = [];
 										let comma = false;
-										for(const item of cat.items) {
-											for(const metadata of item['item-metadata']) {
+										for (const item of cat.items) {
+											for (const metadata of item['item-metadata']) {
 												if (metadata.rel === "urn:X-databox:rels:hasType") {
 													types.push(metadata.val);
 												}
 											}
 										}
 
-										if(types.length !== 0) {
+										if (types.length !== 0) {
 											document.getElementById('types_' + container.name).innerText = 'contains ' + types.join(', ');
 										}
 									});
@@ -117,5 +117,4 @@ router.on('/:name/ui', (params) => {
 	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
 	iframe.src = url;
 	iframe.name = "Test";
-	console.log(iframe)
 });

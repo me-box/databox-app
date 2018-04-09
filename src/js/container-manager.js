@@ -14,7 +14,7 @@ function authHeader(obj) {
 			obj.headers = {};
 		}
 		obj.headers.Authorization = 'Token ' + token;
-		obj.headers.credentials = 'include';
+		obj.credentials = 'include';
 	}
 	return obj;
 }
@@ -73,8 +73,6 @@ module.exports.connect = function () {
 						"name": "IoT Databox Store",
 						"url": "https://store.iotdatabox.com/"
 					}]);
-
-				cookies.set('session', session);
 
 				if (router.lastRouteResolved() !== null && router.lastRouteResolved().url === '/connect') {
 					router.navigate('/');

@@ -53,8 +53,7 @@ module.exports.connect = function () {
 	});
 	const databoxURL = localStorage.getItem('databoxURL');
 	return module.exports.fetch('api/connect')
-		.then((res) => res.text())
-		.then((session) => {
+		.then(() => {
 			if (document.getElementById('spinner') && databoxURL === localStorage.getItem('databoxURL')) {
 				const hostlabel = document.getElementById('hostname');
 				const url = new URL(databoxURL);

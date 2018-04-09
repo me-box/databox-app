@@ -43,10 +43,13 @@ containerManager.onShowConnect = function () {
 				console.error(err);
 			}
 			if (status.authorized) {
+				let body = document.getElementsByTagName("body")[0];
+				body.style.background = 'transparent';
 				QRScanner.scan((err, text) => {
 					if (err) {
 						console.error(err);
 					} else {
+						body.style.background = '#eee';
 						QRScanner.destroy();
 						const auth = JSON.parse(text);
 						localStorage.setItem("databoxURL", 'https://' + auth.ip + '/');
@@ -56,7 +59,11 @@ containerManager.onShowConnect = function () {
 				});
 
 				document.getElementById('content').innerHTML = '';
-				toolbar.showBack();
+				toolbar.showBack(() => {
+					body.style.background = '#eee';
+					QRScanner.destroy();
+					containerManager.showConnect();
+				}, false);
 				QRScanner.show();
 			}
 		});

@@ -1,6 +1,8 @@
 const router = require("./router.js");
 const templates = require("./templates");
 
+let callbackFn = null;
+
 module.exports.disabled = function () {
 	document.getElementById('toolbar-search').style.display = 'none';
 	document.getElementById('toolbar').style.display = 'flex';
@@ -20,12 +22,17 @@ module.exports.showDrawer = function () {
 	document.getElementById('backicon').style.display = 'none';
 };
 
-module.exports.showBack = function () {
+module.exports.showBack = function (callback, search = true) {
+	callbackFn = callback;
 	document.getElementById('toolbaractions').innerText = '';
 	document.getElementById('toolbartitle').innerText = 'Databox';
 	document.getElementById('toolbar-search').style.display = 'none';
 	document.getElementById('toolbar').style.display = 'flex';
-	document.getElementById('searchicon').style.display = 'block';
+	if(search) {
+		document.getElementById('searchicon').style.display = 'block';
+	} else {
+		document.getElementById('searchicon').style.display = 'none';
+	}
 	document.getElementById('navicon').style.display = 'none';
 	document.getElementById('navicon').style.visibility = 'visible';
 	document.getElementById('backicon').style.display = 'block';
@@ -46,7 +53,16 @@ toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust')
 
 const drawer = new mdc.drawer.MDCTemporaryDrawer(document.querySelector('.mdc-drawer--temporary'));
 document.getElementById('navicon').addEventListener('click', () => drawer.open = true);
-document.getElementById('backicon').addEventListener('click', () => window.history.back());
+document.getElementById('backicon').addEventListener('click', () => {
+	console.log("callback");
+	console.log(callbackFn);
+	console.log(typeof callbackFn);
+	if(callbackFn) {
+		callbackFn();
+	} else {
+		window.history.back()
+	}
+});
 document.getElementById('searchbackicon').addEventListener('click', () => window.history.back());
 
 router.hooks({

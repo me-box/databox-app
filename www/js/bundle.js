@@ -1005,7 +1005,7 @@ function authHeader(obj) {
 			obj.headers = {};
 		}
 		obj.headers.Authorization = 'Token ' + token;
-		obj.headers.credentials = 'include';
+		obj.credentials = 'include';
 	}
 	return obj;
 }
@@ -1065,7 +1065,7 @@ module.exports.connect = function () {
 						"url": "https://store.iotdatabox.com/"
 					}]);
 
-				cookies.set('session', session);
+				cookies.set('session', session, { domain: url.hostname });
 
 				if (router.lastRouteResolved() !== null && router.lastRouteResolved().url === '/connect') {
 					router.navigate('/');
@@ -2830,9 +2830,6 @@ toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust')
 const drawer = new mdc.drawer.MDCTemporaryDrawer(document.querySelector('.mdc-drawer--temporary'));
 document.getElementById('navicon').addEventListener('click', () => drawer.open = true);
 document.getElementById('backicon').addEventListener('click', () => {
-	console.log("callback");
-	console.log(callbackFn);
-	console.log(typeof callbackFn);
 	if(callbackFn) {
 		callbackFn();
 	} else {

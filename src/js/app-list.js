@@ -96,25 +96,7 @@ router.on('/:name/ui', (params) => {
 	if (appname === 'databox_arbiter') {
 		appname = 'arbiter';
 	}
-	document.getElementById('toolbartitle').innerText = appname;
-	const url = localStorage.getItem('databoxURL') + appname + '/ui';
-	toolbar.showBack();
-	const toolbarActions = document.getElementById('toolbaractions');
-	toolbarActions.innerHTML = '';
-	const button = document.createElement('a');
-	button.classList.add('mdc-toolbar__icon');
-	button.classList.add('material-icons');
-	button.innerText = 'fullscreen';
-	button.href = url;
-	toolbarActions.appendChild(button);
 
-	const iframe = document.createElement("iframe");
-	const content = document.getElementById('content');
-
-	content.innerHTML = '';
-	content.appendChild(iframe);
-
-	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
-	iframe.src = url;
-	iframe.name = "Test";
+	const url = localStorage.getItem('databoxURL') + appname + '/ui?oauth=' + encodeURIComponent(containerManager.getOAuthCallback(appname));
+	containerManager.showiFrame(url);
 });

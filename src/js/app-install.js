@@ -21,8 +21,9 @@ function listDatasources(manifest) {
 	}
 }
 
-function appConfigDisplay(manifest, sensors) {
-	toolbar.showBack('Configure ' + manifest.displayName);
+function appConfigDisplay(manifesto, sensors) {
+	let manifest = manifesto;
+	toolbar.showBack();
 	if ('packages' in manifest && manifest.packages.length > 0) {
 		const firstPackage = manifest.packages[0];
 		if (!('enabled' in firstPackage)) {
@@ -50,11 +51,13 @@ function appConfigDisplay(manifest, sensors) {
 
 	document.getElementById('install_button').addEventListener('click', () => {
 		toolbar.showSpinner();
+		console.log("manifest");
+		console.log(manifest);
+		console.log(JSON.stringify(manifest));
 		containerManager.fetch("api/install", {
-			headers: {
-				'Content-Type': 'application/json'
-			},
 			method: "POST",
+			mode: "cors",
+			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(manifest),
 		})
 			.then(() => {

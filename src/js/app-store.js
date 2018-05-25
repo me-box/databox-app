@@ -171,24 +171,24 @@ router.on('/store/:name', (params) => {
 						app: app
 					});
 
-					const installURL = "#!/" + manifest.name + "/config/";
+					const installURL = "#!/store/" + manifest.name + "/install/";
 					const menuItems = document.getElementsByClassName('version-item');
 					for (const menuItem of menuItems) {
 						menuItem.addEventListener('click', function (event) {
 							document.getElementById('install_link').href = installURL + event.target.id;
 							const menuItems = document.getElementsByClassName('version-item');
 							for (const menuItem of menuItems) {
-								menuItem.classList.remove('mdc-simple-menu--selected');
+								menuItem.classList.remove('mdc-list-item--selected');
 							}
-							event.target.classList.add('mdc-simple-menu--selected');
+							event.target.classList.add('mdc-list-item--selected');
 						})
 					}
 
 					if (menuItems.length > 0) {
-						menuItems.item(0).classList.add('mdc-simple-menu--selected');
+						menuItems.item(0).classList.add('mdc-list-item--selected');
 					}
 
-					const menu = new mdc.menu.MDCSimpleMenu(document.getElementById('versionMenu'));
+					const menu = new mdc.menu.MDCMenu(document.getElementById('versionMenu'));
 					document.getElementById('versionButton').addEventListener('click', function () {
 						menu.open = !menu.open
 					});

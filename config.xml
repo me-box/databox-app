@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.databox.app" version="0.5.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.databox.app" version="0.5.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>databox</name>
     <description>Databox App</description>
     <author href="http://databox.io">Kevin Glover</author>
@@ -31,6 +31,9 @@
         <feature name="StatusBar">
             <param name="ios-package" onload="true" value="CDVStatusBar" />
         </feature>
+        <config-file parent="UILaunchStoryboardName" target="*-Info.plist">
+            <string>CDVLaunchScreen</string>
+        </config-file>
         <icon height="40" src="res/icons/apple-icon-40.png" width="40" />
         <icon height="57" src="res/icons/apple-icon-57.png" width="57" />
         <icon height="76" src="res/icons/apple-icon-76.png" width="76" />
@@ -47,6 +50,13 @@
     <plugin name="cordova-plugin-qrscanner" spec="git+https://github.com/ktg/cordova-plugin-qrscanner.git" />
     <plugin name="cordova-plugin-add-swift-support" spec="git+https://github.com/akofman/cordova-plugin-add-swift-support.git" />
     <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
+    <plugin name="cordova-plugin-safariviewcontroller" spec="^1.5.3" />
+    <plugin name="cordova-plugin-customurlscheme" spec="^4.3.0">
+        <variable name="URL_SCHEME" value="databox" />
+        <variable name="ANDROID_SCHEME" value=" " />
+        <variable name="ANDROID_HOST" value=" " />
+        <variable name="ANDROID_PATHPREFIX" value="/" />
+    </plugin>
     <engine name="android" spec="^7.1.0" />
     <engine name="ios" spec="^4.5.4" />
 </widget>

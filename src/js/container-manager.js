@@ -2,7 +2,6 @@ const templates = require("./templates");
 const toolbar = require("./toolbar");
 const router = require("./router");
 const stores = require("./app-store");
-const cookies = require("js-cookie");
 
 function authHeader(obj) {
 	if (!obj) {
@@ -35,6 +34,24 @@ module.exports.onConnectError = function (res) {
 };
 
 module.exports.onShowConnect = function () {
+};
+
+module.exports.getOAuthCallback = function(appname) {
+	return "databox://oauth";
+};
+
+module.exports.showiFrame = function(url) {
+	console.log('iframe: ' + url);
+	toolbar.showBack();
+
+	const iframe = document.createElement("iframe");
+	const content = document.getElementById('content');
+
+	content.innerHTML = '';
+	content.appendChild(iframe);
+
+	iframe.style.height = (document.documentElement.clientHeight - 56) + 'px';
+	iframe.src = url;
 };
 
 module.exports.fetch = function (url, options) {

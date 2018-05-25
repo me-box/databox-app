@@ -39,17 +39,19 @@ containerManager.onShowConnect = function () {
 	qrbutton.style.display = 'block';
 	qrbutton.addEventListener('click', () => {
 		QRScanner.prepare((err, status) => {
+			let body = document.getElementsByTagName("body")[0];
 			if (err) {
 				console.error(err);
+				body.style.backgroundColor = '';
+				QRScanner.destroy();
+				containerManager.showConnect();
 			}
 			if (status.authorized) {
-				let body = document.getElementsByTagName("body")[0];
-				body.style.background = 'transparent';
 				QRScanner.scan((err, text) => {
 					if (err) {
 						console.error(err);
 					} else {
-						body.style.background = '#eee';
+						body.style.backgroundColor = '';
 						QRScanner.destroy();
 						const auth = JSON.parse(text);
 						localStorage.setItem("databoxURL", 'https://' + auth.ip + '/');
@@ -60,14 +62,68 @@ containerManager.onShowConnect = function () {
 
 				document.getElementById('content').innerHTML = '';
 				toolbar.showBack(() => {
-					body.style.background = '#eee';
+					body.style.backgroundColor = '';
 					QRScanner.destroy();
 					containerManager.showConnect();
 				}, false);
-				QRScanner.show();
+				QRScanner.show(function(status){
+					console.log(status);
+					body.style.backgroundColor = 'transparent';
+				});
 			}
 		});
 	});
+};
+
+window.addEventListener('message', (event) => {
+	console.log(event);
+	if (event.data.type === 'databox_oauth_redirect') {
+		toolbar.showSpinner();
+		SafariViewController.isAvailable((available) => {
+			let url = event.data.url.replace('{callback}', 'databox://oauth');
+			if (available) {
+				SafariViewController.show({
+						url: url,
+						hidden: false,
+						animated: false,
+						enterReaderModeIfAvailable: false,
+						tintColor: "#3f51b5",
+					},
+					// this success handler will be invoked for the lifecycle events 'opened', 'loaded' and 'closed'
+					(result) => {
+						if (result.event === 'opened') {
+							console.log('opened');
+						} else if (result.event === 'loaded') {
+							console.log('loaded');
+						} else if (result.event === 'closed') {
+							console.log('closed');
+						}
+					},
+					(msg) => {
+						console.log("KO: " + msg);
+					})
+			} else {
+				// potentially powered by InAppBrowser because that (currently) clobbers window.open
+				window.open(url, '_blank', 'location=yes');
+			}
+		})
+	}
+});
+
+window.handleOpenURL = function(url) {
+	const oauthURL = new URL(url);
+	SafariViewController.hide();
+	const lastRoute = router.lastRouteResolved();
+	if(lastRoute != null && lastRoute.url.endsWith('/ui')) {
+		const appname = lastRoute.url.substr(1, lastRoute.url.length - 4);
+		containerManager.fetch(appname + '/ui/oauth' + oauthURL.search)
+			.then(() => router.navigate(lastRoute))
+			.catch((error) => {
+				router.navigate(lastRoute);
+				console.log("Error:" + error);
+			});
+		//containerManager.showiFrame(iframeURL);
+	}
 };
 
 router.on(() => {

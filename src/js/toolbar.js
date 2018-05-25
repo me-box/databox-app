@@ -1,9 +1,10 @@
 const router = require("./router.js");
 const templates = require("./templates");
 
-let callbackFn = null;
+let backCallback = null;
 
 module.exports.disabled = function () {
+	document.getElementById('toolbaractions').innerText = '';
 	document.getElementById('toolbar-search').style.display = 'none';
 	document.getElementById('toolbar').style.display = 'flex';
 	document.getElementById('navicon').style.display = 'block';
@@ -13,6 +14,9 @@ module.exports.disabled = function () {
 };
 
 module.exports.showDrawer = function () {
+	if (router.lastRouteResolved() != null && router.lastRouteResolved().url != null) {
+		localStorage.setItem('back', router.lastRouteResolved().url);
+	}
 	document.getElementById('toolbaractions').innerText = '';
 	document.getElementById('toolbar-search').style.display = 'none';
 	document.getElementById('toolbar').style.display = 'flex';
@@ -22,17 +26,18 @@ module.exports.showDrawer = function () {
 	document.getElementById('backicon').style.display = 'none';
 };
 
-module.exports.showBack = function (callback, search = true) {
-	callbackFn = callback;
+module.exports.showBack = function (callback) {
+	if (callback) {
+		backCallback = callback;
+		document.getElementById('searchicon').style.display = 'none';
+	} else {
+		backCallback = null;
+		document.getElementById('searchicon').style.display = 'block';
+	}
 	document.getElementById('toolbaractions').innerText = '';
 	document.getElementById('toolbartitle').innerText = 'Databox';
 	document.getElementById('toolbar-search').style.display = 'none';
 	document.getElementById('toolbar').style.display = 'flex';
-	if(search) {
-		document.getElementById('searchicon').style.display = 'block';
-	} else {
-		document.getElementById('searchicon').style.display = 'none';
-	}
 	document.getElementById('navicon').style.display = 'none';
 	document.getElementById('navicon').style.visibility = 'visible';
 	document.getElementById('backicon').style.display = 'block';
@@ -47,20 +52,28 @@ module.exports.showSpinner = function (cancel) {
 	}
 };
 
+module.exports.back = function () {
+	const backRoute = localStorage.getItem('back');
+	if (backCallback) {
+		backCallback();
+	} else if (backRoute) {
+		let backURL = backRoute;
+		if (backURL.startsWith('//')) {
+			backURL = backURL.startsWith(1);
+		}
+		router.navigate(backURL);
+	} else {
+		router.navigate('/');
+	}
+};
+
 const toolbar = mdc.toolbar.MDCToolbar.attachTo(document.querySelector('.mdc-toolbar'));
 toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust');
 
-
 const drawer = new mdc.drawer.MDCTemporaryDrawer(document.querySelector('.mdc-drawer--temporary'));
 document.getElementById('navicon').addEventListener('click', () => drawer.open = true);
-document.getElementById('backicon').addEventListener('click', () => {
-	if(callbackFn) {
-		callbackFn();
-	} else {
-		window.history.back()
-	}
-});
-document.getElementById('searchbackicon').addEventListener('click', () => window.history.back());
+document.getElementById('backicon').addEventListener('click', () => module.exports.back());
+document.getElementById('searchbackicon').addEventListener('click', () => module.exports.back());
 
 router.hooks({
 	before: (done, params) => {

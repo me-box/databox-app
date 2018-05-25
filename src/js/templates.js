@@ -120,7 +120,7 @@ pug_html = pug_html + "\u003Cdiv class=\"app-icon-letter\"\u003E";
 ;pug_debug_line = 86;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + (pug.escape(null == (pug_interp = manifest.displayName.charAt(0).toUpperCase()) ? "" : pug_interp)) + "\u003C\u002Fdiv\u003E";
 ;pug_debug_line = 87;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
-pug_html = pug_html + "\u003Cdiv style=\"padding: 16px\"\u003E";
+pug_html = pug_html + "\u003Cdiv style=\"padding: 0px 16px\"\u003E";
 ;pug_debug_line = 88;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";
 pug_html = pug_html + "\u003Cdiv class=\"mdc-card__title--large\"\u003E";
 ;pug_debug_line = 89;pug_debug_filename = "src\u002Ftemplates\u002Fapp-install.pug";

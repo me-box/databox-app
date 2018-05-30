@@ -41,7 +41,6 @@ module.exports.getOAuthCallback = function(appname) {
 };
 
 module.exports.showiFrame = function(url) {
-	console.log('iframe: ' + url);
 	toolbar.showBack();
 
 	const iframe = document.createElement("iframe");

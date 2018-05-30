@@ -338,7 +338,6 @@ containerManager.onShowConnect = function () {
 };
 
 window.addEventListener('message', (event) => {
-	console.log(event);
 	if (event.data.type === 'databox_oauth_redirect') {
 		toolbar.showSpinner();
 		SafariViewController.isAvailable((available) => {
@@ -351,21 +350,16 @@ window.addEventListener('message', (event) => {
 						enterReaderModeIfAvailable: false,
 						tintColor: "#3f51b5",
 					},
-					// this success handler will be invoked for the lifecycle events 'opened', 'loaded' and 'closed'
 					(result) => {
 						if (result.event === 'opened') {
-							console.log('opened');
 						} else if (result.event === 'loaded') {
-							console.log('loaded');
 						} else if (result.event === 'closed') {
-							console.log('closed');
 						}
 					},
 					(msg) => {
 						console.log("KO: " + msg);
 					})
 			} else {
-				// potentially powered by InAppBrowser because that (currently) clobbers window.open
 				window.open(url, '_blank', 'location=yes');
 			}
 		})
@@ -376,17 +370,15 @@ window.handleOpenURL = function(url) {
 	const oauthURL = new URL(url);
 	SafariViewController.hide();
 	const lastRoute = router.lastRouteResolved();
-	console.log("received url: " + url);
-	console.log("app route: " + lastRoute.url);
 	if(lastRoute != null && lastRoute.url.endsWith('/ui')) {
 		const appname = lastRoute.url.substr(1, lastRoute.url.length - 4);
+		console.log(appname + '/ui');
 		containerManager.fetch(appname + '/ui/oauth' + oauthURL.search)
-			.then(() => toolbar.back())
+			.then(() => window.location.reload(true))
 			.catch((error) => {
-				toolbar.back();
+				window.location.reload(true);
 				console.log("Error:" + error);
 			});
-		//containerManager.showiFrame(iframeURL);
 	}
 };
 
@@ -654,6 +646,7 @@ router.on('/:name/ui', (params) => {
 		appname = 'arbiter';
 	}
 
+	console.log('opened ' + params.name + '/ui');
 	const url = localStorage.getItem('databoxURL') + appname + '/ui?oauth=' + encodeURIComponent(containerManager.getOAuthCallback(appname));
 	containerManager.showiFrame(url);
 });
@@ -906,7 +899,6 @@ module.exports.getOAuthCallback = function(appname) {
 };
 
 module.exports.showiFrame = function(url) {
-	console.log('iframe: ' + url);
 	toolbar.showBack();
 
 	const iframe = document.createElement("iframe");
@@ -2679,8 +2671,6 @@ module.exports.disabled = function () {
 
 module.exports.showDrawer = function () {
 	if (router.lastRouteResolved() != null && router.lastRouteResolved().url != null) {
-		console.log(router.lastRouteResolved());
-
 		localStorage.setItem('back', router.lastRouteResolved().url);
 	}
 	document.getElementById('toolbaractions').innerText = '';
@@ -2720,7 +2710,6 @@ module.exports.showSpinner = function (cancel) {
 
 module.exports.back = function () {
 	const backRoute = localStorage.getItem('back');
-	console.log(backRoute);
 	if (backCallback) {
 		backCallback();
 	} else if (backRoute) {

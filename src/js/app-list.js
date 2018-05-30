@@ -97,6 +97,7 @@ router.on('/:name/ui', (params) => {
 		appname = 'arbiter';
 	}
 
+	console.log('opened ' + params.name + '/ui');
 	const url = localStorage.getItem('databoxURL') + appname + '/ui?oauth=' + encodeURIComponent(containerManager.getOAuthCallback(appname));
 	containerManager.showiFrame(url);
 });

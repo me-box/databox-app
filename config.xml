@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="io.databox.app" version="0.5.4" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>databox</name>
+    <name>Databox</name>
     <description>Databox App</description>
     <author href="http://databox.io">Kevin Glover</author>
     <content src="index.html" />
@@ -66,5 +66,5 @@
         <variable name="ANDROID_PATHPREFIX" value="/" />
     </plugin>
     <engine name="android" spec="^7.1.4" />
-    <engine name="ios" spec="~4.5.5" />
+    <engine name="ios" spec="^4.5.5" />
 </widget>

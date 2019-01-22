@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "c3764469e4f899e9ceb2",
+    "revision": "0676ee356c97a13aa41c",
     "url": "css/app.d983c9ae.css"
   },
   {
-    "revision": "c3764469e4f899e9ceb2",
-    "url": "js/app.b44a2d23.js"
+    "revision": "0676ee356c97a13aa41c",
+    "url": "js/app.7987a984.js"
   },
   {
     "revision": "b1fbf9a89f734abe59a0",
@@ -40,7 +40,7 @@ self.__precacheManifest = [
     "url": "js/group-store.85c78695.js"
   },
   {
-    "revision": "85f8f4dc5eba3b63f10bd7bd1d4119f8",
+    "revision": "f9c25da6dcc6062b6a49e4054352ded2",
     "url": "index.html"
   },
   {
@@ -48,32 +48,32 @@ self.__precacheManifest = [
     "url": "cordova.js"
   },
   {
-    "revision": "3febef58312965ee4aa899f16e8bafb1",
-    "url": "icons/icon-192.png"
-  },
-  {
-    "revision": "bce7a03e239515c1a56d1be9158ba596",
-    "url": "icons/full-icon-512.png"
-  },
-  {
     "revision": "658e66ecebe882701ad8664b07754ec8",
     "url": "icons/apple-icon-152.png"
+  },
+  {
+    "revision": "3febef58312965ee4aa899f16e8bafb1",
+    "url": "icons/icon-192.png"
   },
   {
     "revision": "39e5f7243d974d700293906afb9c6e38",
     "url": "icons/icon-16.png"
   },
   {
+    "revision": "bce7a03e239515c1a56d1be9158ba596",
+    "url": "icons/full-icon-512.png"
+  },
+  {
     "revision": "dc591d8cc4b0f0c8f9ab19abaa5f5f13",
     "url": "icons/icon-32.png"
   },
   {
-    "revision": "bb03d203f3bd8d15c1aa49b3d8abb890",
-    "url": "icons/safari-pinned-tab.svg"
-  },
-  {
     "revision": "b6216d61c03e6ce0c9aea6ca7808f7ca",
     "url": "robots.txt"
+  },
+  {
+    "revision": "bb03d203f3bd8d15c1aa49b3d8abb890",
+    "url": "icons/safari-pinned-tab.svg"
   },
   {
     "revision": "b0d18220ad8aca7e7b9790f5dd97bbb3",

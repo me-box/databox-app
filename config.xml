@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.databox.app" version="0.5.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>databox</name>
+<widget id="io.databox.app" version="0.5.6" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Databox</name>
     <description>Databox App</description>
     <author href="http://databox.io">Kevin Glover</author>
     <content src="index.html" />
@@ -12,25 +12,36 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <preference name="AppendUserAgent" value="Cordova" />
     <preference name="StatusBarOverlaysWebView" value="false" />
-    <preference name="StatusBarBackgroundColor" value="#2d3980" />
+    <preference name="StatusBarBackgroundColor" value="#3e4e5a" />
     <preference name="android-minSdkVersion" value="19" />
     <preference name="DisallowOverscroll" value="true" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <icon density="mdpi" src="res/icons/android-icon-48.png" />
-        <icon density="hdpi" src="res/icons/android-icon-72.png" />
-        <icon density="xhdpi" src="res/icons/android-icon-96.png" />
-        <icon density="xxhdpi" src="res/icons/android-icon-144.png" />
-        <icon density="xxxhdpi" src="res/icons/android-icon-192.png" />
         <resource-file src="res/colours.xml" target="app/main/src/res/values/colours.xml" />
-        <resource-file src="res/icons/ic_launcher_foreground.xml" target="app/main/src/res/drawable/ic_launcher_foreground.xml" />
-        <resource-file src="res/icons/android-icon-adaptive.xml" target="app/main/src/res/mipmap-anydpi-v26/icon.xml" />
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" />
+        </edit-config>
+        <resource-file src="res/icons/drawable/ic_launcher_foreground.xml" target="app/src/main/res/drawable/ic_launcher_foreground.xml" />
+        <resource-file src="res/icons/mipmap-hdpi/ic_launcher.png" target="app/src/main/res/mipmap-hdpi/ic_launcher.png" />
+        <resource-file src="res/icons/mipmap-hdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-hdpi/ic_launcher_round.png" />
+        <resource-file src="res/icons/mipmap-mdpi/ic_launcher.png" target="app/src/main/res/mipmap-mdpi/ic_launcher.png" />
+        <resource-file src="res/icons/mipmap-mdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-mdpi/ic_launcher_round.png" />
+        <resource-file src="res/icons/mipmap-xhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher.png" />
+        <resource-file src="res/icons/mipmap-xhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" />
+        <resource-file src="res/icons/mipmap-xxhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher.png" />
+        <resource-file src="res/icons/mipmap-xxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" />
+        <resource-file src="res/icons/mipmap-xxxhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
+        <resource-file src="res/icons/mipmap-xxxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" />
     </platform>
     <platform name="ios">
         <feature name="StatusBar">
             <param name="ios-package" onload="true" value="CDVStatusBar" />
         </feature>
+        <config-file parent="UILaunchStoryboardName" target="*-Info.plist">
+            <string>CDVLaunchScreen</string>
+        </config-file>
         <icon height="40" src="res/icons/apple-icon-40.png" width="40" />
         <icon height="57" src="res/icons/apple-icon-57.png" width="57" />
         <icon height="76" src="res/icons/apple-icon-76.png" width="76" />
@@ -43,10 +54,17 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
-    <plugin name="cordova-plugin-qrscanner" spec="git+https://github.com/ktg/cordova-plugin-qrscanner.git" />
-    <plugin name="cordova-plugin-add-swift-support" spec="git+https://github.com/akofman/cordova-plugin-add-swift-support.git" />
+    <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
+    <plugin name="cordova-plugin-qrscanner" spec="^2.6.0" />
+    <plugin name="cordova-plugin-add-swift-support" spec="^1.7.2" />
     <plugin name="cordova-plugin-sensingKit" spec="https://github.com/ktg/cordova-plugin-sensingkit.git" />
-    <engine name="android" spec="^7.1.0" />
-    <engine name="ios" spec="^4.5.4" />
+    <plugin name="cordova-plugin-safariviewcontroller" spec="^1.5.4" />
+    <plugin name="cordova-plugin-customurlscheme" spec="^4.3.0">
+        <variable name="URL_SCHEME" value="databox" />
+        <variable name="ANDROID_SCHEME" value=" " />
+        <variable name="ANDROID_HOST" value=" " />
+        <variable name="ANDROID_PATHPREFIX" value="/" />
+    </plugin>
+    <engine name="android" spec="^7.1.4" />
+    <engine name="ios" spec="^4.5.5" />
 </widget>

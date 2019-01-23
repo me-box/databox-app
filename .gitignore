@@ -4,3 +4,7 @@
 /.gradle
 /.idea
 /sign.json
+/local.properties
+/gradle
+/gradlew
+/gradlew.bat

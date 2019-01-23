@@ -3,42 +3,42 @@
 	"displayName": "databox",
 	"version": "0.5.0",
 	"description": "Databox App",
-	"main": "index.js",
-	"scripts": {
-		"build": "pug-module src/templates/*.pug -o src/js/templates.js; pug src/*.pug -o www/; browserify src/app.js -o www/js/bundle.js",
-		"build.cm": "pug-module src/templates/*.pug -o src/js/templates.js; pug src/http/*.pug -o ../databox/core-container-manager/src/www/http; pug src/*.pug -o ../databox/core-container-manager/src/www/https; browserify src/web.js -o ../databox/core-container-manager/src/www/https/js/bundle.js"
-	},
 	"author": "Kevin Glover",
 	"license": "Apache-2.0",
+	"scripts": {
+		"build.android": "cordova build android --release --buildConfig=sign.json",
+		"prepare.android": "cordova prepare android"
+	},
 	"dependencies": {
-		"cordova-android": "^7.1.0",
-		"cordova-ios": "^4.5.4",
-		"cordova-plugin-add-swift-support": "git+https://github.com/akofman/cordova-plugin-add-swift-support.git",
-		"cordova-plugin-qrscanner": "git+https://github.com/ktg/cordova-plugin-qrscanner.git",
-		"cordova-plugin-sensingKit": "git+https://github.com/ktg/cordova-plugin-sensingkit.git",
-		"cordova-plugin-statusbar": "^2.4.1",
-		"cordova-plugin-whitelist": "^1.3.3",
-		"js-cookie": "^2.2.0",
-		"material-components-web": "^0.34.1",
-		"navigo": "^7.1.1",
-		"pug-runtime": "^2.0.4"
+		"cordova-android": "^7.1.4",
+		"cordova-ios": "^4.5.5",
+		"cordova-plugin-add-swift-support": "^1.7.2",
+		"cordova-plugin-customurlscheme": "^4.3.0",
+		"cordova-plugin-qrscanner": "^2.6.0",
+		"cordova-plugin-safariviewcontroller": "^1.5.4",
+		"cordova-plugin-sensingKit": "ktg/cordova-plugin-sensingkit",
+		"cordova-plugin-statusbar": "^2.4.2",
+		"cordova-plugin-whitelist": "^1.3.3"
 	},
 	"cordova": {
 		"plugins": {
-			"cordova-plugin-statusbar": {},
-			"cordova-plugin-qrscanner": {},
 			"cordova-plugin-add-swift-support": {},
-			"cordova-plugin-whitelist": {},
-			"cordova-plugin-sensingKit": {}
+			"cordova-plugin-customurlscheme": {
+				"URL_SCHEME": "databox",
+				"ANDROID_SCHEME": " ",
+				"ANDROID_HOST": " ",
+				"ANDROID_PATHPREFIX": "/"
+			},
+			"cordova-plugin-qrscanner": {},
+			"cordova-plugin-safariviewcontroller": {},
+			"cordova-plugin-statusbar": {},
+			"cordova-plugin-sensingKit": {},
+			"cordova-plugin-whitelist": {}
 		},
 		"platforms": [
 			"android",
 			"ios"
 		]
 	},
-	"devDependencies": {
-		"browserify": "^15.2.0",
-		"pug-module": "^1.1.4",
-		"pug-cli": "^1.0.0-alpha6"
-	}
+	"devDependencies": {}
 }
